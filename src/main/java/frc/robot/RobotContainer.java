@@ -6,10 +6,19 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,6 +30,11 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private SwerveRequest.ApplyRobotSpeeds m_drive;
+    LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
+
+    private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
+
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -34,8 +48,39 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final SendableChooser<Command> m_chooser;
 
     public RobotContainer() {
+        m_drive = new SwerveRequest.ApplyRobotSpeeds();
+        
+          RobotConfig config;
+        try {
+            config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                    () -> drivetrain.getState().Pose,
+                    drivetrain::resetPose,
+                    drivetrain::getRobotRelativeSpeeds,
+                    (speeds, feedforwards) -> drivetrain.setControl(m_drive.withSpeeds(speeds)),
+                    // this.ChassisSpeeds(Translation2d.driveVelocity.getX(),
+                    // Translation2d.driveVelocity.getY(), thetaVelocity),
+                    new PPHolonomicDriveController(
+                            new PIDConstants(5.0, 0.0, 0.0),
+                            new PIDConstants(5.0, 0.0, 0.0)),
+                    config,
+                    () -> {
+                        var alliance = DriverStation.getAlliance();
+                        if (alliance.isPresent()) {
+                            return alliance.get() == DriverStation.Alliance.Red;
+                        }
+                        return false;
+                    }, drivetrain);
+                } catch (Exception e) {
+            // Handle exception as needed
+            e.printStackTrace();
+        }
+     m_chooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", m_chooser);
+
         configureBindings();
     }
 
@@ -70,6 +115,9 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+       return m_chooser.getSelected();
+        //return new PathPlannerAuto("cut");
+    
+    
     }
 }
