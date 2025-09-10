@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -103,10 +104,13 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+        joystick.rightTrigger().onTrue(drivetrain.startLogger());
+        joystick.leftTrigger().onTrue(drivetrain.stopLogger());
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

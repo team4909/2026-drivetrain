@@ -218,6 +218,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
 
+    public Command startLogger() {
+       return this.runOnce(() -> SignalLogger.start());
+    }
+
+    public Command stopLogger() {
+        return this.runOnce(() -> SignalLogger.stop());
+     }
+
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
