@@ -27,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.ShooterIOTalonFX;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -49,10 +51,12 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    private final Shooter s_Shooter;
     private final SendableChooser<Command> m_chooser;
 
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
+        s_Shooter = new Shooter(new ShooterIOTalonFX());
         
           RobotConfig config;
         try {
@@ -97,15 +101,16 @@ public class RobotContainer {
             )
         );
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.x().onTrue(s_Shooter.shoot());
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+
         ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.x().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
