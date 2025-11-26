@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
@@ -16,7 +17,17 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,18 +37,21 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIOTalonFX;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drivetrain.DriveToPose;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
     private SwerveRequest.ApplyRobotSpeeds m_drive;
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
-
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -54,11 +68,31 @@ public class RobotContainer {
     private final Shooter s_Shooter;
     private final SendableChooser<Command> m_chooser;
 
+    private final Vision s_Vision;
+
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
-        
-          RobotConfig config;
+        s_Vision = new Vision(drivetrain::addVisionMeasurement,
+                    new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
+                            Units.inchesToMeters(-7.211),
+                            Units.inchesToMeters(12),
+                            Units.inchesToMeters(9.39)),
+                            new Rotation3d(
+                                    Units.degreesToRadians(0.0),
+                                    Units.degreesToRadians(-45),
+                                    Units.degreesToRadians(90+45)))),
+
+                    new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
+                            Units.inchesToMeters(7.211),
+                            Units.inchesToMeters(10.607),
+                            Units.inchesToMeters(9.411)),
+                            new Rotation3d(
+                                    Units.degreesToRadians(0.0),
+                                    Units.degreesToRadians(-25.414),
+                                    Units.degreesToRadians(20)))));
+
+        RobotConfig config;
         try {
             config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
@@ -79,12 +113,12 @@ public class RobotContainer {
                         }
                         return false;
                     }, drivetrain);
-                } catch (Exception e) {
+        } catch (Exception e) {
             // Handle exception as needed
             e.printStackTrace();
         }
-     m_chooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", m_chooser);
+        m_chooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", m_chooser);
 
         configureBindings();
     }
@@ -93,25 +127,27 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
+                                                                                                   // negative Y
+                                                                                                   // (forward)
+                        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
+                                                                                    // negative X (left)
+                ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.x().onTrue(s_Shooter.shoot());
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        joystick.a().whileTrue(new DriveToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.2,0), Rotation2d.k180deg)))));
+
+        joystick.b().whileTrue(drivetrain.applyRequest(
+                () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
 
         ));
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         joystick.rightTrigger().onTrue(drivetrain.startLogger());
@@ -124,9 +160,8 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-       return m_chooser.getSelected();
-        //return new PathPlannerAuto("cut");
-    
-    
+        return m_chooser.getSelected();
+        // return new PathPlannerAuto("cut");
+
     }
 }
