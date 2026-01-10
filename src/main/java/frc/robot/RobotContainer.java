@@ -41,6 +41,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterIOTalonFX;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.DriveToPose;
+import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
@@ -153,7 +154,7 @@ public class RobotContainer {
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.x().onTrue(s_Shooter.shoot());
-        joystick.a().whileTrue(new DriveToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
         joystick.b().whileTrue(drivetrain.applyRequest(
                 () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
