@@ -75,22 +75,38 @@ public class RobotContainer {
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-7.211),
-                            Units.inchesToMeters(12),
-                            Units.inchesToMeters(9.39)),
+                            Units.inchesToMeters(-10.92),
+                            Units.inchesToMeters(10.92),
+                            Units.inchesToMeters(8.709057)),
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-45),
+                                    Units.degreesToRadians(-61.87),
                                     Units.degreesToRadians(90+45)))),
 
                     new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(7.211),
-                            Units.inchesToMeters(10.607),
-                            Units.inchesToMeters(9.411)),
+                            Units.inchesToMeters(10.92),
+                            Units.inchesToMeters(10.92),
+                            Units.inchesToMeters(8.709057)),
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-25.414),
-                                    Units.degreesToRadians(20)))));
+                                    Units.degreesToRadians(-61.87),
+                                    Units.degreesToRadians(45)))),
+                    new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
+                            Units.inchesToMeters(-10.92),
+                            Units.inchesToMeters(-10.92),
+                            Units.inchesToMeters(8.709057)),
+                            new Rotation3d(
+                                    Units.degreesToRadians(0.0),
+                                    Units.degreesToRadians(-61.87),
+                                    Units.degreesToRadians(180+45)))),
+                    new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
+                            Units.inchesToMeters(10.92),
+                            Units.inchesToMeters(-10.92),
+                            Units.inchesToMeters(8.709057)),
+                            new Rotation3d(
+                                    Units.degreesToRadians(0.0),
+                                    Units.degreesToRadians(-61.87),
+                                    Units.degreesToRadians(270+45)))));
 
         RobotConfig config;
         try {
@@ -137,7 +153,7 @@ public class RobotContainer {
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.x().onTrue(s_Shooter.shoot());
-        joystick.a().whileTrue(new DriveToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.2,0), Rotation2d.k180deg)))));
+        joystick.a().whileTrue(new DriveToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
         joystick.b().whileTrue(drivetrain.applyRequest(
                 () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))

@@ -38,7 +38,7 @@ public class DriveToPose extends Command {
         new ProfiledPIDController(6.0, 0.0, 0.0, new TrapezoidProfile.Constraints(3/30, 4/30));
     m_thetaController =
         new ProfiledPIDController(
-            4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(100 * Math.PI/1000, 100 * Math.PI/1000));
+            4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(100 * Math.PI/10, 100 * Math.PI/10));
     this.m_drivetrain = drivetrain;
 
     m_drive = new SwerveRequest.ApplyFieldSpeeds()
