@@ -153,7 +153,7 @@ public class RobotContainer {
                                                                                     // negative X (left)
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.x().onTrue(s_Shooter.shoot());
+        joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
         joystick.b().whileTrue(drivetrain.applyRequest(

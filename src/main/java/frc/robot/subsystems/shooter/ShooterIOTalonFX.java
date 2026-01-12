@@ -10,9 +10,12 @@ import frc.robot.subsystems.ShooterIOInputsAutoLogged;
 public class ShooterIOTalonFX implements ShooterIO {
 
     private final TalonFX m_shootermotor;
+    private final int kShooterMotorID = 22;
+    private final String kCanbus = "CANivore1";
+
 
     public ShooterIOTalonFX() {
-        m_shootermotor = new TalonFX(22, "CANivore1");
+        m_shootermotor = new TalonFX(kShooterMotorID, kCanbus);
 
         final TalonFXConfiguration shooterMotorConfig = new TalonFXConfiguration();
         shooterMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
