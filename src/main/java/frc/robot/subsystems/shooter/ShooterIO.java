@@ -2,7 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import frc.robot.subsystems.ShooterIOInputsAutoLogged;
+import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
 
 public interface ShooterIO {
 
