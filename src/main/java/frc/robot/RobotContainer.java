@@ -42,6 +42,8 @@ import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.turret.Turret;
+import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
@@ -67,6 +69,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter s_Shooter;
+    private final Turret s_Turret;
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;
@@ -74,6 +77,7 @@ public class RobotContainer {
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
+        s_Turret = new Turret(new TurretIOTalonFX());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
@@ -154,6 +158,7 @@ public class RobotContainer {
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
+        joystick.rightTrigger().whileTrue(s_Turret.go()).onFalse(s_Turret.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
         joystick.b().whileTrue(drivetrain.applyRequest(
