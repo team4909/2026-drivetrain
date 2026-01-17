@@ -14,8 +14,8 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     private final TalonFX m_shootermotor1;
     private final TalonFX m_shootermotor2;
-    private final int kShooterMotor1ID = 20;
-    private final int kShooterMotor2ID = 23;
+    private final int kShooterMotor1ID = 27;
+    private final int kShooterMotor2ID = 26;
     private final String kCanbus = "CANivore1";
 
 

@@ -16,8 +16,8 @@ public class IndexerIOTalonFX implements IndexerIO {
     // Top = follower
     private final TalonFX m_indexerTopMotor;
 
-    private final int kIndexerBottomMotorID = 22;
-    private final int kIndexerTopMotorID = 23;
+    private final int kIndexerBottomMotorID = 54;
+    private final int kIndexerTopMotorID = 53;
 
     private final String kCanbus = "CANivore2";
 
