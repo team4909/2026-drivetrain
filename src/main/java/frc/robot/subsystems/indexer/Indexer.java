@@ -1,33 +1,33 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.indexer;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
+import frc.robot.subsystems.indexer.IndexerIOInputsAutoLogged;
 
-public class Shooter extends SubsystemBase {
-    private final ShooterIO m_io;
-    private final ShooterIOInputsAutoLogged m_inputs = new ShooterIOInputsAutoLogged();
+public class Indexer extends SubsystemBase {
+    private final IndexerIO m_io;
+    private final IndexerIOInputsAutoLogged m_inputs = new IndexerIOInputsAutoLogged();
     private LoggedNetworkNumber m_speed;
 
-    public Shooter(ShooterIO io) {
-        super("Shooter");
+    public Indexer(IndexerIO io) {
+        super("Indexer");
         m_io = io;
 
-        m_speed = new LoggedNetworkNumber("/Tuning/ShooterSpeed", 0.0);
+        m_speed = new LoggedNetworkNumber("/Tuning/IndexerSpeed", 0.0);
     }
 
     public Command tuningShoot() {
-        return this.run(() -> m_io.setSpeed(1));
+        return this.run(() -> m_io.setSpeed(m_speed.get()));
     }
 
-    public Command slowShoot() {
+    public Command slowFeed() {
         return this.run(() -> m_io.setSpeed(-0.2)).withName("SlowShoot");
     }
 
-    public Command shoot() {
+    public Command feed() {
         return this.run(() -> m_io.setSpeed(-1)).withName("Shoot");
     }
 

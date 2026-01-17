@@ -130,7 +130,10 @@ public class TunerConstants {
     private static final int kFrontLeftDriveMotorId = 4;
     private static final int kFrontLeftSteerMotorId = 3;
     private static final int kFrontLeftEncoderId = 12;
-    private static final Angle kFrontLeftEncoderOffsetRobot1 = Rotations.of(0.090576171875);
+    private static final Angle kFrontLeftEncoderOffsetRobot1 = Rotations.of(0.20947265625);
+    private static final Angle kFrontLeftEncoderOffsetRobot2 = Rotations.of(0.090576171875);
+    
+
     private static final boolean kFrontLeftSteerMotorInverted = true;
     private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -141,7 +144,8 @@ public class TunerConstants {
     private static final int kFrontRightDriveMotorId = 6;
     private static final int kFrontRightSteerMotorId = 5;
     private static final int kFrontRightEncoderId = 13;
-    private static final Angle kFrontRightEncoderOffsetRobot1 = Rotations.of(0.33544921875);
+    private static final Angle kFrontRightEncoderOffsetRobot1 = Rotations.of(0.486083984375);
+    private static final Angle kFrontRightEncoderOffsetRobot2 = Rotations.of(0.33544921875);
     private static final boolean kFrontRightSteerMotorInverted = true;
     private static final boolean kFrontRightEncoderInverted = false;
 
@@ -152,7 +156,8 @@ public class TunerConstants {
     private static final int kBackLeftDriveMotorId = 2;
     private static final int kBackLeftSteerMotorId = 1;
     private static final int kBackLeftEncoderId = 11;
-    private static final Angle kBackLeftEncoderOffsetRobot1 = Rotations.of(-0.46630859375);
+    private static final Angle kBackLeftEncoderOffsetRobot1 = Rotations.of(-0.49951171875);
+    private static final Angle kBackLeftEncoderOffsetRobot2 = Rotations.of(-0.46630859375);
     private static final boolean kBackLeftSteerMotorInverted = true;
     private static final boolean kBackLeftEncoderInverted = false;
 
@@ -163,7 +168,9 @@ public class TunerConstants {
     private static final int kBackRightDriveMotorId = 8;
     private static final int kBackRightSteerMotorId = 7;
     private static final int kBackRightEncoderId = 14;
-    private static final Angle kBackRightEncoderOffsetRobot1 = Rotations.of(-0.336181640625);
+    private static final Angle kBackRightEncoderOffsetRobot1 = Rotations.of(-0.440673828125);
+    private static final Angle kBackRightEncoderOffsetRobot2 = Rotations.of(-0.336181640625);
+
     private static final boolean kBackRightSteerMotorInverted = true;
     private static final boolean kBackRightEncoderInverted = false;
 
@@ -171,7 +178,8 @@ public class TunerConstants {
     private static final Distance kBackRightYPos = Inches.of(-10.5);
 
 
-    public final static String RobotV3 = "032380FD";
+    public final static String Robot1 = "032380FD";
+    public final static String Robot2 = "032243C9";
 
 
     
@@ -186,7 +194,7 @@ public class TunerConstants {
         Angle kBackLeftEncoderOffset;
         Angle kBackRightEncoderOffset;
 
-        if (HALUtil.getSerialNumber().equals(RobotV3)) {
+        if (HALUtil.getSerialNumber().equals(Robot1)) {
             System.out.println("Robot 1");
             kFrontLeftEncoderOffset = kFrontLeftEncoderOffsetRobot1;
             kFrontRightEncoderOffset = kFrontRightEncoderOffsetRobot1;
@@ -194,14 +202,14 @@ public class TunerConstants {
             kBackRightEncoderOffset = kBackRightEncoderOffsetRobot1;
             
         } 
-        // else if (HALUtil.getSerialNumber().equals(RobotV2)) {
-        //     System.out.println("Robot 2");
-        //     kBackLeftEncoderOffset = kBackLeftEncoderOffsetRobot2;
-        //     kBackRightEncoderOffset = kBackRightEncoderOffsetRobot2;
-        //     kFrontLeftEncoderOffset = kFrontLeftEncoderOffsetRobot2;
-        //     kFrontRightEncoderOffset = kFrontRightEncoderOffsetRobot2;
+        else if (HALUtil.getSerialNumber().equals(Robot2)) {
+            System.out.println("Robot 2");
+            kBackLeftEncoderOffset = kBackLeftEncoderOffsetRobot2;
+            kBackRightEncoderOffset = kBackRightEncoderOffsetRobot2;
+            kFrontLeftEncoderOffset = kFrontLeftEncoderOffsetRobot2;
+            kFrontRightEncoderOffset = kFrontRightEncoderOffsetRobot2;
             
-        // } 
+        } 
         else {
             System.out.println("Unknown Robot");
             throw new RuntimeException("Unknown Robot Serial Number");

@@ -11,11 +11,14 @@ import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
 
 public class ShooterIOTalonFX implements ShooterIO {
 
+
     private final TalonFX m_shootermotor1;
     private final TalonFX m_shootermotor2;
-    private final int kShooterMotor1ID = 22;
+    private final int kShooterMotor1ID = 20;
     private final int kShooterMotor2ID = 23;
     private final String kCanbus = "CANivore1";
+
+
 
     public ShooterIOTalonFX() {
         m_shootermotor1 = new TalonFX(kShooterMotor1ID, kCanbus);
