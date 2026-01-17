@@ -1,33 +1,45 @@
 package frc.robot.subsystems.turret;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.MutAngle;
+
 public class TurretIOTalonFX implements TurretIO{
     private final TalonFX m_motor;
-    private final double m_gearBox = 1.0/3;
+    private final double m_gearBox = 1/3;
     private final double m_smallGear = 10;
     private final double m_bigGear = 105;
-    private final double m_gearRatio = m_gearBox * (m_smallGear / m_bigGear);
-    private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+    private final double m_gearRatio = (m_gearBox * (m_smallGear / m_bigGear));
+    private PositionVoltage m_request = new PositionVoltage(0);
+
+    private final int kShooterMotorID = 20;
+    private final String kCanbus = "CANivore2";
 
     public TurretIOTalonFX (){
-        m_motor = new TalonFX(1,"CANivore2");
+        m_motor = new TalonFX(kShooterMotorID, kCanbus);
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
-        slot0Configs.kP = 1d; // An error of 1 rotation results in 2.4 V output
+        slot0Configs.kP = 10; // An error of 1 rotation results in 2.4 V output
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0; // A velocity of 1 rps results in 0.1 V output
 
-        var feedbackConfigs = new FeedbackConfigs();
-        feedbackConfigs.SensorToMechanismRatio = m_gearRatio;
+        // var feedbackConfigs = new FeedbackConfigs();
+        // feedbackConfigs.SensorToMechanismRatio = m_gearRatio;
 
         m_motor.getConfigurator().apply(slot0Configs);
-        m_motor.getConfigurator().apply(feedbackConfigs);
+        // m_motor.getConfigurator().apply(feedbackConfigs);
+
+        m_motor.setPosition(0, 2);
+        System.out.println("Starting position: "+ m_motor.getPosition());
     }
 
     public void setSpeed(double speed) {
@@ -35,6 +47,11 @@ public class TurretIOTalonFX implements TurretIO{
     }
 
     public void setSetpoint(double rotations) {
-        m_motor.setControl(m_request.withPosition(rotations));
+        System.out.println("Motor Position: "+ m_motor.getPosition().getValueAsDouble());
+        m_motor.setControl(m_request.withPosition(Rotations.of(rotations)));//(rotations/m_gearRatio));
+    }
+
+    public void setMotorPosition(double position) {
+        m_motor.setPosition(position, 1);
     }
 }
