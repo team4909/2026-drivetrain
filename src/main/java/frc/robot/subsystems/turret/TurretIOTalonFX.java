@@ -1,10 +1,14 @@
 package frc.robot.subsystems.turret;
 
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 
 public class TurretIOTalonFX implements TurretIO{
     private final TalonFX m_motor;
@@ -14,8 +18,13 @@ public class TurretIOTalonFX implements TurretIO{
     private final double m_gearRatio = m_gearBox * (m_smallGear / m_bigGear);
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
+    private StatusSignal<AngularVelocity> m_velocity;
+    private StatusSignal<Voltage> m_voltage;
+    private StatusSignal m_current;
+    private StatusSignal m_rotations;
+
     public TurretIOTalonFX (){
-        m_motor = new TalonFX(1,"CANivore2");
+        m_motor = new TalonFX(25,"CANivore2");
 
         // in init function, set slot 0 gains
         var slot0Configs = new Slot0Configs();
@@ -28,6 +37,11 @@ public class TurretIOTalonFX implements TurretIO{
 
         m_motor.getConfigurator().apply(slot0Configs);
         m_motor.getConfigurator().apply(feedbackConfigs);
+
+        m_velocity = m_motor.getVelocity();
+        m_voltage = m_motor.getMotorVoltage();
+        m_current = m_motor.getStatorCurrent();
+        m_rotations = m_motor.getPosition();
     }
 
     public void setSpeed(double speed) {
@@ -36,5 +50,12 @@ public class TurretIOTalonFX implements TurretIO{
 
     public void setSetpoint(double rotations) {
         m_motor.setControl(m_request.withPosition(rotations));
+    }
+
+    public void updateInputs(TurretIOInputsAutoLogged m_inputs){
+        m_inputs.current = m_current.getValueAsDouble();
+        m_inputs.rotations = m_rotations.getValueAsDouble();
+        m_inputs.velocityRPS = m_velocity.getValueAsDouble();
+        m_inputs.volts = m_voltage.getValueAsDouble();
     }
 }

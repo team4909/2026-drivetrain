@@ -23,4 +23,8 @@ public class Turret extends SubsystemBase{
     public Command home() {
         return this.run(() -> m_io.setSetpoint(3));
     }
+
+    public Command goToAngle(double degrees) {
+        return this.run(() -> m_io.setSetpoint(degrees));
+    }
 }

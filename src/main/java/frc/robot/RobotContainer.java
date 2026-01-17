@@ -40,6 +40,8 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
+import frc.robot.subsystems.hood.Hood;
+import frc.robot.subsystems.hood.HoodIOServo;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
@@ -70,6 +72,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter s_Shooter;
     private final Turret s_Turret;
+    private final Hood s_Hood;
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;
@@ -78,6 +81,7 @@ public class RobotContainer {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
+        s_Hood = new Hood(new HoodIOServo());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
