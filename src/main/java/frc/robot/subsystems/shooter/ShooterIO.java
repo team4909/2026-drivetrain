@@ -8,13 +8,21 @@ public interface ShooterIO {
 
     @AutoLog
     public static class ShooterIOInputs {
-        public double speed = 0.0;
-        public double statorCurrent = 0.0;
-        public double supplyCurrent = 0.0;
+        public boolean motor1Connected = false;
+        public double motor1VelocityRPS = 0.0;
+        public double motor1StatorCurrent = 0.0;
+        public double motor1SupplyCurrent = 0.0;
+        public double motor1Voltage = 0.0;
+
+        public boolean motor2Connected = false;
+        public double motor2VelocityRPS = 0.0;
+        public double motor2StatorCurrent = 0.0;
+        public double motor2SupplyCurrent = 0.0;
+        public double motor2Voltage = 0.0;
     }
 
     // Methods are how we move actions to hardware
-    public void setSpeed(double speed);
+    public void setVelocity(double RPS);
 
     public void setBrakeMode(boolean enableBrakeMode);
 

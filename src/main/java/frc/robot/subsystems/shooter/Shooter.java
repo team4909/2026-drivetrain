@@ -10,38 +10,23 @@ import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
 public class Shooter extends SubsystemBase {
     private final ShooterIO m_io;
     private final ShooterIOInputsAutoLogged m_inputs = new ShooterIOInputsAutoLogged();
-    private LoggedNetworkNumber m_speed;
+    private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/ShooterVelocityRPS", 0.0);
 
     public Shooter(ShooterIO io) {
         super("Shooter");
         m_io = io;
-
-        m_speed = new LoggedNetworkNumber("/Tuning/ShooterSpeed", 0.0);
     }
 
     public Command tuningShoot() {
-        return this.run(() -> m_io.setSpeed(1));
-    }
-
-    public Command slowShoot() {
-        return this.run(() -> m_io.setSpeed(-0.2)).withName("SlowShoot");
-    }
-
-    public Command shoot() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("Shoot");
+        return this.run(() -> m_io.setVelocity(m_velocity.get()));
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setSpeed(0)).withName("Stop");
+        return this.run(() -> m_io.setVelocity(0)).withName("Stop");
     }
 
-    public Command stopInstant() {
-        return this.runOnce(() -> m_io.setSpeed(0)).withName("StopInstant");
-    }
-
-    public Command intake() {
-        return this.run(() -> m_io.setSpeed(1)).withName("Intake");
-
+    public Command shoot(){
+        return this.run(() -> m_io.setVelocity(50.0)).withName("Shoot");
     }
 
     @Override
