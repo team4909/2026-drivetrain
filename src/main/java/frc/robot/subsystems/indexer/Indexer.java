@@ -28,7 +28,7 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command feed() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("Shoot");
+        return this.run(() -> m_io.setSpeed(1)).withName("Shoot");
     }
 
     public Command stop() {
