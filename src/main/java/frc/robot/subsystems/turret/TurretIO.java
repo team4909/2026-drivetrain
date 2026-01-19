@@ -12,4 +12,6 @@ public interface TurretIO {
     public default void setSpeed(double speed){}
 
     public default void setSetpoint(double rotations){}
+
+    public default double getTurretPosition(){return 0.0;}
 }

@@ -44,6 +44,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
+import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
@@ -53,6 +54,8 @@ public class RobotContainer {
                                                                                       // max angular velocity
     private SwerveRequest.ApplyRobotSpeeds m_drive;
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
+
+    private final Pose2d m_hub = new Pose2d(new Translation2d(aprilTagLayout.getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, aprilTagLayout.getFieldWidth() / 2.0), new Rotation2d());
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
@@ -158,7 +161,8 @@ public class RobotContainer {
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
-        joystick.x().whileTrue(s_Turret.goToDegrees(6));
+        
+        joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
         joystick.rightTrigger().whileTrue(s_Turret.go()).onFalse(s_Turret.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 

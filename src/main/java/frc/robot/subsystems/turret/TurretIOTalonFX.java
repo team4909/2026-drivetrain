@@ -14,7 +14,7 @@ import edu.wpi.first.units.measure.MutAngle;
 
 public class TurretIOTalonFX implements TurretIO{
     private final TalonFX m_motor;
-    private final double m_gearBox = 1/3;
+    private final double m_gearBox = 1.0/9;
     private final double m_smallGear = 10;
     private final double m_bigGear = 105;
     private final double m_gearRatio = (m_gearBox * (m_smallGear / m_bigGear));
@@ -47,11 +47,12 @@ public class TurretIOTalonFX implements TurretIO{
     }
 
     public void setSetpoint(double rotations) {
-        System.out.println("Motor Position: "+ m_motor.getPosition().getValueAsDouble());
-        m_motor.setControl(m_request.withPosition(Rotations.of(rotations)));//(rotations/m_gearRatio));
+        // System.out.println("rotations: " + rotations);
+        // System.out.println("Gear Ratio: " + m_gearRatio);
+        // System.out.println("Motor Pos: " + m_motor.getPosition().getValueAsDouble());
+        // System.out.println("Goal: " + rotations/m_gearRatio);
+        m_motor.setControl(m_request.withPosition(Rotations.of(rotations/m_gearRatio)));
     }
 
-    public void setMotorPosition(double position) {
-        m_motor.setPosition(position, 1);
-    }
+    public double getTurretPosition(){return m_motor.getPosition().getValueAsDouble()*m_gearRatio;}
 }
