@@ -14,8 +14,16 @@ public class Hood extends SubsystemBase{
         m_io = io;
     }
     
-    public Command extendHood (int position){
-        return this.run (() -> m_io.setPosition(position)).withName("ExtendHood");
+    public Command extendHood (){
+        return this.run (() -> m_io.setPosition(2000)).withName("ExtendHood");
+    } 
+
+     public Command retractHood (){
+        return this.run (() -> m_io.setPosition(1000)).withName("RetractHood");
+    } 
+
+    public Command testShotHood (){
+        return this.run (() -> m_io.setPosition(1500)).withName("testShotHood");
     } 
 
 

@@ -26,7 +26,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command shoot(){
-        return this.run(() -> m_io.setVelocity(50.0)).withName("Shoot");
+        return this.run(() -> m_io.setVelocity(-50.0)).withName("Shoot");
     }
 
     @Override
