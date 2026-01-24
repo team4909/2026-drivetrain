@@ -10,7 +10,7 @@ import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
 public class Shooter extends SubsystemBase {
     private final ShooterIO m_io;
     private final ShooterIOInputsAutoLogged m_inputs = new ShooterIOInputsAutoLogged();
-    private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/ShooterVelocityRPS", 50.0);
+    private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/ShooterVelocityRPS", -50.0);
 
     public Shooter(ShooterIO io) {
         super("Shooter");
