@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
+import edu.wpi.first.math.util.Units;
 
 public class ShootingCalculator {
     private final InterpolatingDoubleTreeMap shotHoodAngleMap =
@@ -23,7 +24,7 @@ public class ShootingCalculator {
         // shotHoodAngleMap.put(5.57, Rotation2d.fromDegrees(32.0));
         // shotHoodAngleMap.put(5.60, Rotation2d.fromDegrees(35.0));
     public ShootingCalculator(){
-        shotFlywheelSpeedMap.put(1.34, 210.0);
+        shotFlywheelSpeedMap.put(Units.inchesToMeters(87), -50.0);
         shotFlywheelSpeedMap.put(1.78, 220.0);
         shotFlywheelSpeedMap.put(2.17, 220.0);
         shotFlywheelSpeedMap.put(2.81, 230.0);
