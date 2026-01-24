@@ -9,9 +9,9 @@ public interface HoodIO{
 
         public double positionRightActuator = 0.0;
     }
-    public void setPosition(double position);
+    public default void setPosition(double position) {}
 
-    public void updateInputs(HoodIOInputsAutoLogged m_inputs);
+    // public void updateInputs(HoodIOInputsAutoLogged m_inputs);
 
 
 

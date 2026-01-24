@@ -41,6 +41,7 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.hood.Hood;
+import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOServo;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
@@ -81,7 +82,7 @@ public class RobotContainer {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
-        s_Hood = new Hood(new HoodIOServo());
+        s_Hood = new Hood(new HoodIORevServoHub());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
@@ -161,7 +162,9 @@ public class RobotContainer {
                                                                                     // negative X (left)
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
+        // joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
+        joystick.x().whileTrue(s_Hood.extendHood(2500));
+        joystick.y().whileTrue(s_Hood.extendHood(500));
         joystick.rightTrigger().whileTrue(s_Turret.go()).onFalse(s_Turret.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
@@ -172,9 +175,9 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         joystick.rightTrigger().onTrue(drivetrain.startLogger());
         joystick.leftTrigger().onTrue(drivetrain.stopLogger());
