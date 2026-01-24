@@ -4,9 +4,13 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.Vector;
 
+import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.RGBWColor;
+import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
+import com.ctre.phoenix6.signals.StripTypeValue;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,6 +24,11 @@ public class LedIOCandle implements LedIO {
     public LedIOCandle() {
         m_candle = new CANdle(1, "rio");
         kBlack = new RGBWColor(0, 0, 0, 0);
+
+        var cfg = new CANdleConfiguration();
+        // Disable status LED when being controlled
+        cfg.CANdleFeatures.StatusLedWhenActive = StatusLedWhenActiveValue.Disabled;
+        m_candle.getConfigurator().apply(cfg);
     }
 
     public void setColor(RGBWColor rgb) {
