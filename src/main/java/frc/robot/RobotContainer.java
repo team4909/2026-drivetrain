@@ -55,7 +55,7 @@ public class RobotContainer {
     private SwerveRequest.ApplyRobotSpeeds m_drive;
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
-    private final Pose2d m_hub = new Pose2d(new Translation2d(aprilTagLayout.getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, aprilTagLayout.getFieldWidth() / 2.0), new Rotation2d());
+    private final Pose2d m_hub = new Pose2d(new Translation2d(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0), new Rotation2d());
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 

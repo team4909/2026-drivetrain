@@ -34,6 +34,8 @@ public class TurretTrackPose extends Command{
         Pose2d currentRobotPose = m_robotPoseSupplier.get();
         Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentRobotPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
         Rotation2d targetHeading = robotToTargetTranslation.getAngle().rotateBy(Rotation2d.k180deg);
+
+        m_rotationalController.setTolerance(Units.degreesToRadians(1.0));
     }
 
     @Override
