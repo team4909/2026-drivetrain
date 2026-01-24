@@ -40,6 +40,9 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIO;
+import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOServo;
@@ -72,8 +75,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter s_Shooter;
-    private final Turret s_Turret;
     private final Hood s_Hood;
+    private final Indexer s_Indexer;
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;
@@ -81,7 +84,7 @@ public class RobotContainer {
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
-        s_Turret = new Turret(new TurretIOTalonFX());
+        s_Indexer = new Indexer(new IndexerIOTalonFX());
         s_Hood = new Hood(new HoodIORevServoHub());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
@@ -162,11 +165,15 @@ public class RobotContainer {
                                                                                     // negative X (left)
                 ));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        // joystick.x().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
         joystick.x().whileTrue(s_Hood.extendHood(2000));
         joystick.y().whileTrue(s_Hood.extendHood(1500));
-        joystick.rightTrigger().whileTrue(s_Turret.go()).onFalse(s_Turret.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
+        joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
+
+        // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
+
+
+
 
         joystick.b().whileTrue(drivetrain.applyRequest(
                 () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
@@ -179,8 +186,8 @@ public class RobotContainer {
         // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.rightTrigger().onTrue(drivetrain.startLogger());
-        joystick.leftTrigger().onTrue(drivetrain.stopLogger());
+        //joystick.rightTrigger().onTrue(drivetrain.startLogger());
+        //joystick.leftTrigger().onTrue(drivetrain.stopLogger());
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
