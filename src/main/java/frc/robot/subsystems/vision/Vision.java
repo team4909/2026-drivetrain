@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.VisionIO.PoseObservationType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.OptionalDouble;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.Utils;
@@ -58,6 +59,26 @@ public class Vision extends SubsystemBase {
    */
   public Rotation2d getTargetX(int cameraIndex) {
     return inputs[cameraIndex].latestTargetObservation.tx();
+  }
+
+  public OptionalDouble getLatestAverageTagDistanceMeters() {
+    double latestTimestamp = Double.NEGATIVE_INFINITY;
+    double latestDistance = Double.NaN;
+
+    for (int cameraIndex = 0; cameraIndex < inputs.length; cameraIndex++) {
+      for (var observation : inputs[cameraIndex].poseObservations) {
+        if (observation.timestamp() > latestTimestamp) {
+          latestTimestamp = observation.timestamp();
+          latestDistance = observation.averageTagDistance();
+        }
+      }
+    }
+
+    if (latestTimestamp == Double.NEGATIVE_INFINITY) {
+      return OptionalDouble.empty();
+    }
+
+    return OptionalDouble.of(latestDistance);
   }
 
   @Override
