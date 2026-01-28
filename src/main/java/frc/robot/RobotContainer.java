@@ -47,6 +47,7 @@ import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOServo;
 import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
@@ -80,6 +81,7 @@ public class RobotContainer {
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;
+    private final ShootingCalculator shootingCalculator = new ShootingCalculator();
 
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
@@ -153,6 +155,8 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
@@ -172,6 +176,7 @@ public class RobotContainer {
         joystick.rightTrigger().whileTrue(s_Shooter.shoot()).onFalse(s_Shooter.stop());
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
         joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
 
         // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
 
@@ -188,6 +193,7 @@ public class RobotContainer {
         // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        
 
         //joystick.rightTrigger().onTrue(drivetrain.startLogger());
         //joystick.leftTrigger().onTrue(drivetrain.stopLogger());

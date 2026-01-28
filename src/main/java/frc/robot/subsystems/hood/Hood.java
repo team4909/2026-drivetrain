@@ -5,6 +5,8 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.shooter.ShootingCalculator;
+import java.util.function.DoubleSupplier;
 
 public class Hood extends SubsystemBase{
     private final HoodIO m_io;
