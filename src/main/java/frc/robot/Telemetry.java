@@ -4,6 +4,10 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -19,6 +23,9 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
+
+import org.littletonrobotics.junction.Logger;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -45,6 +52,7 @@ public class Telemetry {
     private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
+    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)).getTranslation();
 
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
@@ -107,6 +115,7 @@ public class Telemetry {
         SignalLogger.writeDoubleArray("DriveState/ModuleStates", m_moduleStatesArray);
         SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+        Logger.recordOutput("DriveState/distanceToHub", state.Pose.getTranslation().getDistance(m_hubCenter));
 
         /* Telemeterize the pose to a Field2d */
         fieldTypePub.set("Field2d");
