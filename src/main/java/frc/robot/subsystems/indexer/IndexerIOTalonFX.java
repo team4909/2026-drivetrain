@@ -34,7 +34,7 @@ public class IndexerIOTalonFX implements IndexerIO {
 
      
         m_indexerTopMotor.setControl(
-            new Follower(kIndexerBottomMotorID, MotorAlignmentValue.Aligned)
+            new Follower(kIndexerBottomMotorID, MotorAlignmentValue.Opposed)
         );
     }
 
