@@ -79,9 +79,9 @@ public class RobotContainer {
     private final Hood s_Hood;
     private final Indexer s_Indexer;
     private final SendableChooser<Command> m_chooser;
-
+    private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
     private final Vision s_Vision;
-    private final ShootingCalculator shootingCalculator = new ShootingCalculator();
+
 
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
@@ -168,15 +168,23 @@ public class RobotContainer {
                         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
                 ));
-        s_Hood.setDefaultCommand(s_Hood.tunableShot());
+        s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         joystick.x().whileTrue(s_Hood.extendHood());
         joystick.y().whileTrue(s_Hood.retractHood());
         joystick.rightBumper().whileTrue(s_Hood.tunableShot());
-        joystick.rightTrigger().whileTrue(s_Shooter.shoot()).onFalse(s_Shooter.stop());
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
-        joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
+
+        joystick.rightTrigger().whileTrue(Commands.parallel(
+                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+                Commands.sequence(Commands.waitSeconds(0.2), s_Indexer.feed())
+                )).onFalse(Commands.parallel(
+                        s_Shooter.stop(),
+                        s_Indexer.stop()
+                ));
+
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
+        // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
 
         // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
 

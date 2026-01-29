@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
@@ -25,8 +27,8 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> m_io.setVelocity(0)).withName("Stop");
     }
 
-    public Command shoot(){
-        return this.run(() -> m_io.setVelocity(-50.0)).withName("Shoot");
+    public Command shoot(DoubleSupplier velocity){
+        return this.run(() -> m_io.setVelocity((int) velocity.getAsDouble())).repeatedly().withName("Shoot");
     }
 
     @Override

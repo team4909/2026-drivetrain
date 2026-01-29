@@ -6,7 +6,10 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.shooter.ShootingCalculator;
+
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Hood extends SubsystemBase{
     private final HoodIO m_io;
@@ -29,6 +32,10 @@ public class Hood extends SubsystemBase{
     public Command testShotHood (){
         return this.run (() -> m_io.setPosition(1500)).withName("testShotHood");
     } 
+
+    public Command goTo (DoubleSupplier pulseWidth){
+        return this.run (() -> m_io.setPosition(((int) pulseWidth.getAsDouble()))).repeatedly().withName("goToHood");
+    }
 
     public Command tunableShot (){
         return this.run (() -> m_io.setPosition((int) m_position.get())).withName("tunableShot");

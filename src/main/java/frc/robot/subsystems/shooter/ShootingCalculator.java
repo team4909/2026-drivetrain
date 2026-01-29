@@ -4,34 +4,41 @@ package frc.robot.subsystems.shooter;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
 public class ShootingCalculator {
     private final InterpolatingDoubleTreeMap shotHoodAngleMap =
       new InterpolatingDoubleTreeMap();
     private final InterpolatingDoubleTreeMap shotFlywheelSpeedMap =
      new InterpolatingDoubleTreeMap();
-
+    private CommandSwerveDrivetrain m_drivetrain;
 
        
-    public ShootingCalculator(){
-        shotHoodAngleMap.put(Units.inchesToMeters(87), 1000.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(92.3), 1100.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(97.6), 1200.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(102.9), 1300.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(108.2), 1400.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(113.5), 1500.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(122.52), 1600.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(131.54), 1700.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(140.56), 1800.0);
-         shotHoodAngleMap.put(Units.inchesToMeters(149.58), 1900.0);
-        shotHoodAngleMap.put(Units.inchesToMeters(158.6), 2000.0);
+    public ShootingCalculator(CommandSwerveDrivetrain drivetrain){
+        shotHoodAngleMap.put(Units.inchesToMeters(63.625), 1000.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625), 1400.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40), 1800.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40+40), 2000.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(97.6), 1200.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(102.9), 1300.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(108.2), 1400.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(113.5), 1500.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(122.52), 1600.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(131.54), 1700.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(140.56), 1800.0);
+        //  shotHoodAngleMap.put(Units.inchesToMeters(149.58), 1900.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(158.6), 2000.0);
+        m_drivetrain = drivetrain;
 
 
 
-        shotFlywheelSpeedMap.put(Units.inchesToMeters(87), -50.0);
-        shotFlywheelSpeedMap.put(1.78, -220.0);
-        shotFlywheelSpeedMap.put(2.17, -220.0);
-        shotFlywheelSpeedMap.put(2.88, -230.0);
+        shotFlywheelSpeedMap.put(Units.inchesToMeters(63.625), -50.0);
+        shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625), -53.0);
+        shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40), -59.0);
+        shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), -63.0);
+
+        // shotFlywheelSpeedMap.put(2.17, -220.0);
+        // shotFlywheelSpeedMap.put(2.88, -230.0);
         // shotFlywheelSpeedMap.put(3.82, 250.0);
         // shotFlywheelSpeedMap.put(4.09, 255.0);
         // shotFlywheelSpeedMap.put(4.40, 260.0);
@@ -42,11 +49,11 @@ public class ShootingCalculator {
     
 
     
-    public double getHoodPosition(double distanceFromHub){
-        return shotHoodAngleMap.get(distanceFromHub);
+    public double getHoodPosition(){
+        return shotHoodAngleMap.get(m_drivetrain.getDistanceFromHub());
     }
 
-    public double getShooterSpeed(double distanceFromHub){
-        return shotFlywheelSpeedMap.get(distanceFromHub);
+    public double getShooterSpeed(){
+        return shotFlywheelSpeedMap.get(m_drivetrain.getDistanceFromHub());
     }
 }
