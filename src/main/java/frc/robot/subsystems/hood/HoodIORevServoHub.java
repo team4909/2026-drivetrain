@@ -39,7 +39,8 @@ public class HoodIORevServoHub implements HoodIO{
         //0-1 scale of extention
         // m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank0_2, (int)(500+(position*2000)));
         try {
-            m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank3_5, 2500);
+            //pulse period may be making servo faster although unclear
+            m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank3_5, 20000);
 
             m_servoLeftChannel.setPulseWidth(position);
             m_servoRightChannel.setPulseWidth(position);
