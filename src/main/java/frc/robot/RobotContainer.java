@@ -176,7 +176,7 @@ public class RobotContainer {
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(0.2), s_Indexer.feed())
+                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
                 )).onFalse(Commands.parallel(
                         s_Shooter.stop(),
                         s_Indexer.stop()

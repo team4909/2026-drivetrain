@@ -41,8 +41,8 @@ public class ShooterIOTalonFX implements ShooterIO {
 
 
     public ShooterIOTalonFX() {
-        m_shootermotor1 = new TalonFX(kShooterMotor1ID,kCanbus);
-        m_shootermotor2 = new TalonFX(kShooterMotor2ID,kCanbus);
+        m_shootermotor1 = new TalonFX(kShooterMotor1ID);
+        m_shootermotor2 = new TalonFX(kShooterMotor2ID);
 
     
 
