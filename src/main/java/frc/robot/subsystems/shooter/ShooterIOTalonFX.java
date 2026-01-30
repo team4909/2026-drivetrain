@@ -73,7 +73,7 @@ public class ShooterIOTalonFX implements ShooterIO {
             m_shooter1Velocity,
             m_shooter1StatorCurrent,
             m_shooter1SupplyCurrent,
-            m_shooter1Voltage
+            m_shooter1Voltage,
             m_shooter2Velocity,
             m_shooter2StatorCurrent,
             m_shooter2SupplyCurrent,

@@ -39,8 +39,8 @@ public class Indexer extends SubsystemBase {
         return this.runOnce(() -> m_io.setSpeed(0)).withName("StopInstant");
     }
 
-    public Command intake() {
-        return this.run(() -> m_io.setSpeed(1)).withName("Intake");
+    public Command notintake() {
+        return this.run(() -> m_io.setSpeed(-1)).withName("Intake");
 
     }
 
