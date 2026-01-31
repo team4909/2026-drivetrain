@@ -51,6 +51,7 @@ import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
+import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
@@ -60,6 +61,8 @@ public class RobotContainer {
                                                                                       // max angular velocity
     private SwerveRequest.ApplyRobotSpeeds m_drive;
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
+
+    private final Pose2d m_hub = new Pose2d(new Translation2d(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0), new Rotation2d());
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
@@ -78,6 +81,8 @@ public class RobotContainer {
     private final Shooter s_Shooter;
     private final Hood s_Hood;
     private final Indexer s_Indexer;
+//     private final Shooter s_Shooter;
+    private final Turret s_Turret;
     private final SendableChooser<Command> m_chooser;
     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
     private final Vision s_Vision;
@@ -88,6 +93,8 @@ public class RobotContainer {
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Indexer = new Indexer(new IndexerIOTalonFX());
         s_Hood = new Hood(new HoodIORevServoHub());
+        // s_Shooter = new Shooter(new ShooterIOTalonFX());
+        s_Turret = new Turret(new TurretIOTalonFX());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
@@ -170,8 +177,8 @@ public class RobotContainer {
                 ));
         s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.x().whileTrue(s_Hood.extendHood());
-        joystick.y().whileTrue(s_Hood.retractHood());
+        // joystick.x().whileTrue(s_Hood.extendHood());
+        // joystick.y().whileTrue(s_Hood.retractHood());
         joystick.rightBumper().whileTrue(s_Hood.tunableShot());
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
@@ -184,7 +191,8 @@ public class RobotContainer {
 
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
+        joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
+        // joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
 
         // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
 
@@ -199,15 +207,14 @@ public class RobotContainer {
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        
 
-        //joystick.rightTrigger().onTrue(drivetrain.startLogger());
-        //joystick.leftTrigger().onTrue(drivetrain.stopLogger());
+        // joystick.rightTrigger().onTrue(drivetrain.startLogger());
+        // joystick.leftTrigger().onTrue(drivetrain.stopLogger());
 
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // // reset the field-centric heading on left bumper press
+        // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Turret extends SubsystemBase{
 
     private final TurretIO m_io;
-    
+    private double turretDegrees = 0;
 
     public Turret (TurretIO io) {
         m_io = io;
@@ -20,11 +20,18 @@ public class Turret extends SubsystemBase{
         return this.run(() -> m_io.setSpeed(0));
     }
 
-    public Command home() {
-        return this.run(() -> m_io.setSetpoint(3));
+    public Command goToDegrees(double degrees) {
+        //0 Degrees is forwards
+        return this.run(() -> m_io.setSetpoint(degrees/360));
     }
 
     public Command goToAngle(double degrees) {
         return this.run(() -> m_io.setSetpoint(degrees));
     }
+    /** Immediately set turret position in degrees (0 = forward). */
+    public void setDegrees(double degrees) {
+        m_io.setSetpoint(degrees / 360.0);
+    }
+
+    public double getTurretPosition() {return m_io.getTurretPosition();}
 }
