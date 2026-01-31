@@ -44,6 +44,8 @@ public class ShooterIOTalonFX implements ShooterIO {
         m_shootermotor1 = new TalonFX(kShooterMotor1ID, kCanbus);
         m_shootermotor2 = new TalonFX(kShooterMotor2ID, kCanbus);
 
+    
+
         TalonFXConfiguration shooterConfigs = new TalonFXConfiguration();
 
         //All Feedforwards are in AMPS bc this is torque control
