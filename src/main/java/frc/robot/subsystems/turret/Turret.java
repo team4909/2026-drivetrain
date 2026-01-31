@@ -25,5 +25,10 @@ public class Turret extends SubsystemBase{
         return this.run(() -> m_io.setSetpoint(degrees/360));
     }
 
+    /** Immediately set turret position in degrees (0 = forward). */
+    public void setDegrees(double degrees) {
+        m_io.setSetpoint(degrees / 360.0);
+    }
+
     public double getTurretPosition() {return m_io.getTurretPosition();}
 }

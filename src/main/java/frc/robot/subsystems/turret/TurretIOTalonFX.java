@@ -17,7 +17,7 @@ import edu.wpi.first.units.measure.MutAngle;
 
 public class TurretIOTalonFX implements TurretIO{
     private final TalonFX m_motor;
-    private final double m_gearBox = 1.0/9;
+    private final double m_gearBox = 1.0/3;
     private final double m_smallGear = 10;
     private final double m_bigGear = 105;
     private final double m_gearRatio = (m_gearBox * (m_smallGear / m_bigGear));
@@ -35,14 +35,15 @@ public class TurretIOTalonFX implements TurretIO{
         slot0Configs.kI = 0; // no output for integrated error
         slot0Configs.kD = 0; // A velocity of 1 rps results in 0.1 V output
 
-        final TalonFXConfiguration turretConfigs = new TalonFXConfiguration();
-        turretConfigs.CurrentLimits.SupplyCurrentLimit = 10.0;
-        turretConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // final TalonFXConfiguration turretConfigs = new TalonFXConfiguration();
+        // turretConfigs.CurrentLimits.SupplyCurrentLimit = 10.0;
+        // turretConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         // var feedbackConfigs = new FeedbackConfigs();
         // feedbackConfigs.SensorToMechanismRatio = m_gearRatio;
 
 
+        // slot0Configs.MotorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         final MotorOutputConfigs turretConfiguration = new MotorOutputConfigs();
         turretConfiguration.NeutralMode = NeutralModeValue.Brake;
 
@@ -50,11 +51,11 @@ public class TurretIOTalonFX implements TurretIO{
 
 
         m_motor.getConfigurator().apply(slot0Configs);
-        m_motor.getConfigurator().apply(turretConfigs);
+        // m_motor.getConfigurator().apply(turretConfigs);
         m_motor.getConfigurator().apply(turretConfiguration);
 
         m_motor.setPosition(0, 2);
-        System.out.println("Starting position: "+ m_motor.getPosition());
+        // System.out.println("Starting position: "+ m_motor.getPosition());
     }
 
     public void setSpeed(double speed) {
