@@ -21,7 +21,11 @@ public class TurretTrackPose extends Command{
         m_turret = turret;
         m_goalPose = goalPose;
 
-        // m_rotationalController = new ProfiledPIDController(4, 0, 0, new TrapezoidProfile.Constraints(10 * Math.PI, 10 * Math.PI));
+    // Initialize rotational controller to avoid NPE. Fine-tune gains/constraints as needed.
+    m_rotationalController = new ProfiledPIDController(4.0, 0.0, 0.0,
+        new TrapezoidProfile.Constraints(10 * Math.PI, 10 * Math.PI));
+    // allow wrapping around -pi..pi
+    m_rotationalController.enableContinuousInput(-Math.PI, Math.PI);
 
         m_robotPoseSupplier = robotPoseSupplier;
 
@@ -34,8 +38,13 @@ public class TurretTrackPose extends Command{
         Pose2d currentRobotPose = m_robotPoseSupplier.get();
         Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentRobotPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
         Rotation2d targetHeading = robotToTargetTranslation.getAngle().rotateBy(Rotation2d.k180deg);
-
         m_rotationalController.setTolerance(Units.degreesToRadians(1.0));
+        // prime controller with current turret angle as initial state
+        // Note: if turret position units differ, adapt accordingly.
+        double currentTurretDeg = m_turret.getTurretPosition() * 360.0;
+        double currentTurretRad = Units.degreesToRadians(currentTurretDeg);
+        m_rotationalController.reset(currentTurretRad);
+        m_rotationalController.setGoal(targetHeading.getRadians());
     }
 
     @Override
@@ -44,7 +53,7 @@ public class TurretTrackPose extends Command{
         Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentRobotPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
         Rotation2d targetHeading = robotToTargetTranslation.getAngle().rotateBy(Rotation2d.k180deg);
 
-        m_turret.goToDegrees(targetHeading.getDegrees());
+        m_turret.goToDegrees(180);
         // Rotation2d turretHeading = new Rotation2d(Units.degreesToRadians(m_turret.getTurretPosition()*360));
 
         
