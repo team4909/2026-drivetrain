@@ -180,7 +180,7 @@ public class RobotContainer {
         joystick.y().whileTrue(s_Hood.retractHood());
         joystick.rightBumper().whileTrue(s_Hood.tunableShot());
 
-        joystick.leftTrigger().whileTrue(s_Intake.run()).onFalse(s_Intake.stop());
+        joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
