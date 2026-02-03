@@ -10,21 +10,19 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
-    // Leader = bottom/intake roller
     private final TalonFX m_intakeRoller;
-    // Follower = top/idler that follows leader
     private final TalonFX m_intakeExtender;
-    private final TalonFX m_intakeRollerRight;
+    private final TalonFX m_intakeRollerLeft;
     private PositionVoltage m_extenderRequest;
-    // TODO: change these CAN IDs to match your robot's wiring
+  
     private final int kIntakeRollerID = 56;
     private final int kIntakeRollerLeaderID = 57;
     private final int kIntakeExtenderID = 55;
 
-    private final String kCanbus = "CANivore1";
+    private final String kCanbus = "CANivore2";
 
     public IntakeIOTalonFX() {
-        m_intakeRollerRight = new TalonFX(kIntakeRollerLeaderID, kCanbus);
+        m_intakeRollerLeft = new TalonFX(kIntakeRollerLeaderID, kCanbus);
         m_intakeRoller = new TalonFX(kIntakeRollerID, kCanbus);
         m_intakeExtender = new TalonFX(kIntakeExtenderID, kCanbus);
 
@@ -32,20 +30,20 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        m_intakeRollerRight.getConfigurator().apply(cfg);
+        m_intakeRollerLeft.getConfigurator().apply(cfg);
         m_intakeExtender.getConfigurator().apply(cfg);
         m_intakeRoller.getConfigurator().apply(cfg);
+        
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 
-    // configure a default position request for the extender
-    // slot and gains can be tuned in the motor config if needed
+
     m_extenderRequest = new PositionVoltage(0).withSlot(0);
 
     }
 
     @Override
     public void setSpeed(double speed) {
-        m_intakeRoller.setControl(new DutyCycleOut(speed));
+        m_intakeRollerLeft.setControl(new DutyCycleOut(speed));
     }
 
     @Override
