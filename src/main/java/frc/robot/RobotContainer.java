@@ -69,7 +69,7 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Shooter s_Shooter;
-        private final Indexer s_Indexer;
+    private final Indexer s_Indexer;
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;

@@ -6,6 +6,6 @@ import com.ctre.phoenix6.signals.RGBWColor;
 public interface LedIO {
 
     public default void setColor(RGBWColor rgb){}
-    public default void flashColor(RGBWColor rgbFlash){}
+    // public default void animationPlayer(AnimationType state){}
     
 }
