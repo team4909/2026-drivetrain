@@ -99,7 +99,7 @@ public class RobotContainer {
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
                             Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.709057)),
+                            Units.inchesToMeters(8.709057)),//682965
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
                                     Units.degreesToRadians(-61.87),
@@ -108,7 +108,7 @@ public class RobotContainer {
                     new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(10.92),
                             Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.709057)),
+                            Units.inchesToMeters(8.682965)),
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
                                     Units.degreesToRadians(-61.87),
@@ -125,7 +125,7 @@ public class RobotContainer {
                     new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(10.92),
                             Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(8.709057)),
+                            Units.inchesToMeters(8.682965)),
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
                                     Units.degreesToRadians(-61.87),
