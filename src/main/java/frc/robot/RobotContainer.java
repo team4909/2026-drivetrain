@@ -113,14 +113,15 @@ public class RobotContainer {
                                     Units.degreesToRadians(0.0),
                                     Units.degreesToRadians(-61.87),
                                     Units.degreesToRadians(45)))),
-                    new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(8.709057)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(180+45)))),
+                    new VisionIOPhotonVision("back-right-cam", new Transform3d(
+                        new Translation3d(
+                        Units.inchesToMeters(-9.124 + 2.5),
+                        Units.inchesToMeters(-10.646),
+                        Units.inchesToMeters(8.25)),
+                        new Rotation3d(
+                        Units.degreesToRadians(0.0),
+                        Units.degreesToRadians(-28.125),
+                        Units.degreesToRadians(-150.0)))),
                     new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(10.92),
                             Units.inchesToMeters(-10.92),
@@ -200,7 +201,7 @@ public class RobotContainer {
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         //         s_Shooter.tuningShoot(),
-        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
+        //         Commands.sequence(Commands.waitSeconds(4), s_Indexer.feed())
         //         )).onFalse(Commands.parallel(
         //                 s_Shooter.stop(),
         //                 s_Indexer.stop()
