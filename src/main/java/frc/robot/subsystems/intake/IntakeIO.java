@@ -20,10 +20,23 @@ public interface IntakeIO {
 
     /**
      * Optional: set a closed-loop setpoint for an extender motor (rotations).
-     * Default no-op so IO implementations that don't have an extender can ignore it.
+     * Default no-op so IO implementations that don't have an extender can ignore
+     * it.
+     * 
      * @param rotations rotations of the extender mechanism
      */
-    public default void setExtenderSetpoint(double rotations) {}
+    public default void setExtenderSetpoint(double rotations) {
+    }
+
+    /**
+     * Optional: set a open-loop voltage for an extender motor.
+     * Default no-op so IO implementations that don't have an extender can ignore
+     * it.
+     * 
+     * @param volts voltage to apply to the extender
+     */
+    public default void setExtenderVoltage(double volts) {
+    }
 
     // Get Hardware Data to Business Logic
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs);

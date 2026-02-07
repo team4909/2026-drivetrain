@@ -57,172 +57,181 @@ import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
-                                                                                      // max angular velocity
-    private SwerveRequest.ApplyRobotSpeeds m_drive;
-    LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
+                                                                                      // speed
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
+                                                                                          // second
+                                                                                          // max angular velocity
+        private SwerveRequest.ApplyRobotSpeeds m_drive;
+        LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
-    private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
+        private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
+                                                                                 // motors
+        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+        private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final Shooter s_Shooter;
-    private final Hood s_Hood;
-    private final Indexer s_Indexer;
+        public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+        private final Shooter s_Shooter;
+        private final Hood s_Hood;
+        private final Indexer s_Indexer;
         private final Intake s_Intake;
-    private final SendableChooser<Command> m_chooser;
-    private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
-    private final Vision s_Vision;
+        private final SendableChooser<Command> m_chooser;
+        private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
+        private final Vision s_Vision;
 
+        public RobotContainer() {
+                m_drive = new SwerveRequest.ApplyRobotSpeeds();
+                s_Shooter = new Shooter(new ShooterIOTalonFX());
+                s_Indexer = new Indexer(new IndexerIOTalonFX());
+                // Create intake and give it a reference to the indexer so combined
+                // intake+index commands can be created inside the intake subsystem.
+                s_Intake = new Intake(new IntakeIOTalonFX());
+                s_Hood = new Hood(new HoodIORevServoHub());
+                s_Vision = new Vision(drivetrain::addVisionMeasurement,
+                                new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(-10.92),
+                                                Units.inchesToMeters(10.92),
+                                                Units.inchesToMeters(8.709057)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-61.87),
+                                                                Units.degreesToRadians(90 + 45)))),
 
-    public RobotContainer() {
-        m_drive = new SwerveRequest.ApplyRobotSpeeds();
-        s_Shooter = new Shooter(new ShooterIOTalonFX());
-        s_Indexer = new Indexer(new IndexerIOTalonFX());
-        // Create intake and give it a reference to the indexer so combined
-        // intake+index commands can be created inside the intake subsystem.
-        s_Intake = new Intake(new IntakeIOTalonFX());
-        s_Hood = new Hood(new HoodIORevServoHub());
-        s_Vision = new Vision(drivetrain::addVisionMeasurement,
-                    new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.709057)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(90+45)))),
+                                new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(10.92),
+                                                Units.inchesToMeters(10.92),
+                                                Units.inchesToMeters(8.709057)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-61.87),
+                                                                Units.degreesToRadians(45)))),
+                                new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(-10.92),
+                                                Units.inchesToMeters(-10.92),
+                                                Units.inchesToMeters(8.709057)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-61.87),
+                                                                Units.degreesToRadians(180 + 45)))),
+                                new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(10.92),
+                                                Units.inchesToMeters(-10.92),
+                                                Units.inchesToMeters(8.709057)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-61.87),
+                                                                Units.degreesToRadians(270 + 45)))));
 
-                    new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.709057)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(45)))),
-                    new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(8.709057)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(180+45)))),
-                    new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(8.709057)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(270+45)))));
+                RobotConfig config;
+                try {
+                        config = RobotConfig.fromGUISettings();
+                        AutoBuilder.configure(
+                                        () -> drivetrain.getState().Pose,
+                                        drivetrain::resetPose,
+                                        drivetrain::getRobotRelativeSpeeds,
+                                        (speeds, feedforwards) -> drivetrain.setControl(m_drive.withSpeeds(speeds)),
+                                        // this.ChassisSpeeds(Translation2d.driveVelocity.getX(),
+                                        // Translation2d.driveVelocity.getY(), thetaVelocity),
+                                        new PPHolonomicDriveController(
+                                                        new PIDConstants(5.0, 0.0, 0.0),
+                                                        new PIDConstants(5.0, 0.0, 0.0)),
+                                        config,
+                                        () -> {
+                                                var alliance = DriverStation.getAlliance();
+                                                if (alliance.isPresent()) {
+                                                        return alliance.get() == DriverStation.Alliance.Red;
+                                                }
+                                                return false;
+                                        }, drivetrain);
+                } catch (Exception e) {
+                        // Handle exception as needed
+                        e.printStackTrace();
+                }
+                m_chooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", m_chooser);
 
-        RobotConfig config;
-        try {
-            config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(
-                    () -> drivetrain.getState().Pose,
-                    drivetrain::resetPose,
-                    drivetrain::getRobotRelativeSpeeds,
-                    (speeds, feedforwards) -> drivetrain.setControl(m_drive.withSpeeds(speeds)),
-                    // this.ChassisSpeeds(Translation2d.driveVelocity.getX(),
-                    // Translation2d.driveVelocity.getY(), thetaVelocity),
-                    new PPHolonomicDriveController(
-                            new PIDConstants(5.0, 0.0, 0.0),
-                            new PIDConstants(5.0, 0.0, 0.0)),
-                    config,
-                    () -> {
-                        var alliance = DriverStation.getAlliance();
-                        if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
-                        }
-                        return false;
-                    }, drivetrain);
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
+                configureBindings();
         }
-        m_chooser = AutoBuilder.buildAutoChooser();
-        SmartDashboard.putData("Auto Chooser", m_chooser);
 
-        configureBindings();
-    }
+        private void configureBindings() {
 
-    private void configureBindings() {
-        
+                // Note that X is defined as forward according to WPILib convention,
+                // and Y is defined as to the left according to WPILib convention.
+                drivetrain.setDefaultCommand(
+                                // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive
+                                                                                                                   // forward
+                                                                                                                   // with
+                                                                                                                   // negative
+                                                                                                                   // Y
+                                                                                                                   // (forward)
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with
+                                                                                                // negative X (left)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive
+                                                                                                            // counterclockwise
+                                                                                                            // with
+                                                                                                            // negative
+                                                                                                            // X (left)
+                                ));
+                s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
+                joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                joystick.x().whileTrue(s_Hood.extendHood());
+                joystick.y().whileTrue(s_Hood.retractHood());
+                joystick.rightBumper().whileTrue(s_Hood.tunableShot());
 
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                                   // negative Y
-                                                                                                   // (forward)
-                        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                    // negative X (left)
+                joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
+
+                joystick.rightTrigger().whileTrue(Commands.parallel(
+                                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+                                Commands.sequence(Commands.waitSeconds(0.2), s_Indexer.feed()),
+                                s_Intake.oscillateExtender())).onFalse(Commands.parallel(
+                                                s_Shooter.stop(),
+                                                s_Indexer.stop(),
+                                                s_Intake.stop()));
+
+                joystick.a().whileTrue(new RotateToPose(drivetrain,
+                                (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(
+                                                new Transform2d(new Translation2d(0.4, 0), Rotation2d.kZero)))));
+                // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
+                joystick.a().whileTrue(new RotateToPose(drivetrain,
+                                (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(
+                                                new Transform2d(new Translation2d(0.4, 0), Rotation2d.kZero)))));
+
+                // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
+
+                joystick.b().whileTrue(drivetrain.applyRequest(
+                                () -> point.withModuleDirection(
+                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+
                 ));
-        s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.x().whileTrue(s_Hood.extendHood());
-        joystick.y().whileTrue(s_Hood.retractHood());
-        joystick.rightBumper().whileTrue(s_Hood.tunableShot());
 
-        joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
+                // Run SysId routines when holding back/start and X/Y.
+                // Note that each routine should be run exactly once in a single log.
+                // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(0.2), s_Indexer.feed())
-                )).onFalse(Commands.parallel(
-                        s_Shooter.stop(),
-                        s_Indexer.stop()
-                ));
+                // joystick.rightTrigger().onTrue(drivetrain.startLogger());
+                // joystick.leftTrigger().onTrue(drivetrain.stopLogger());
 
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
-        // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
+                // reset the field-centric heading on left bumper press
+                joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
+                drivetrain.registerTelemetry(logger::telemeterize);
+        }
 
+        public Command getAutonomousCommand() {
+                return m_chooser.getSelected();
+                // return new PathPlannerAuto("cut");
 
-
-
-        joystick.b().whileTrue(drivetrain.applyRequest(
-                () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-
-        ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-        
-
-        //joystick.rightTrigger().onTrue(drivetrain.startLogger());
-        //joystick.leftTrigger().onTrue(drivetrain.stopLogger());
-
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
-    }
-
-    public Command getAutonomousCommand() {
-        return m_chooser.getSelected();
-        // return new PathPlannerAuto("cut");
-
-    }
+        }
 }

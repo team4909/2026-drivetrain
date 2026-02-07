@@ -14,6 +14,10 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
+    private LoggedNetworkNumber m_upPosition = new LoggedNetworkNumber("/Tuning/Intake/UpPosition", 0.0);
+    private LoggedNetworkNumber m_downPosition = new LoggedNetworkNumber("/Tuning/Intake/DownPosition", 10.0);
+    private LoggedNetworkNumber m_forceDownVolts = new LoggedNetworkNumber("/Tuning/Intake/ForceDownVolts", 2.0);
+    private LoggedNetworkNumber m_oscillateWait = new LoggedNetworkNumber("/Tuning/Intake/OscillateWait", 0.3);
 
     public Intake(IntakeIO io) {
         super("Intake");
@@ -39,6 +43,22 @@ public class Intake extends SubsystemBase {
 
     public Command goToExtender() {
         return this.runOnce(() -> m_io.setExtenderSetpoint(m_position.get())).withName("GoToExtender");
+    }
+
+    private Command setPosition(double rotations) {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(rotations));
+    }
+
+    public Command oscillateExtender() {
+        return Commands.sequence(
+                setPosition(m_upPosition.get()),
+                Commands.waitSeconds(0.3), // Wait to reach up
+                Commands.sequence(
+                        setPosition(m_downPosition.get()),
+                        Commands.waitSeconds(0.3), // Wait to reach down
+                        setPosition(m_upPosition.get()),
+                        Commands.waitSeconds(0.3)).repeatedly())
+                .withName("OscillateExtender");
     }
 
     @Override
