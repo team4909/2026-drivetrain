@@ -189,7 +189,8 @@ public class RobotContainer {
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
         joystick.rightBumper().onTrue(s_Hood.tunableShot());
-        joystick.leftTrigger().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
+        joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
+        joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
 
 
         

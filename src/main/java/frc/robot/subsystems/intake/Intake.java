@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command outtake() {
-        return this.run(() -> m_io.setSpeed(1)).withName("IntakeOut");
+        return this.run(() -> m_io.setSpeed(-1)).withName("IntakeOut");
     }
 
     public Command goToExtender() {
