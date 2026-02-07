@@ -64,7 +64,12 @@ public class RobotContainer {
     private SwerveRequest.ApplyRobotSpeeds m_drive;
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
-    private final Pose2d m_hub = new Pose2d(new Translation2d(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0), new Rotation2d());
+    private final Pose2d m_hub = new Pose2d(
+            new Translation2d(
+                    AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX()
+                            + Units.inchesToMeters(47.0) / 2.0,
+                    AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0),
+            new Rotation2d());
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
@@ -89,7 +94,6 @@ public class RobotContainer {
     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
     private final Vision s_Vision;
 
-
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
@@ -101,40 +105,41 @@ public class RobotContainer {
         // s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
-                    new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-9.423484),
-                            Units.inchesToMeters(10.544861),
-                            Units.inchesToMeters(7.844)),//682965
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-20),
-                                    Units.degreesToRadians(90.0 + 65)))),
-
-                    // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
-                    //         Units.inchesToMeters(10.92),
-                    //         Units.inchesToMeters(10.92),
-                    //         Units.inchesToMeters(8.682965)),
-                    //         new Rotation3d(
-                    //                 Units.degreesToRadians(0.0),
-                    //                 Units.degreesToRadians(-61.87),
-                    //                 Units.degreesToRadians(45)))),
-                    new VisionIOPhotonVision("back-right-cam", new Transform3d(
-                        new Translation3d(
+                new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                         Units.inchesToMeters(-9.423484),
-                        Units.inchesToMeters(-10.544861),
-                        Units.inchesToMeters(7.844)),
+                        Units.inchesToMeters(10.544861),
+                        Units.inchesToMeters(7.844)), // 682965
                         new Rotation3d(
-                        Units.degreesToRadians(0.0),
-                        Units.degreesToRadians(-20),
-                        Units.degreesToRadians(270.0 - 65)))));
-                    // new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
-                    //         Units.inchesToMeters(10.92),
-                    //         Units.inchesToMeters(-10.92),
-                    //         Units.inchesToMeters(8.682965)),
-                    //         new Rotation3d(
-                    //                 Units.degreesToRadians(0.0),
-                    //                 Units.degreesToRadians(-61.87),
-                    //                 Units.degreesToRadians(270+45)))));
+                                Units.degreesToRadians(0.0),
+                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(90.0 + 65)))),
+
+                // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
+                // Units.inchesToMeters(10.92),
+                // Units.inchesToMeters(10.92),
+                // Units.inchesToMeters(8.682965)),
+                // new Rotation3d(
+                // Units.degreesToRadians(0.0),
+                // Units.degreesToRadians(-61.87),
+                // Units.degreesToRadians(45)))),
+                new VisionIOPhotonVision("back-right-cam", new Transform3d(
+                        new Translation3d(
+                                Units.inchesToMeters(-9.423484),
+                                Units.inchesToMeters(-10.544861),
+                                Units.inchesToMeters(7.844)),
+                        new Rotation3d(
+                                Units.degreesToRadians(0.0),
+                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(270.0 - 65)))));
+        // new VisionIOPhotonVision("front-right-cam", new Transform3d(new
+        // Translation3d(
+        // Units.inchesToMeters(10.92),
+        // Units.inchesToMeters(-10.92),
+        // Units.inchesToMeters(8.682965)),
+        // new Rotation3d(
+        // Units.degreesToRadians(0.0),
+        // Units.degreesToRadians(-61.87),
+        // Units.degreesToRadians(270+45)))));
 
         RobotConfig config;
         try {
@@ -168,7 +173,6 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        
 
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -193,38 +197,34 @@ public class RobotContainer {
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
 
-
-        
-
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
-                )).onFalse(Commands.parallel(
+                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
                         s_Shooter.stop(),
-                        s_Indexer.stop()
-                ));
-
+                        s_Indexer.stop()));
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
-        //         s_Shooter.tuningShoot(),
-        //         Commands.sequence(Commands.waitSeconds(4), s_Indexer.feed())
-        //         )).onFalse(Commands.parallel(
-        //                 s_Shooter.stop(),
-        //                 s_Indexer.stop()
-        //         ));
+        // s_Shooter.tuningShoot(),
+        // Commands.sequence(Commands.waitSeconds(4), s_Indexer.feed())
+        // )).onFalse(Commands.parallel(
+        // s_Shooter.stop(),
+        // s_Indexer.stop()
+        // ));
 
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.kZero)))));
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
+                .toPose2d().transformBy(new Transform2d(new Translation2d(-0.4, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
-        // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
-        // joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
+        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, () -> drivetrain.getState().Pose));
+        // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
+        // drivetrain.getState().Pose));
+        // joystick.a().whileTrue(new RotateToPose(drivetrain,
+        // (aprilTagLayout.getTagPose(18).orElse(new
+        // Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0),
+        // Rotation2d.kZero)))));
 
         // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
-
-
-
 
         joystick.b().whileTrue(drivetrain.applyRequest(
                 () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
@@ -241,7 +241,8 @@ public class RobotContainer {
         // joystick.leftTrigger().onTrue(drivetrain.stopLogger());
 
         // // reset the field-centric heading on left bumper press
-        // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // extend intake on left bumper press
+        joystick.leftBumper().onTrue(s_Intake.extend()).onFalse(s_Intake.retract());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }

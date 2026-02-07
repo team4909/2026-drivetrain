@@ -14,7 +14,6 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
-
     public Intake(IntakeIO io) {
         super("Intake");
         m_io = io;
@@ -37,8 +36,12 @@ public class Intake extends SubsystemBase {
         return this.run(() -> m_io.setSpeed(-1)).withName("IntakeOut");
     }
 
-    public Command goToExtender() {
-        return this.runOnce(() -> m_io.setExtenderSetpoint(m_position.get())).withName("GoToExtender");
+    public Command extend() {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(1.0)).withName("IntakeExtend");
+    }
+
+    public Command retract() {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(0)).withName("IntakeRetract");
     }
 
     @Override
