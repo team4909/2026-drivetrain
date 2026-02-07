@@ -97,39 +97,39 @@ public class RobotContainer {
         s_Turret = new Turret(new TurretIOTalonFX());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.709057)),//682965
+                            Units.inchesToMeters(-9.423484),
+                            Units.inchesToMeters(10.544861),
+                            Units.inchesToMeters(7.844)),//682965
                             new Rotation3d(
                                     Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(90+45)))),
+                                    Units.degreesToRadians(-20),
+                                    Units.degreesToRadians(90.0 + 65)))),
 
-                    new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(8.682965)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(45)))),
+                    // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
+                    //         Units.inchesToMeters(10.92),
+                    //         Units.inchesToMeters(10.92),
+                    //         Units.inchesToMeters(8.682965)),
+                    //         new Rotation3d(
+                    //                 Units.degreesToRadians(0.0),
+                    //                 Units.degreesToRadians(-61.87),
+                    //                 Units.degreesToRadians(45)))),
                     new VisionIOPhotonVision("back-right-cam", new Transform3d(
                         new Translation3d(
-                        Units.inchesToMeters(-9.124 + 2.5),
-                        Units.inchesToMeters(-10.646),
-                        Units.inchesToMeters(8.25)),
+                        Units.inchesToMeters(-9.423484),
+                        Units.inchesToMeters(-10.544861),
+                        Units.inchesToMeters(7.844)),
                         new Rotation3d(
                         Units.degreesToRadians(0.0),
-                        Units.degreesToRadians(-28.125),
-                        Units.degreesToRadians(-150.0)))),
-                    new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
-                            Units.inchesToMeters(10.92),
-                            Units.inchesToMeters(-10.92),
-                            Units.inchesToMeters(8.682965)),
-                            new Rotation3d(
-                                    Units.degreesToRadians(0.0),
-                                    Units.degreesToRadians(-61.87),
-                                    Units.degreesToRadians(270+45)))));
+                        Units.degreesToRadians(-20),
+                        Units.degreesToRadians(270.0 - 65)))));
+                    // new VisionIOPhotonVision("front-right-cam", new Transform3d(new Translation3d(
+                    //         Units.inchesToMeters(10.92),
+                    //         Units.inchesToMeters(-10.92),
+                    //         Units.inchesToMeters(8.682965)),
+                    //         new Rotation3d(
+                    //                 Units.degreesToRadians(0.0),
+                    //                 Units.degreesToRadians(-61.87),
+                    //                 Units.degreesToRadians(270+45)))));
 
         RobotConfig config;
         try {
@@ -207,7 +207,7 @@ public class RobotContainer {
         //                 s_Indexer.stop()
         //         ));
 
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.kZero)))));
+        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
         s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()-> drivetrain.getState().Pose));
