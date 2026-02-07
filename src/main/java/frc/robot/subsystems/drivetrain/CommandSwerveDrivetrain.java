@@ -267,7 +267,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getDistanceFromHub(){
-        Translation2d m_hubCenter = aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)).getTranslation();
+        Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
+        Logger.recordOutput("DriveState/hubCenter", aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)));
         Logger.recordOutput("DriveState/InterpTableDist", this.getState().Pose.getTranslation().getDistance(m_hubCenter));
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
     }
