@@ -54,6 +54,8 @@ import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -81,8 +83,8 @@ public class RobotContainer {
     private final Shooter s_Shooter;
     private final Hood s_Hood;
     private final Indexer s_Indexer;
-//     private final Shooter s_Shooter;
     private final Turret s_Turret;
+    private final Intake s_Intake;
     private final SendableChooser<Command> m_chooser;
     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
     private final Vision s_Vision;
@@ -92,6 +94,9 @@ public class RobotContainer {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Indexer = new Indexer(new IndexerIOTalonFX());
+        // Create intake and give it a reference to the indexer so combined
+        // intake+index commands can be created inside the intake subsystem.
+        s_Intake = new Intake(new IntakeIOTalonFX());
         s_Hood = new Hood(new HoodIORevServoHub());
         // s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
@@ -188,6 +193,8 @@ public class RobotContainer {
 
 
         
+
+        joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
