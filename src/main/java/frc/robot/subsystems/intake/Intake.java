@@ -13,7 +13,7 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
-
+     private LoggedNetworkNumber m_home = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_upPosition = new LoggedNetworkNumber("/Tuning/Intake/UpPosition", 0.0);
     private LoggedNetworkNumber m_downPosition = new LoggedNetworkNumber("/Tuning/Intake/DownPosition", 10.0);
     private LoggedNetworkNumber m_forceDownVolts = new LoggedNetworkNumber("/Tuning/Intake/ForceDownVolts", 2.0);
@@ -43,6 +43,10 @@ public class Intake extends SubsystemBase {
 
     public Command goToExtender() {
         return this.runOnce(() -> m_io.setExtenderSetpoint(m_position.get())).withName("GoToExtender");
+    }
+
+    public Command goTohome() {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(m_home.get())).withName("GoToExtender");
     }
 
     private Command setPosition(double rotations) {

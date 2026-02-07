@@ -33,7 +33,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-        cfg.Slot0.kP = 1.0;
+        cfg.Slot0.kP = 10.0;
         cfg.Slot0.kI = 0.0;
         cfg.Slot0.kD = 0.0;
 
