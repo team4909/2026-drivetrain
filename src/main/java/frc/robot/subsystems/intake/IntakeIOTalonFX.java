@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -30,8 +31,11 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
 
+        final Slot0Configs extenderSlot0Configs = new Slot0Configs();
+        extenderSlot0Configs.kP = 10;
+
         m_intakeRollerLeft.getConfigurator().apply(cfg);
-        m_intakeExtender.getConfigurator().apply(cfg);
+       m_intakeExtender.getConfigurator().apply(extenderSlot0Configs);
         m_intakeRoller.getConfigurator().apply(cfg);
         
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));

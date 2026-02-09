@@ -14,6 +14,20 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
+           public enum Setpoint {
+        Stowed(-11.0),
+        Extended(11.0);
+
+        private final double rotations;
+
+        Setpoint(double rotations) {
+            this.rotations = rotations;
+        }
+
+        public double rotations() {
+            return rotations;
+        }
+    }
     public Intake(IntakeIO io) {
         super("Intake");
         m_io = io;
@@ -36,12 +50,45 @@ public class Intake extends SubsystemBase {
         return this.run(() -> m_io.setSpeed(-1)).withName("IntakeOut");
     }
 
+
+     public Command setpoint(Setpoint setpoint) {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
+                .withName("IntakeSetpoint" + setpoint.name());
+    }
+
+    public Command holdSetpoint(Setpoint setpoint) {
+        return this.run(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
+                .withName("IntakeHoldSetpoint" + setpoint.name());
+    }
+
+    public Command intakeWithSetpoint(Setpoint setpoint) {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(setpoint.rotations());
+            m_io.setSpeed(1);
+        }).withName("IntakeWithSetpoint" + setpoint.name());
+    }
+
+    
+    
+    // public Command stowAndStop() {
+    //     return this.run(() -> {
+    //         m_io.setExtenderSetpoint(getSetpointRotations(Setpoint.Stowed));
+    //         m_io.setSpeed(0);
+    //     }).withName("IntakeStowAndStop");
+    // }
+  
+
+    public Command setpointFromTuning() {
+        return this.runOnce(() -> m_io.setExtenderSetpoint(m_position.get()))
+                .withName("IntakeSetpointTuning");
+    }
+
     public Command extend() {
-        return this.runOnce(() -> m_io.setExtenderSetpoint(1.0)).withName("IntakeExtend");
+        return setpoint(Setpoint.Extended).withName("IntakeExtend");
     }
 
     public Command retract() {
-        return this.runOnce(() -> m_io.setExtenderSetpoint(0)).withName("IntakeRetract");
+        return setpoint(Setpoint.Stowed).withName("IntakeRetract");
     }
 
     @Override

@@ -242,7 +242,10 @@ public class RobotContainer {
 
         // // reset the field-centric heading on left bumper press
         // extend intake on left bumper press
-        joystick.leftBumper().onTrue(s_Intake.extend()).onFalse(s_Intake.retract());
+       joystick.leftBumper()
+                .whileTrue(s_Intake.intakeWithSetpoint(Intake.Setpoint.Extended))
+                .onFalse(Commands.sequence(s_Intake.stop(), s_Intake.retract()));
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
