@@ -13,25 +13,25 @@ public class ShootingCalculator {
      new InterpolatingDoubleTreeMap();
     private CommandSwerveDrivetrain m_drivetrain;
 
-    private double inmin = 1000.0;
-    private double inmax = 2000.0;
-    private double outmin = 1000.0;
-    private double outmax = 1500.0;
+    // private double inmin = 1000.0;
+    // private double inmax = 2000.0;
+    // private double outmin = 1000.0;
+    // private double outmax = 1500.0;
 
 
        
     public ShootingCalculator(CommandSwerveDrivetrain drivetrain){
         //V3
-        shotHoodAngleMap.put(Units.inchesToMeters(63.625), map(1000.0));
-        System.out.println(map(2000));
-        shotHoodAngleMap.put(Units.inchesToMeters(103.625), map(1600.0));
-        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40), map(1800.0));
-        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40+40), map(2000.0));
-        System.out.println(map(1500));
-        // shotHoodAngleMap.put(Units.inchesToMeters(63.625), 1100.0);
-        // shotHoodAngleMap.put(Units.inchesToMeters(103.625), 1300.0);
-        // shotHoodAngleMap.put(Units.inchesToMeters(103.625+40), 1650.0);
-        // shotHoodAngleMap.put(Units.inchesToMeters(103.625+40+40), 1925.0);
+        // shotHoodAngleMap.put(Units.inchesToMeters(63.625), map(1000.0));
+        // System.out.println(map(2000));
+        // shotHoodAngleMap.put(Units.inchesToMeters(103.625), map(1600.0));
+        // shotHoodAngleMap.put(Units.inchesToMeters(103.625+40), map(1800.0));
+        // shotHoodAngleMap.put(Units.inchesToMeters(103.625+40+40), map(2000.0));
+        // System.out.println(map(1500));
+        shotHoodAngleMap.put(Units.inchesToMeters(63.625), 1100.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625), 1300.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40), 1650.0);
+        shotHoodAngleMap.put(Units.inchesToMeters(103.625+40+40), 1925.0);
         
         //V2
         // shotHoodAngleMap.put(Units.inchesToMeters(103.625), 1400.0);
@@ -57,9 +57,9 @@ public class ShootingCalculator {
         shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), 60.0);
 
         //V2
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), -63.0);
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40), -59.0);
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625), -53.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), 63.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40), 59.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625), 53.0);
 
         // shotFlywheelSpeedMap.put(2.17, -220.0);
         // shotFlywheelSpeedMap.put(2.88, -230.0);
@@ -71,9 +71,9 @@ public class ShootingCalculator {
         // shotFlywheelSpeedMap.put(5.60, 290.0);
     }
     
-    public double map(double x) {
-        return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
-    }
+    // public double map(double x) {
+    //     return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
+    // }
 
     
     public double getHoodPosition(){

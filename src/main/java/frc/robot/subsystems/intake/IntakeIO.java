@@ -11,6 +11,7 @@ public interface IntakeIO {
         public double speed = 0.0;
         public double statorCurrent = 0.0;
         public double supplyCurrent = 0.0;
+        public double position = 0.0;
     }
 
     // Methods are how we move actions to hardware

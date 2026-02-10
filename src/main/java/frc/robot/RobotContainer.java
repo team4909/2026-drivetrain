@@ -190,10 +190,10 @@ public class RobotContainer {
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
-        joystick.rightBumper().whileTrue(s_Hood.tunableShot());
+        joystick.rightBumper().whileTrue(s_Hood.retractHood());
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
-        joystick.rightBumper().onTrue(s_Hood.tunableShot());
+        // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
 
@@ -243,7 +243,7 @@ public class RobotContainer {
         // // reset the field-centric heading on left bumper press
         // extend intake on left bumper press
        joystick.leftBumper()
-                .whileTrue(s_Intake.intakeWithSetpoint(Intake.Setpoint.Extended))
+                .whileTrue(Commands.sequence(s_Intake.intakeWithSetpoint(Intake.Setpoint.Extended), s_Intake.intakeWithSetpoint(Intake.Setpoint.Stowed)).repeatedly())
                 .onFalse(Commands.sequence(s_Intake.stop(), s_Intake.retract()));
 
 

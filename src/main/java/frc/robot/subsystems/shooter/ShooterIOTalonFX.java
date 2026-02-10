@@ -49,6 +49,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         TalonFXConfiguration shooterConfigs = new TalonFXConfiguration();
 
         //All Feedforwards are in AMPS bc this is torque control
+
         shooterConfigs.Slot0.kP = 5.0;
         shooterConfigs.Slot0.kI = 0.0; 
         shooterConfigs.Slot0.kD = 0.0;
@@ -56,7 +57,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         shooterConfigs.TorqueCurrent.withPeakForwardTorqueCurrent(Units.Amps.of(40)).withPeakReverseTorqueCurrent(Units.Amps.of(-40));
         m_shootermotor1.getConfigurator().apply(shooterConfigs);
         m_shootermotor2.getConfigurator().apply(shooterConfigs);
- 
+        
         m_shootermotor2.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
 
         m_shooter1Velocity = m_shootermotor1.getVelocity();

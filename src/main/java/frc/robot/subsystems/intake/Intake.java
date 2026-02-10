@@ -14,8 +14,8 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
-           public enum Setpoint {
-        Stowed(-11.0),
+        public enum Setpoint {
+        Stowed(0.0),
         Extended(11.0);
 
         private final double rotations;
@@ -52,8 +52,8 @@ public class Intake extends SubsystemBase {
 
 
      public Command setpoint(Setpoint setpoint) {
-        return this.runOnce(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
-                .withName("IntakeSetpoint" + setpoint.name());
+        return this.run(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
+                .withName("IntakeSetpoint" + setpoint.name()).until(() -> Math.abs(m_inputs.position - setpoint.rotations()) <= 0.1);
     }
 
     public Command holdSetpoint(Setpoint setpoint) {
@@ -93,6 +93,7 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
+        m_io.updateInputs(m_inputs);
         Logger.processInputs(this.getName(), m_inputs);
     }
 }
