@@ -42,6 +42,9 @@ import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
+import frc.robot.subsystems.led.Led;
+import frc.robot.subsystems.led.LedIOCandle;
+import frc.robot.subsystems.led.Led.AnimationType;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.vision.Vision;
@@ -73,11 +76,13 @@ public class RobotContainer {
     private final SendableChooser<Command> m_chooser;
 
     private final Vision s_Vision;
+    private final Led s_Led;
 
     public RobotContainer() {
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Indexer = new Indexer(new IndexerIOTalonFX());
+        s_Led = new Led(new LedIOCandle());
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                     new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                             Units.inchesToMeters(-10.92),
@@ -156,13 +161,19 @@ public class RobotContainer {
                         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
                 ));
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        joystick.rightTrigger().whileTrue(s_Shooter.tuningShoot()).onFalse(s_Shooter.stop());
-        joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(18).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0), Rotation2d.k180deg)))));
-        joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-
+        
+        s_Led.setDefaultCommand(s_Led.setAnimation(Led.AnimationType.Off));
+        
+        joystick.a().whileTrue(s_Led.setAnimation(Led.AnimationType.Fire)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.b().whileTrue(s_Led.setAnimation(Led.AnimationType.Larson)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.x().whileTrue(s_Led.setAnimation(Led.AnimationType.SingleFade)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.y().whileTrue(s_Led.setAnimation(Led.AnimationType.RgbFade)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.leftBumper().whileTrue(s_Led.setAnimation(Led.AnimationType.Strobe)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.rightBumper().whileTrue(s_Led.setAnimation(Led.AnimationType.Twinkle)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.povUp().whileTrue(s_Led.setAnimation(Led.AnimationType.ColorFlow)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
+        joystick.povDown().whileTrue(s_Led.setAnimation(Led.AnimationType.TwinkleOff)).onFalse(s_Led.setAnimation(Led.AnimationType.Off));
         // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
-
+        
 
 
 
@@ -173,9 +184,9 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         //joystick.rightTrigger().onTrue(drivetrain.startLogger());
         //joystick.leftTrigger().onTrue(drivetrain.stopLogger());

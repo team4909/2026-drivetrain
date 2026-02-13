@@ -7,9 +7,14 @@ import java.util.Vector;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.controls.ColorFlowAnimation;
+import com.ctre.phoenix6.controls.EmptyAnimation;
 import com.ctre.phoenix6.controls.FireAnimation;
+import com.ctre.phoenix6.controls.LarsonAnimation;
 import com.ctre.phoenix6.controls.RainbowAnimation;
+import com.ctre.phoenix6.controls.RgbFadeAnimation;
+import com.ctre.phoenix6.controls.SingleFadeAnimation;
 import com.ctre.phoenix6.controls.SolidColor;
+import com.ctre.phoenix6.controls.StrobeAnimation;
 import com.ctre.phoenix6.controls.TwinkleAnimation;
 import com.ctre.phoenix6.controls.TwinkleOffAnimation;
 import com.ctre.phoenix6.hardware.CANdle;
@@ -20,22 +25,24 @@ import com.ctre.phoenix6.signals.StripTypeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.led.Led.AnimationType;
 
 public class LedIOCandle implements LedIO {
 
     private static final int kSlot0StartIdx = 0;
-    private static final int kSlot0EndIdx = 7;
+    private static final int kSlot0EndIdx = 150;
 
     private final CANdle m_candle;
 
-    private final RGBWColor kViolet;
+    private final RGBWColor kGreen;
 
     
-.3.
+
+    // private AnimationType m_anim0State = AnimationType.None;
 
     public LedIOCandle() {
-        m_candle = new CANdle(1, "rio");
-        kViolet = new RGBWColor(0, 0, 0, 0);
+        m_candle = new CANdle(33, "CANivore2");
+        kGreen = new RGBWColor(0, 255, 0, 0);
 
         var cfg = new CANdleConfiguration();
         // Disable status LED when being controlled
@@ -44,39 +51,62 @@ public class LedIOCandle implements LedIO {
     }
 
     public void setColor(RGBWColor rgb) {
-
         m_candle.setControl(new SolidColor(0, 7).withColor(rgb));
-
     }
 
-    // @Override
-    // public void animationPlayer(AnimationType state) {
-    //     switch (m_anim0State) {
-    //         default:
-    //         case ColorFlow:
-    //             m_candle.setControl(
-    //                     new ColorFlowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
-    //                             .withColor(kViolet));
-    //             break;
-    //         case Rainbow:
-    //             m_candle.setControl(
-    //                     new RainbowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0));
-    //             break;
-    //         case Twinkle:
-    //             m_candle.setControl(
-    //                     new TwinkleAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
-    //                             .withColor(kViolet));
-    //             break;
-    //         case TwinkleOff:
-    //             m_candle.setControl(
-    //                     new TwinkleOffAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
-    //                             .withColor(kViolet));
-    //             break;
-    //         case Fire:
-    //             m_candle.setControl(
-    //                     new FireAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0));
-    //             break;
-    //     }
-    // }
+    public void animationPlayer(AnimationType state) {
+        switch (state) {
+            default:
+            case ColorFlow:
+                m_candle.setControl(
+                        new ColorFlowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
+                                .withColor(kGreen));
+                break;
+            case Rainbow:
+                m_candle.setControl(
+                        new RainbowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0));
+                break;
+            case Twinkle:
+                m_candle.setControl(
+                        new TwinkleAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
+                                .withColor(kGreen));
+                break;
+            case TwinkleOff:
+                m_candle.setControl(
+                        new TwinkleOffAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
+                                .withColor(kGreen));
+                break;
+            case Fire:
+                m_candle.setControl(
+                        new FireAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0));
+                break;
+            case Off:
+                m_candle.setControl(new EmptyAnimation(0));
+                break;
+            case Larson:
+                    m_candle.setControl(
+                        new LarsonAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(1)
+                            .withColor(kGreen)
+                    );
+                    break;
+            case RgbFade:
+                    m_candle.setControl(
+                        new RgbFadeAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(1)
+                    );
+                    break;
+                case SingleFade:
+                    m_candle.setControl(
+                        new SingleFadeAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(1)
+                            .withColor(kGreen)
+                    );
+                    break;
+                case Strobe:
+                    m_candle.setControl(
+                        new StrobeAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(1)
+                            .withColor(kGreen)
+                    );
+                    break;
+        }
+    }
 
 }
