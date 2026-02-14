@@ -24,7 +24,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     private final TalonFX m_shootermotor2;
     private final int kShooterMotor1ID = 27;
     private final int kShooterMotor2ID = 26;
-    private final String kCanbus = "rio";
+    private final String kCanbus = "CANivore2";
 
     private StatusSignal<AngularVelocity> m_shooter1Velocity;
     private StatusSignal<Current> m_shooter1StatorCurrent;
@@ -49,6 +49,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         TalonFXConfiguration shooterConfigs = new TalonFXConfiguration();
 
         //All Feedforwards are in AMPS bc this is torque control
+
         shooterConfigs.Slot0.kP = 5.0;
         shooterConfigs.Slot0.kI = 0.0; 
         shooterConfigs.Slot0.kD = 0.0;
@@ -56,7 +57,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         shooterConfigs.TorqueCurrent.withPeakForwardTorqueCurrent(Units.Amps.of(40)).withPeakReverseTorqueCurrent(Units.Amps.of(-40));
         m_shootermotor1.getConfigurator().apply(shooterConfigs);
         m_shootermotor2.getConfigurator().apply(shooterConfigs);
- 
+        
         m_shootermotor2.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
 
         m_shooter1Velocity = m_shootermotor1.getVelocity();

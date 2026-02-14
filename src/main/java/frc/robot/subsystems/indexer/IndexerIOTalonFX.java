@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -28,6 +29,7 @@ public class IndexerIOTalonFX implements IndexerIO {
         final TalonFXConfiguration indexerMotorConfig = new TalonFXConfiguration();
         indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
         indexerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        indexerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         m_indexerBottomMotor.getConfigurator().apply(indexerMotorConfig);
         m_indexerTopMotor.getConfigurator().apply(indexerMotorConfig);

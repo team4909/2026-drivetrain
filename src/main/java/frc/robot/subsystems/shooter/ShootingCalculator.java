@@ -13,6 +13,12 @@ public class ShootingCalculator {
      new InterpolatingDoubleTreeMap();
     private CommandSwerveDrivetrain m_drivetrain;
 
+    // private double inmin = 1000.0;
+    // private double inmax = 2000.0;
+    // private double outmin = 1000.0;
+    // private double outmax = 1500.0;
+
+
        
     public ShootingCalculator(CommandSwerveDrivetrain drivetrain){
         //V3
@@ -45,9 +51,9 @@ public class ShootingCalculator {
         shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), 60.0);
 
         //V2
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), -63.0);
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40), -59.0);
-        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625), -53.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), 63.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40), 59.0);
+        // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625), 53.0);
 
         // shotFlywheelSpeedMap.put(2.17, -220.0);
         // shotFlywheelSpeedMap.put(2.88, -230.0);
@@ -59,6 +65,9 @@ public class ShootingCalculator {
         // shotFlywheelSpeedMap.put(5.60, 290.0);
     }
     
+    // public double map(double x) {
+    //     return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
+    // }
 
     
     public double getHoodPosition(){
