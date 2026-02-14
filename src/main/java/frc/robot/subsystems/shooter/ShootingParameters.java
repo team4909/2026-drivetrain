@@ -1,6 +1,7 @@
 import java.security.KeyStore.Entry;
 import java.util.Map;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -13,121 +14,130 @@ import frc.robot.subsystems.shooter.Shooter;
 
 @SuppressWarnings("static-access")
 public class ShootingParameters {
-        // private static final InterpolatingTreeMap<Double, ShooterParameters> shooterTable = new InterpolatingTreeMap<Double, ShooterParameters>();\
+    // private static final InterpolatingTreeMap<Double, ShooterParameters>
+    // shooterTable = new InterpolatingTreeMap<Double, ShooterParameters>();\
 
-        private static final InterpolatingDoubleTreeMap m_hoodTable = new InterpolatingDoubleTreeMap();
-        private static final InterpolatingDoubleTreeMap m_shooterTable = new InterpolatingDoubleTreeMap();
-        private static final InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
+    private static final InterpolatingDoubleTreeMap m_hoodTable = new InterpolatingDoubleTreeMap();
+    private static final InterpolatingDoubleTreeMap m_shooterTable = new InterpolatingDoubleTreeMap();
+    private static final InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
 
-        
+    static {
+        m_hoodTable.put(Units.inchesToMeters(63.625), 25.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625), 25.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625 + 40), 25.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625 + 40 + 40), 25.0);
 
+        m_shooterTable.put(Units.inchesToMeters(63.625), 47.0);
+        m_shooterTable.put(Units.inchesToMeters(103.625), 52.0);
+        m_shooterTable.put(Units.inchesToMeters(103.625 + 40), 55.0);
+        m_shooterTable.put(Units.inchesToMeters(103.625 + 40 + 40), 60.0);
 
-        static{
-            m_hoodTable.put(Units.inchesToMeters(63.625), 25.0);
-                m_hoodTable.put(Units.inchesToMeters(103.625), 25.0);
-                m_hoodTable.put(Units.inchesToMeters(103.625+40), 25.0);
-                m_hoodTable.put(Units.inchesToMeters(103.625+40+40), 25.0);
-    
-                m_shooterTable.put(Units.inchesToMeters(63.625), 47.0);
-                m_shooterTable.put(Units.inchesToMeters(103.625), 52.0);
-                m_shooterTable.put(Units.inchesToMeters(103.625+40), 55.0);
-                m_shooterTable.put(Units.inchesToMeters(103.625+40+40), 60.0);
-
-                m_timeOfFlightTable = m_timeOfFlightTable.ofEntries(
+        m_timeOfFlightTable = m_timeOfFlightTable.ofEntries(
                 Map.entry(Units.inchesToMeters(63.625), 1.2),
-                 Map.entry(Units.inchesToMeters(103.625), 1.2),
-                 Map.entry(Units.inchesToMeters(103.625+40), 1.2),
-                 Map.entry(Units.inchesToMeters(103.625+40+40), 1.2)
-            );
+                Map.entry(Units.inchesToMeters(103.625), 1.2),
+                Map.entry(Units.inchesToMeters(103.625 + 40), 1.2),
+                Map.entry(Units.inchesToMeters(103.625 + 40 + 40), 1.2));
 
-            //     private Map<Double, Double> m_timeOfFlightEntries = Map.ofEntries(
-            // Map.Entry<Units.inchesToMeters(63.625), 1.2>,
-            // Map.Entry<Units.inchesToMeters(103.625), 1.2>,
-            // Map.entry(Units.inchesToMeters(63.625), 1.2),
-            // Map.entry(Units.inchesToMeters(103.625), 1.2),
-            // Map.entry(Units.inchesToMeters(103.625+40), 1.2),
-            // Map.entry(Units.inchesToMeters(103.625+40+40), 1.2)
+        // private Map<Double, Double> m_timeOfFlightEntries = Map.ofEntries(
+        // Map.Entry<Units.inchesToMeters(63.625), 1.2>,
+        // Map.Entry<Units.inchesToMeters(103.625), 1.2>,
+        // Map.entry(Units.inchesToMeters(63.625), 1.2),
+        // Map.entry(Units.inchesToMeters(103.625), 1.2),
+        // Map.entry(Units.inchesToMeters(103.625+40), 1.2),
+        // Map.entry(Units.inchesToMeters(103.625+40+40), 1.2)
         // );
 
-                
-    
-                // m_timeOfFlightTable.put(Units.inchesToMeters(63.625), 1.2);
-                // m_timeOfFlightTable.put(Units.inchesToMeters(103.625), 1.2);
-                // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40), 1.2);
-                // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40+40), 1.2);
-    
+        // m_timeOfFlightTable.put(Units.inchesToMeters(63.625), 1.2);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625), 1.2);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40), 1.2);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40+40), 1.2);
 
+        // shooterTable.put(Units.inchesToMeters(63.625), new ShooterParameters(47.0,
+        // 25.0, 1.2));
+        // shooterTable.put(Units.inchesToMeters(103.625), new ShooterParameters(52.0,
+        // 25.0, 1.2));
+        // shooterTable.put(Units.inchesToMeters(103.625+40), new
+        // ShooterParameters(55.0, 25.0, 1.2));
+        // shooterTable.put(Units.inchesToMeters(103.625+40+40), new
+        // ShooterParameters(60.0, 25.0, 1.2));
+    }
 
+    private Hood m_hood;
+    private Shooter m_shooter;
 
-            // shooterTable.put(Units.inchesToMeters(63.625), new ShooterParameters(47.0, 25.0, 1.2));
-            // shooterTable.put(Units.inchesToMeters(103.625), new ShooterParameters(52.0, 25.0, 1.2));
-            // shooterTable.put(Units.inchesToMeters(103.625+40), new ShooterParameters(55.0, 25.0, 1.2));
-            // shooterTable.put(Units.inchesToMeters(103.625+40+40), new ShooterParameters(60.0, 25.0, 1.2));
-        }
+    public ShootingParameters(Hood hood, Shooter shooter) {
+        m_hood = hood;
+        m_shooter = shooter;
+    }
 
-        private Hood m_hood;
-        private Shooter m_shooter;
-
-
-        public ShootingParameters(Hood hood, Shooter shooter) {
-            m_hood = hood;
-            m_shooter = shooter;
-        }
-
-        public ShooterCommand calculate(
+    public ShooterCommand calculate(
             Translation2d robotPosition,
             Translation2d robotVelocity,
             Translation2d goalPosition,
-            double latencyCompensation
-        ) {
-            // 1. Project future position
-            Translation2d futurePos = robotPosition.plus(
-                robotVelocity.times(latencyCompensation)
-            );
+            double latencyCompensation) {
+        // 1. Project future position
+        Translation2d futurePos = robotPosition.plus(
+                robotVelocity.times(latencyCompensation));
 
-            // 2. Get target vector
-            Translation2d toGoal = goalPosition.minus(futurePos);
-            double distance = toGoal.getNorm();
-            Translation2d targetDirection = toGoal.div(distance);
+        // 2. Get target vector
+        Translation2d toGoal = goalPosition.minus(futurePos);
+        double distance = toGoal.getNorm();
+        Translation2d targetDirection = toGoal.div(distance);
 
-            // 3. Look up baseline velocity from table   
-            ShooterParameters baseline = new ShooterParameters(
+        // 3. Look up baseline velocity from table
+        ShooterParameters baseline = new ShooterParameters(
                 m_shooterTable.get(distance),
                 m_hoodTable.get(distance),
-                m_timeOfFlightTable.get(distance)
-            );
+                m_timeOfFlightTable.get(distance));
 
-            double ballReleaseAngle = 90 - baseline.hoodAngle(); // cos90 = 0, multiplying ball velocity by 0 means ball straight up.
-            double horizontalVelocity = distance / baseline.timeOfFlight() * Math.cos(Units.degreesToRadians(ballReleaseAngle));
+        double ballReleaseAngle = 90 - baseline.hoodAngle(); // cos90 = 0, multiplying ball velocity by 0 means ball
+                                                             // straight up.
+        double horizontalVelocity = distance / baseline.timeOfFlight()
+                * Math.cos(Units.degreesToRadians(ballReleaseAngle));
 
-            // 4. Build target velocity vector
-            Translation2d targetVelocity = targetDirection.times(horizontalVelocity);
+        // 4. Build target velocity vector
+        Translation2d targetVelocity = targetDirection.times(horizontalVelocity);
 
-            // 5. THE MAGIC: subtract robot velocity
-            Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
+        // 5. THE MAGIC: subtract robot velocity
+        Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
 
-            // 6. Extract results
-            Rotation2d turretAngle = shotVelocity.getAngle();
-            double requiredVelocity = shotVelocity.getNorm();
+        // 6. Extract results
+        Rotation2d turretAngle = shotVelocity.getAngle().plus(Rotation2d.k180deg);
+        double requiredVelocity = shotVelocity.getNorm();
 
-            // 7. Use table in reverse: velocity → effective distance → RPM
-            double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
-            double requiredRpm = m_shooterTable.get(effectiveDistance);
+        double velocityRatio = requiredVelocity / horizontalVelocity;
 
-            return new ShooterCommand(turretAngle, requiredRpm);
-        }
+        // Splitting correction
+        double rpmFactor = Math.sqrt(velocityRatio);
+        double hoodFactor = Math.sqrt(velocityRatio);
 
-         public double velocityToEffectiveDistance(double velocity) {
+        // Apply RPM
+        double requiredRpm = baseline.rps() * rpmFactor;
+
+        // Apply hood angle correction
+        double totalVelocity = horizontalVelocity / Math.cos(Units.degreesToRadians(ballReleaseAngle));
+        double targetHorizFromHood = horizontalVelocity * hoodFactor;
+        double ratio = MathUtil.clamp(targetHorizFromHood / totalVelocity, 0.0, 1.0);
+        double adjustedHood = Math.toDegrees(Math.acos(ratio));
+
+        // 7. Use table in reverse: velocity → effective distance → RPM
+        // double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
+        // double requiredRpm = m_shooterTable.get(effectiveDistance);
+
+        return new ShooterCommand(turretAngle, requiredRpm, adjustedHood);
+    }
+
+    public double velocityToEffectiveDistance(double velocity) {
         // Binary search or iterate through table to find distance
         // where (distance / ToF) = velocity
         // Most InterpolatingTreeMap implementations support inverse lookup
         // or you can build a reverse map: velocity → distance
 
-        for(Map.Entry<Double, Double> entry : Map.of(
-            Units.inchesToMeters(63.625), 1.2,
-            Units.inchesToMeters(103.625), 1.2,
-            Units.inchesToMeters(103.625+40), 1.2,
-            Units.inchesToMeters(103.625+40+40), 1.2).entrySet()) {
+        for (Map.Entry<Double, Double> entry : Map.of(
+                Units.inchesToMeters(63.625), 1.2,
+                Units.inchesToMeters(103.625), 1.2,
+                Units.inchesToMeters(103.625 + 40), 1.2,
+                Units.inchesToMeters(103.625 + 40 + 40), 1.2).entrySet()) {
 
             double dist = entry.getKey();
             double vel = dist / entry.getValue();
@@ -136,11 +146,13 @@ public class ShootingParameters {
             }
         }
 
-        return Units.inchesToMeters(103.625+40+40); // Clamp to max
+        return Units.inchesToMeters(103.625 + 40 + 40); // Clamp to max
     }
-    // Simple data class for the LUT
-        public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {}
-        public record ShooterCommand(Rotation2d turretAngle, double rpm) {}
-}
 
-    
+    // Simple data class for the LUT
+    public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {
+    }
+
+    public record ShooterCommand(Rotation2d turretAngle, double rpm, double hoodAngle) {
+    }
+}
