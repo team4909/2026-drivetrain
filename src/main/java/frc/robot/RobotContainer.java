@@ -29,6 +29,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -190,7 +191,7 @@ public class RobotContainer {
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
-        joystick.rightBumper().whileTrue(s_Hood.retractHood());
+        joystick.povRight().whileTrue(s_Hood.retractHood());
         // joystick.x().whileTrue(s_Hood.extendHood());
         joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
@@ -243,14 +244,18 @@ public class RobotContainer {
         // // reset the field-centric heading on left bumper press
         // extend intake on left bumper press
        joystick.leftBumper()
-                //.whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
-                .whileTrue(s_Intake.intakeAndExtend())
+                .onTrue(s_Intake.Extend());
+                // .onFalse(Commands.sequence(s_Intake.stow()));
+        joystick.povLeft()
+                .onTrue(s_Intake.stow());
+                // .onFalse(Commands.sequence(s_Intake.stow()));
+        joystick.rightBumper()
+                .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
                 .onFalse(Commands.sequence(s_Intake.stowAndStop()));
-
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
-
+        
     public Command getAutonomousCommand() {
         return m_chooser.getSelected();
         // return new PathPlannerAuto("cut");

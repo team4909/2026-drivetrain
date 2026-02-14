@@ -33,7 +33,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intake() {
-        return this.run(() -> m_io.setSpeed(1)).withName("IntakeIn");
+        return this.run(() -> m_io.setSpeed(-1)).withName("IntakeIn");
     }
 
     public Command outtake() {
@@ -48,6 +48,14 @@ public class Intake extends SubsystemBase {
         }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
     }
 
+     public Command Extend() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Extended);
+            // m_io.setSpeed(-1);
+            m_inputs.setpoint = "Extend";
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
+    }
+
     public Command stowAndStop() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
@@ -55,7 +63,13 @@ public class Intake extends SubsystemBase {
             m_inputs.setpoint = "Stowed";
         }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
     }
-  
+    public Command stow() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Stowed);
+            // m_io.setSpeed(0);
+            m_inputs.setpoint = "Stowed";
+        }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+    }
 
     public Command setpointFromTuning() {
         return this.runOnce(() -> m_io.setExtenderSetpoint(m_position.get()))
