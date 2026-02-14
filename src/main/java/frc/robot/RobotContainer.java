@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -105,6 +106,14 @@ public class RobotContainer {
         s_Hood = new Hood(new HoodIORevServoHub());
         // s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
+
+        NamedCommands.registerCommand("IntakeDownGo", s_Intake.intakeAndExtend());
+        NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
+        NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
+        NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
+        NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
+        NamedCommands.registerCommand("ShootAndIndex", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())));
+
         s_Vision = new Vision(drivetrain::addVisionMeasurement,
                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
                         Units.inchesToMeters(-9.423484),
@@ -197,6 +206,7 @@ public class RobotContainer {
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
+        joystick.back().whileTrue(s_Intake.reZero());
 
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
