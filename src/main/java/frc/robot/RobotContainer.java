@@ -192,7 +192,7 @@ public class RobotContainer {
         // joystick.y().whileTrue(s_Hood.retractHood());
         joystick.rightBumper().whileTrue(s_Hood.retractHood());
         // joystick.x().whileTrue(s_Hood.extendHood());
-        // joystick.y().whileTrue(s_Hood.retractHood());
+        joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
@@ -243,8 +243,9 @@ public class RobotContainer {
         // // reset the field-centric heading on left bumper press
         // extend intake on left bumper press
        joystick.leftBumper()
-                .whileTrue(Commands.sequence(s_Intake.intakeWithSetpoint(Intake.Setpoint.Extended), s_Intake.intakeWithSetpoint(Intake.Setpoint.Stowed)).repeatedly())
-                .onFalse(Commands.sequence(s_Intake.stop(), s_Intake.retract()));
+                //.whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
+                .whileTrue(s_Intake.intakeAndExtend())
+                .onFalse(Commands.sequence(s_Intake.stowAndStop()));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

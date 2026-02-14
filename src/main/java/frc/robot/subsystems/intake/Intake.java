@@ -14,20 +14,10 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
-        public enum Setpoint {
-        Stowed(0.0),
-        Extended(11.0);
+    private final double Stowed = 0.0;
+    private final double Extended = 10.0;
 
-        private final double rotations;
 
-        Setpoint(double rotations) {
-            this.rotations = rotations;
-        }
-
-        public double rotations() {
-            return rotations;
-        }
-    }
     public Intake(IntakeIO io) {
         super("Intake");
         m_io = io;
@@ -50,32 +40,21 @@ public class Intake extends SubsystemBase {
         return this.run(() -> m_io.setSpeed(-1)).withName("IntakeOut");
     }
 
-
-     public Command setpoint(Setpoint setpoint) {
-        return this.run(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
-                .withName("IntakeSetpoint" + setpoint.name()).until(() -> Math.abs(m_inputs.position - setpoint.rotations()) <= 0.1);
-    }
-
-    public Command holdSetpoint(Setpoint setpoint) {
-        return this.run(() -> m_io.setExtenderSetpoint(setpoint.rotations()))
-                .withName("IntakeHoldSetpoint" + setpoint.name());
-    }
-
-    public Command intakeWithSetpoint(Setpoint setpoint) {
+    public Command intakeAndExtend() {
         return this.run(() -> {
-            m_io.setExtenderSetpoint(setpoint.rotations());
-            m_io.setSpeed(1);
-        }).withName("IntakeWithSetpoint" + setpoint.name());
+            m_io.setExtenderSetpoint(Extended);
+            m_io.setSpeed(-1);
+            m_inputs.setpoint = "Extend";
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
     }
 
-    
-    
-    // public Command stowAndStop() {
-    //     return this.run(() -> {
-    //         m_io.setExtenderSetpoint(getSetpointRotations(Setpoint.Stowed));
-    //         m_io.setSpeed(0);
-    //     }).withName("IntakeStowAndStop");
-    // }
+    public Command stowAndStop() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Stowed);
+            m_io.setSpeed(0);
+            m_inputs.setpoint = "Stowed";
+        }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+    }
   
 
     public Command setpointFromTuning() {
@@ -83,12 +62,10 @@ public class Intake extends SubsystemBase {
                 .withName("IntakeSetpointTuning");
     }
 
-    public Command extend() {
-        return setpoint(Setpoint.Extended).withName("IntakeExtend");
-    }
-
-    public Command retract() {
-        return setpoint(Setpoint.Stowed).withName("IntakeRetract");
+    public Command reZero() {
+        return this.runOnce(() ->{
+            m_io.setPosition(0);
+        });
     }
 
     @Override

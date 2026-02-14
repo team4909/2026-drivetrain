@@ -1,5 +1,7 @@
 package frc.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -21,6 +23,10 @@ public class IntakeIOTalonFX implements IntakeIO {
     private final int kIntakeRollerLeaderID = 57;
     private final int kIntakeExtenderID = 55;
 
+    private final double m_gearBox = 1.0/25.0;
+
+    private final double m_gearRatio = m_gearBox;
+
     private final String kCanbus = "CANivore2";
 
     public IntakeIOTalonFX() {
@@ -31,7 +37,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         final TalonFXConfiguration cfg = new TalonFXConfiguration();
         cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-        cfg.Slot0.kP = 1;
+        cfg.Slot0.kP = 0.3;
         cfg.Slot0.kI = 0;
         cfg.Slot0.kD = 0;
 
@@ -58,16 +64,14 @@ public class IntakeIOTalonFX implements IntakeIO {
     }
 
     @Override
-    public void setBrakeMode(boolean enableBrakeMode) {
-        final NeutralModeValue neutralModeValue = enableBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast;
-        m_intakeRoller.setNeutralMode(neutralModeValue);
-        m_intakeExtender.setNeutralMode(neutralModeValue);
+    public void setExtenderSetpoint(double rotations) {
+        m_intakeExtender.setControl(m_extenderRequest.withPosition(rotations));
     }
 
-    @Override
-        public void setExtenderSetpoint(double rotations) {
-            m_intakeExtender.setControl(m_extenderRequest.withPosition(rotations));
-        }
+    public void setPosition(double position) {
+        m_intakeExtender.setPosition(position);
+    }
+
 
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {

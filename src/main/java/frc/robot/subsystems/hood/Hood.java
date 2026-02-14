@@ -15,10 +15,19 @@ public class Hood extends SubsystemBase{
     private final HoodIO m_io;
     private final HoodIOInputsAutoLogged m_inputs = new HoodIOInputsAutoLogged();
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/HoodPosition", 1000);
+
+    private double inmin = 32; // min hood angle
+    private double inmax = 48; // max hood angle
+    private double outmin = 1000.0; // min pulse width
+    private double outmax = 2000.0; // max pulse width
     
     public Hood(HoodIO io){
         super("Hood");
         m_io = io;
+    }
+
+    public double map(double x) {
+        return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
     }
     
     public Command extendHood (){
@@ -40,6 +49,11 @@ public class Hood extends SubsystemBase{
     public Command tunableShot (){
         return this.run (() -> m_io.setPosition((int) m_position.get())).withName("tunableShot");
     } 
+
+    // public double getBallReleaseAngle() {
+    //     double pulseWidth = m_io.getPosition();
+    //     return (pulseWidth - outmin) * (inmax - inmin) / (outmax - outmin) + inmin;
+    // }
 
 
     // @Override
