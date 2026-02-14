@@ -58,6 +58,7 @@ import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIOTalonFX;
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -67,10 +68,7 @@ public class RobotContainer {
     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
     private final Pose2d m_hub = new Pose2d(
-            new Translation2d(
-                    AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX()
-                            + Units.inchesToMeters(47.0) / 2.0,
-                    AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0),
+                aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.5,0), Rotation2d.k180deg)).getTranslation(),
             new Rotation2d());
 
     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
@@ -123,6 +121,16 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(90.0 + 65)))),
+                new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-11.338099),
+                        Units.inchesToMeters(11.935828),
+                        Units.inchesToMeters(14.3875)),
+                        new Rotation3d(
+                                Units.degreesToRadians(7.435472),
+                                Units.degreesToRadians(-35),
+                                Units.degreesToRadians(90 + 75)
+                        ))),
+
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
                 // Units.inchesToMeters(10.92),
@@ -225,7 +233,7 @@ public class RobotContainer {
         // ));
 
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
-                .toPose2d().transformBy(new Transform2d(new Translation2d(-0.4, 0), Rotation2d.kZero)))));
+                .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
         s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, () -> drivetrain.getState().Pose));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
