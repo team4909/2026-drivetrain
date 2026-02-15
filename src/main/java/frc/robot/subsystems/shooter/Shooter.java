@@ -31,6 +31,10 @@ public class Shooter extends SubsystemBase {
         return this.run(() -> m_io.setVelocity((int) velocity.getAsDouble())).repeatedly().withName("Shoot");
     }
 
+    public Command shoot2(){
+        return this.run(() -> m_io.setVelocity(100)).repeatedly().withName("Shoot");
+    }
+
     @Override
     public void periodic() {
         Logger.processInputs(this.getName(), m_inputs);

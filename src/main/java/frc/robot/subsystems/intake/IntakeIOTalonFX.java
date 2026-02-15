@@ -36,14 +36,14 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeExtender = new TalonFX(kIntakeExtenderID, kCanbus);
 
         final TalonFXConfiguration cfg = new TalonFXConfiguration();
-        cfg.CurrentLimits.SupplyCurrentLimit = 10.0;
+        cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
         cfg.Slot0.kP = 0.3;
         cfg.Slot0.kI = 0;
         cfg.Slot0.kD = 0;
 
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
-        extenderConfigs.NeutralMode = NeutralModeValue.Coast;
+        extenderConfigs.NeutralMode = NeutralModeValue.Brake;
         
         // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
         // extenderSlot0Configs.kP = 10;

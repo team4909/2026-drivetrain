@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -121,16 +122,15 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(90.0 + 65)))),
-                new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-11.338099),
-                        Units.inchesToMeters(11.935828),
-                        Units.inchesToMeters(14.3875)),
-                        new Rotation3d(
-                                Units.degreesToRadians(7.435472),
-                                Units.degreesToRadians(-35),
-                                Units.degreesToRadians(90 + 75)
-                        ))),
-
+                // new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
+                //         Units.inchesToMeters(-11.338099),
+                //         Units.inchesToMeters(11.935828),
+                //         Units.inchesToMeters(14.3875)),
+                //         new Rotation3d(
+                //                 Units.degreesToRadians(7.435472),
+                //                 Units.degreesToRadians(-35),
+                //                 Units.degreesToRadians(90 + 75)
+                        //))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
                 // Units.inchesToMeters(10.92),
@@ -209,20 +209,18 @@ public class RobotContainer {
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
         joystick.povRight().whileTrue(s_Hood.retractHood());
-        // joystick.x().whileTrue(s_Hood.extendHood());
         joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
-        joystick.x().whileTrue(s_Intake.outtake()).onFalse(s_Intake.stop());
         joystick.back().whileTrue(s_Intake.reZero());
 
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
-                        s_Shooter.stop(),
-                        s_Indexer.stop()));
+        // joystick.rightTrigger().whileTrue(Commands.parallel(
+        //         s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
+        //                 s_Shooter.stop(),
+        //                 s_Indexer.stop()));
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         // s_Shooter.tuningShoot(),
@@ -231,6 +229,15 @@ public class RobotContainer {
         // s_Shooter.stop(),
         // s_Indexer.stop()
         // ));
+
+        joystick.rightTrigger().whileTrue(new ConditionalCommand(
+                Commands.parallel(s_Shooter.shoot2(), s_Hood.extendHood(), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                // Condition: true when robot is behind the hub (X greater than hub X)
+                () -> drivetrain.getState().Pose.getX() > m_hub.getX()))
+                .onFalse(Commands.parallel(
+                        s_Shooter.stop(),
+                        s_Indexer.stop()));
 
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
                 .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));

@@ -129,8 +129,8 @@ public class TurretTrackPose extends Command{
 
     // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)
     private static final List<Pose2d> FIELD_CORNERS = List.of(
-        new Pose2d(0, aprilTagLayout.getFieldWidth(), new Rotation2d()),
-        new Pose2d(0, 0.0, new Rotation2d())
+        new Pose2d(0, aprilTagLayout.getFieldWidth() - 1.5, new Rotation2d()),
+        new Pose2d(0, 1.5, new Rotation2d())
         // new Pose2d(8.23, 5.49, new Rotation2d()),
         // new Pose2d(0.0, 5.49, new Rotation2d())
     );
