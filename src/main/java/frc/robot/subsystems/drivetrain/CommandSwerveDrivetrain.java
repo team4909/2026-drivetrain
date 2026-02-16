@@ -306,13 +306,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
     }
 
-    // public boolean robotBehindHub() {
-    //     // Simple X-based check; adapt this to your field's coordinate convention if needed.
-    //     if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-    //         return this.getState().Pose.getX() < m_hubCenter.getX();
-    //     }
-    //     return this.getState().Pose.getX() > m_hubCenter.getX();
-    // }
+    public boolean robotBehindHub() {
+        // Simple X-based check; adapt this to your field's coordinate convention if needed.
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+            return this.getState().Pose.getX() < m_hubCenter.getX();
+        }
+        return this.getState().Pose.getX() > m_hubCenter.getX();
+    }
 
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();

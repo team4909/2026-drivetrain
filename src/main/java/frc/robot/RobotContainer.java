@@ -202,11 +202,11 @@ public class RobotContainer {
                         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
                 ));
-        s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
+        // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
 
-        // s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(), 
-        // s_Hood.goTo(m_shootingCalculator::getHoodPosition), 
-        // s_Drivetrain::robotBehindHub));
+        s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(), 
+        s_Hood.goTo(m_shootingCalculator::getHoodPosition), 
+        s_Drivetrain::robotBehindHub));
         // s_Hood.setDefaultCommand(s_Hood.tunableShot());
         joystick.start().onTrue(s_Drivetrain.runOnce(() -> s_Drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
@@ -233,17 +233,17 @@ public class RobotContainer {
         // s_Indexer.stop()
         // ));
 
-        // joystick.rightTrigger().whileTrue(new ConditionalCommand(
-        //         Commands.parallel(s_Shooter.shoot(() -> 100), s_Hood.extendHood(), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
-        //         Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
-        //         // Condition: true when robot is behind the hub (X greater than hub X)
-        //         s_Drivetrain::robotBehindHub))
-        //         .onFalse(Commands.parallel(
-        //                 s_Shooter.stop(),
-        //                 s_Indexer.stop()));
+        joystick.rightTrigger().whileTrue(new ConditionalCommand(
+                Commands.parallel(s_Shooter.shoot(() -> 100), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                // Condition: true when robot is behind the hub (X greater than hub X)
+                s_Drivetrain::robotBehindHub))
+                .onFalse(Commands.parallel(
+                        s_Shooter.stop(),
+                        s_Indexer.stop()));
 
-        joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
-                .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
+        // joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
+        //         .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
         s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, new Pose2d(m_hub, Rotation2d.kZero), () -> s_Drivetrain.getState().Pose));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
