@@ -48,8 +48,8 @@ public class TurretIOTalonFX implements TurretIO {
         slot0Configs.kD = 0;
 
         var motionMagicConfigs = TalonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = 60;
-        motionMagicConfigs.MotionMagicAcceleration = 160;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 75;
+        motionMagicConfigs.MotionMagicAcceleration = 250;
 
         TalonFXConfigs.CurrentLimits.SupplyCurrentLimit = 40.0;
         TalonFXConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
