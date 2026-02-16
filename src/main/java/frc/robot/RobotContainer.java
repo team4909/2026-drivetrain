@@ -4,13 +4,14 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -18,8 +19,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -31,27 +30,25 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drivetrain.DriveToPose;
 import frc.robot.subsystems.drivetrain.RotateToPose;
-import frc.robot.subsystems.indexer.Indexer;
-import frc.robot.subsystems.indexer.IndexerIO;
-import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIORevServoHub;
-import frc.robot.subsystems.hood.HoodIOServo;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.indexer.IndexerIOTalonFX;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
-import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
+import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.turret.TurretTrackPose;
@@ -66,13 +63,11 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
     private SwerveRequest.ApplyRobotSpeeds m_drive;
-    LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
+//     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
-    private final Pose2d m_hub = new Pose2d(
-                aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.5,0), Rotation2d.k180deg)).getTranslation(),
-            new Rotation2d());
+    private Translation2d m_hub;
 
-    private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
+//     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -188,6 +183,12 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", m_chooser);
 
         configureBindings();
+
+        m_hub = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
+        
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+                m_hub = m_hub.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        }
     }
 
     private void configureBindings() {
@@ -242,7 +243,7 @@ public class RobotContainer {
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
                 .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, () -> drivetrain.getState().Pose));
+        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, new Pose2d(m_hub, Rotation2d.kZero), () -> drivetrain.getState().Pose));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,

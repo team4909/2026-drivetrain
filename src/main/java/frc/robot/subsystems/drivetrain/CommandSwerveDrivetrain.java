@@ -139,7 +139,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        System.out.println(TunerConstants.kDriveGearRatio);
+        // System.out.println(TunerConstants.kDriveGearRatio);
     }
 
     /**
@@ -267,8 +267,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getDistanceFromHub(){
-        Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
-        Logger.recordOutput("DriveState/hubCenter", aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)));
+        Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        }
+
+
+        Logger.recordOutput("DriveState/hubCenter", aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)));
         Logger.recordOutput("DriveState/InterpTableDist", this.getState().Pose.getTranslation().getDistance(m_hubCenter));
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
     }

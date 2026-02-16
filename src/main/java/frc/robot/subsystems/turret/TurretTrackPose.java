@@ -18,6 +18,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretTrackPose extends Command{
@@ -25,6 +27,7 @@ public class TurretTrackPose extends Command{
     private Pose2d m_goalPose;
     private ProfiledPIDController m_rotationalController;
     private Supplier<Pose2d> m_robotPoseSupplier;
+    private List<Pose2d> FIELD_CORNERS;
 
     public TurretTrackPose(Turret turret, Pose2d goalPose, Supplier<Pose2d> robotPoseSupplier){
         m_turret = turret;
@@ -37,6 +40,21 @@ public class TurretTrackPose extends Command{
     // m_rotationalController.enableContinuousInput(-Math.PI, Math.PI);
 
         m_robotPoseSupplier = robotPoseSupplier;
+
+        // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)        
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
+        FIELD_CORNERS = List.of(
+            new Pose2d(new Translation2d(0,0), Rotation2d.kZero),
+            new Pose2d(new Translation2d(0, aprilTagLayout.getFieldWidth()), Rotation2d.kZero)
+        );
+    }
+    else {
+        FIELD_CORNERS = List.of(
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(),0), Rotation2d.kZero),
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth()), Rotation2d.kZero)
+        );
+    }
+    
 
         addRequirements(turret);
     }
@@ -91,7 +109,7 @@ public class TurretTrackPose extends Command{
 
     // If robot is behind the hub, aim at the nearest corner instead of the
     // provided goal pose. `HUB_POSE` and `FIELD_CORNERS` are defined below.
-    Pose2d targetPose = robotBehindHub(robotPose, HUB_POSE) ? robotPose.nearest(FIELD_CORNERS) : m_goalPose;
+    Pose2d targetPose = robotBehindHub(robotPose, m_goalPose) ? robotPose.nearest(FIELD_CORNERS) : m_goalPose;
 
     // Compute vector from robot to target in field coordinates
     Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
@@ -127,21 +145,13 @@ public class TurretTrackPose extends Command{
 
     }
 
-    // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)
-    private static final List<Pose2d> FIELD_CORNERS = List.of(
-        new Pose2d(0, aprilTagLayout.getFieldWidth() - 1.5, new Rotation2d()),
-        new Pose2d(0, 1.5, new Rotation2d())
-        // new Pose2d(8.23, 5.49, new Rotation2d()),
-        // new Pose2d(0.0, 5.49, new Rotation2d())
-    );
 
-    // Example hub position (center of field) — change if your coordinate system differs
-    private static final Pose2d HUB_POSE = new Pose2d(
-                aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation(),
-            new Rotation2d());
 
     private boolean robotBehindHub(Pose2d robotPose, Pose2d hubPose) {
         // Simple X-based check; adapt this to your field's coordinate convention if needed.
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            return robotPose.getX() < hubPose.getX();
+        }
         return robotPose.getX() > hubPose.getX();
     }
 
