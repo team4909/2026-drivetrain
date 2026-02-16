@@ -44,14 +44,14 @@ public class TurretTrackPose extends Command{
         // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)        
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
         FIELD_CORNERS = List.of(
-            new Pose2d(new Translation2d(0,0), Rotation2d.kZero),
-            new Pose2d(new Translation2d(0, aprilTagLayout.getFieldWidth()), Rotation2d.kZero)
+            new Pose2d(new Translation2d(0,1.5), Rotation2d.kZero),
+            new Pose2d(new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
         );
     }
     else {
         FIELD_CORNERS = List.of(
-            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(),0), Rotation2d.kZero),
-            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth()), Rotation2d.kZero)
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(),1.5), Rotation2d.kZero),
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
         );
     }
     
@@ -141,13 +141,15 @@ public class TurretTrackPose extends Command{
     Logger.recordOutput("Turret/flippedRelative", flippedRelative);
 
         Logger.recordOutput("Turret/targetHeading", turretCmdDeg);
-        Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
+       // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
 
     }
 
 
 
     private boolean robotBehindHub(Pose2d robotPose, Pose2d hubPose) {
+        if(robotPose==null){return false;}
+
         // Simple X-based check; adapt this to your field's coordinate convention if needed.
         if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
             return robotPose.getX() < hubPose.getX();
@@ -175,9 +177,9 @@ public class TurretTrackPose extends Command{
             pose.getTranslation().unaryMinus().rotateBy(rotationInverse), rotationInverse);
       }
 
-    private boolean robotBehindTarget(Pose2d robotPose, Pose2d targetPose) {
-        return robotPose.getX() > targetPose.getX();
-    }
+    // private boolean robotBehindTarget(Pose2d robotPose, Pose2d targetPose) {
+    //     return robotPose.getX() > targetPose.getX();
+    // }
 
 
     
