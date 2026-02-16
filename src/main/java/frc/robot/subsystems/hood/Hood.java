@@ -56,8 +56,9 @@ public class Hood extends SubsystemBase{
     // }
 
 
-    // @Override
-    // public void periodic() {
-    //     Logger.processInputs(getName(), m_inputs);
-    // }
+    @Override
+    public void periodic() {
+        m_io.updateInputs(m_inputs);
+        Logger.processInputs(getName(), m_inputs);
+    }
 }

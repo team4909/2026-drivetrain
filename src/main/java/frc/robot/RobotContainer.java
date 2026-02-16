@@ -48,7 +48,6 @@ import frc.robot.subsystems.indexer.IndexerIO;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIORevServoHub;
-import frc.robot.subsystems.hood.HoodIOServo;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
@@ -231,7 +230,7 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot2(), s_Hood.extendHood(), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(()-> 100), s_Hood.extendHood(), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
                 Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 () -> drivetrain.getState().Pose.getX() > m_hub.getX()))

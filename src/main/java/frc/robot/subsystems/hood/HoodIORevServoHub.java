@@ -6,20 +6,20 @@ import com.revrobotics.servohub.ServoChannel.ChannelId;
 import com.revrobotics.servohub.config.ServoChannelConfig;
 import com.revrobotics.servohub.config.ServoHubConfig;
 
-public class HoodIORevServoHub implements HoodIO{
+public class HoodIORevServoHub implements HoodIO {
     private ServoChannel m_servoLeftChannel;
     private ServoChannel m_servoRightChannel;
     private ServoHubConfig m_config = new ServoHubConfig();
     private ServoHub m_servoHub;
 
-    public HoodIORevServoHub(){
+    public HoodIORevServoHub() {
         // m_servoLeft = new Servo(servoLeftChannel);
         // m_servoRight = new Servo(servoRightChannel);
-        m_config.channel3.pulseRange(1000,1500,2000)
-        .disableBehavior(ServoChannelConfig.BehaviorWhenDisabled.kSupplyPower);
+        m_config.channel3.pulseRange(1000, 1500, 2000)
+                .disableBehavior(ServoChannelConfig.BehaviorWhenDisabled.kSupplyPower);
 
-        m_config.channel4.pulseRange(1000,1500,2000)
-        .disableBehavior(ServoChannelConfig.BehaviorWhenDisabled.kSupplyPower);
+        m_config.channel4.pulseRange(1000, 1500, 2000)
+                .disableBehavior(ServoChannelConfig.BehaviorWhenDisabled.kSupplyPower);
 
         m_servoHub = new ServoHub(1);
 
@@ -35,11 +35,12 @@ public class HoodIORevServoHub implements HoodIO{
         m_servoRightChannel.setEnabled(true);
     }
 
-    public void setPosition(int position){
-        //0-1 scale of extention
-        // m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank0_2, (int)(500+(position*2000)));
+    public void setPosition(int position) {
+        // 0-1 scale of extention
+        // m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank0_2,
+        // (int)(500+(position*2000)));
         try {
-            //pulse period may be making servo faster although unclear
+            // pulse period may be making servo faster although unclear
             m_servoHub.setBankPulsePeriod(ServoHub.Bank.kBank3_5, 20000);
 
             m_servoLeftChannel.setPulseWidth(position);
@@ -51,8 +52,9 @@ public class HoodIORevServoHub implements HoodIO{
         // m_servoRightChannel.setPulseWidth((int)(500+(position*2000)));
 
     }
-// public void updateInputs(HoodIOInputsAutoLogged m_inputs){
 
-    // m_inputs.positionLeftActuator = m_servoLeft.getPosition();
-    // m_inputs.positionRightActuator = m_servoRight.getPosition();
+    // TODO: change value from pulse width to angle in degrees
+    public void updateInputs(HoodIOInputsAutoLogged m_inputs) {
+        m_inputs.hoodAngleDegrees = m_servoLeftChannel.getPulseWidth();
+    }
 }
