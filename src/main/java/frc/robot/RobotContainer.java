@@ -65,13 +65,10 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
                                                                                       // max angular velocity
     private SwerveRequest.ApplyRobotSpeeds m_drive;
-    LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
     private final Pose2d m_hub = new Pose2d(
                 aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.5,0), Rotation2d.k180deg)).getTranslation(),
             new Rotation2d());
-
-    private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -230,8 +227,8 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(()-> 100), s_Hood.extendHood(), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
-                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(()-> 100), s_Hood.extendHood(),s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()), //Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),//Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 () -> drivetrain.getState().Pose.getX() > m_hub.getX()))
                 .onFalse(Commands.parallel(
