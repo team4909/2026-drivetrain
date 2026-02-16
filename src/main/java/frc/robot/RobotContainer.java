@@ -219,11 +219,11 @@ public class RobotContainer {
 
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
-                        s_Shooter.stop(),
-                        s_Indexer.stop()));
+        // joystick.rightTrigger().whileTrue(Commands.parallel(
+        //         s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
+        //                 s_Shooter.stop(),
+        //                 s_Indexer.stop()));
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         // s_Shooter.tuningShoot(),
