@@ -175,7 +175,7 @@ public class RobotContainer {
                     () -> {
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
+                            return alliance.get().equals(Alliance.Red);
                         }
                         return false;
                     }, s_Drivetrain);
