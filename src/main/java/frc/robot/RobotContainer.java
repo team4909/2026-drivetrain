@@ -108,6 +108,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeDownGo", s_Intake.intakeAndExtend());
         NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
         NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
+        NamedCommands.registerCommand("IntakeGo", s_Intake.intake());
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
         NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
         NamedCommands.registerCommand("ShootAndIndex", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())));
@@ -122,15 +123,15 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(90.0 + 65)))),
-                // new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
-                //         Units.inchesToMeters(-11.935828),
-                //         Units.inchesToMeters(11.338099),
-                //         Units.inchesToMeters(14.3875)),
-                //         new Rotation3d(
-                //                 Units.degreesToRadians(7.435472),
-                //                 Units.degreesToRadians(-30),
-                //                 Units.degreesToRadians(90 + 75)
-                //         ))),
+                new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-11.935828),
+                        Units.inchesToMeters(11.338099),
+                        Units.inchesToMeters(14.3875)),
+                        new Rotation3d(
+                                Units.degreesToRadians(7.435472),
+                                Units.degreesToRadians(-30),
+                                Units.degreesToRadians(192.5)
+                        ))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
                 // Units.inchesToMeters(10.92),

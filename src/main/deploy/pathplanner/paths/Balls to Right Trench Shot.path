@@ -3,34 +3,34 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7526390870185449,
-        "y": 6.021084165477889
+        "x": 8.011226818830243,
+        "y": 4.49432239657632
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.965149786019971,
-        "y": 7.845435092724678
+        "x": 7.8947788873038505,
+        "y": 0.5092154065620549
       },
       "isLocked": false,
-      "linkedName": "Close Balls"
+      "linkedName": "Right Trench Balls"
     },
     {
       "anchor": {
-        "x": 8.0,
-        "y": 3.195
+        "x": 2.9522111269614832,
+        "y": 0.8973751783166914
       },
       "prevControl": {
-        "x": 9.059298968826575,
-        "y": 8.981453782297583
+        "x": 5.255292439372324,
+        "y": 0.1857489300998577
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Trench Balls"
+      "linkedName": "Right Trench Shot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.36460554371002313,
+      "waypointRelativePos": 0.7803837953091686,
       "rotationDegrees": 0.0
     }
   ],
@@ -46,14 +46,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -90.0
+    "velocity": 0,
+    "rotation": -47.290610042638626
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -176.05481377096228
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }
