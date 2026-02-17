@@ -5,65 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
+          "data": {
+            "pathName": "Left Trench to Close Balls"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "Left Trench to Balls"
+                  "waitTime": 2.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeDownGo"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoodDown"
+                  "name": "ShootAndIndex"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeStop"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Balls to Hub Front"
+                  "name": "ShootIndexStop"
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "HoodDown"
+                  "waitTime": 0.1
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "HoodInterp"
+            "pathName": "Close Balls to Balls"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Balls to Hub Front"
           }
         },
         {

@@ -111,6 +111,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
         NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
         NamedCommands.registerCommand("ShootAndIndex", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())));
+        NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(

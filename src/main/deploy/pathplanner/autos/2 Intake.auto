@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench to Balls"
+                  "pathName": "Left Trench to Close Balls"
                 }
               },
               {
@@ -19,26 +19,32 @@
                 "data": {
                   "name": "IntakeDownGo"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoodDown"
-                }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 3.0
+            "name": "HoodInterp"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "IntakeStop"
+            "name": "ShootAndIndex"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootIndexStop"
           }
         },
         {
@@ -46,15 +52,34 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Balls to Hub Front"
+                  "name": "HoodDown"
                 }
               },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Close Balls to Balls"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
                   "name": "HoodDown"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Balls to Hub Front"
                 }
               }
             ]
