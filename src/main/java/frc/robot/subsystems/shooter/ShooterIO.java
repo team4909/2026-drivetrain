@@ -19,6 +19,8 @@ public interface ShooterIO {
         public double motor2StatorCurrent = 0.0;
         public double motor2SupplyCurrent = 0.0;
         public double motor2Voltage = 0.0;
+
+        public double goalVelocity = 0.0;
     }
 
     // Methods are how we move actions to hardware

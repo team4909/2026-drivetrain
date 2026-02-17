@@ -175,7 +175,7 @@ public class RobotContainer {
                     () -> {
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
+                            return alliance.get().equals(Alliance.Red);
                         }
                         return false;
                     }, s_Drivetrain);
@@ -219,11 +219,11 @@ public class RobotContainer {
 
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
-                        s_Shooter.stop(),
-                        s_Indexer.stop()));
+        // joystick.rightTrigger().whileTrue(Commands.parallel(
+        //         s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
+        //                 s_Shooter.stop(),
+        //                 s_Indexer.stop()));
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         // s_Shooter.tuningShoot(),
@@ -234,8 +234,8 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 100), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
-                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(() -> 100),s_Hood.extendHood(), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
