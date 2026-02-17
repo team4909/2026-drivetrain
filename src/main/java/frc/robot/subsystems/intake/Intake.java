@@ -15,7 +15,7 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
     private final double Stowed = 0.0;
-    private final double Extended = 10.0;
+    private final double Extended = 17.5;
 
 
     public Intake(IntakeIO io) {
