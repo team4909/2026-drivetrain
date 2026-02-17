@@ -234,8 +234,8 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 100), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
-                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())),
+                Commands.parallel(s_Shooter.shoot(() -> 100),s_Hood.extendHood(), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
