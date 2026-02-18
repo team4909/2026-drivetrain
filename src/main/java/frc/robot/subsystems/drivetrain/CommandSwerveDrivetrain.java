@@ -303,6 +303,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         Logger.recordOutput("DriveState/hubCenter", new Pose2d(m_hubCenter, Rotation2d.kZero));
         Logger.recordOutput("DriveState/InterpTableDist", this.getState().Pose.getTranslation().getDistance(m_hubCenter));
+        Logger.recordOutput("DriveState/behindHub", robotBehindHub());
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
     }
 

@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -236,7 +237,7 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 100),s_Hood.extendHood(), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(() -> 100), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
@@ -280,7 +281,8 @@ public class RobotContainer {
                 .onTrue(s_Intake.stow());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
         joystick.rightBumper()
-                .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
+                // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
+                .whileTrue(Commands.repeatingSequence(s_Intake.Extend(), s_Intake.stow()))
                 .onFalse(Commands.sequence(s_Intake.stowAndStop()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
