@@ -110,9 +110,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
         NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
         NamedCommands.registerCommand("IntakeGo", s_Intake.intake());
+        NamedCommands.registerCommand("IntakeZeroDown", s_Intake.reZeroDown());
+        NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))));
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
+        NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
         NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
-        NamedCommands.registerCommand("ShootAndIndex", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())));
+        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
@@ -282,8 +286,8 @@ public class RobotContainer {
                 // .onFalse(Commands.sequence(s_Intake.stow()));
         joystick.rightBumper()
                 // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
-                .whileTrue(Commands.repeatingSequence(s_Intake.Extend(), s_Intake.stow()))
-                .onFalse(Commands.sequence(s_Intake.stowAndStop()));
+                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))))
+                .onFalse(Commands.sequence(s_Intake.Extend()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
     }

@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Left Trench to Balls"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -21,34 +15,22 @@
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "HoodDown"
+                  "waitTime": 0.5
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeStop"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Balls to Left Trench Shot"
+                  "pathName": "Left Trench Start to Left Slimeage Pass"
                 }
               },
               {
@@ -58,18 +40,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "HoodInterp"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootAndIndex"
           }
         }
       ]

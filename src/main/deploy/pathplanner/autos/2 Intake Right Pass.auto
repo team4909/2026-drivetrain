@@ -30,32 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench to Balls"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoodDown"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Balls to Left Trench Shot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeStop"
+                  "pathName": "Right Trench to Ball Pass"
                 }
               },
               {
@@ -74,32 +49,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "HoodInterp"
+                  "name": "Pass"
                 }
               },
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootAndIndex"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 6.0
+                  "waitTime": 3.0
                 }
               },
               {
@@ -107,6 +63,12 @@
                 "data": {
                   "name": "IntakeOscillate"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoodUp"
+                }
               }
             ]
           }
@@ -116,9 +78,21 @@
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "ShootIndexStop"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoodDown"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "Left Trench Shot to Close Balls"
+                  "pathName": "Right Ball Pass to Balls"
                 }
               },
               {
@@ -126,20 +100,8 @@
                 "data": {
                   "name": "IntakeDownGo"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootIndexStop"
-                }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -147,15 +109,34 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "Close Balls to Left Shot"
+                  "name": "HoodDown"
                 }
               },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Balls to Right Trench Shot"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
                   "name": "HoodInterp"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.3
                 }
               }
             ]
@@ -172,15 +153,15 @@
                 }
               },
               {
-                "type": "wait",
-                "data": {
-                  "waitTime": 10.0
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "IntakeOscillate"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 10.0
                 }
               }
             ]

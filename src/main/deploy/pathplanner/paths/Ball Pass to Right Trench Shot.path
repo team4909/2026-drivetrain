@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.011226818830243,
-        "y": 4.49432239657632
+        "x": 7.8947788873038505,
+        "y": 2.3076890156918695
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.843024251069899,
-        "y": 1.2467189728958648
+        "x": 6.173937232524964,
+        "y": 0.27631954350927357
       },
       "isLocked": false,
-      "linkedName": "Right Trench Balls"
+      "linkedName": "Right Trench Ball Pass"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 1.4925534950071324
       },
       "prevControl": {
-        "x": 5.216476462196862,
-        "y": -0.629386590584877
+        "x": 4.168445078459342,
+        "y": 1.427860199714693
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.7803837953091686,
+      "waypointRelativePos": 0.7036247334754815,
       "rotationDegrees": 0.0
     }
   ],
@@ -53,7 +53,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.0
+    "rotation": 1.1934894239819978
   },
   "useDefaultConstraints": true
 }
