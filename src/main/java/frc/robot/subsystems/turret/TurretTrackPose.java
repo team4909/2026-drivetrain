@@ -4,6 +4,8 @@ import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -20,20 +22,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretTrackPose extends Command{
     private Turret m_turret;
-    private Pose2d m_goalPose;
-    private ProfiledPIDController m_rotationalController;
     private Supplier<Pose2d> m_robotPoseSupplier;
+    private DoubleSupplier m_requiredAngle;
 
-    public TurretTrackPose(Turret turret, Pose2d goalPose, Supplier<Pose2d> robotPoseSupplier){
+    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret){
         m_turret = turret;
-        m_goalPose = goalPose;
-
-    // Initialize rotational controller to avoid NPE. Fine-tune gains/constraints as needed.
-    // m_rotationalController = new ProfiledPIDController(4.0, 0.0, 0.0,
-    //     new TrapezoidProfile.Constraints(10 * Math.PI, 10 * Math.PI));
-    // allow wrapping around -pi..pi
-    // m_rotationalController.enableContinuousInput(-Math.PI, Math.PI);
-
+        m_requiredAngle = requiredAngle;
         m_robotPoseSupplier = robotPoseSupplier;
 
         addRequirements(turret);
@@ -48,7 +42,6 @@ public class TurretTrackPose extends Command{
         // // m_rotationalController.setTolerance(Units.degreesToRadians(1.0));
         // // prime controller with current turret angle as initial state
         // // Note: if turret position units differ, adapt accordingly.
-        double currentTurretDeg = m_turret.getTurretPosition() * 360.0;
         // double currentTurretRad = Units.degreesToRadians(currentTurretDeg);
         // m_rotationalController.reset(currentTurretRad);
         // m_rotationalController.setGoal(targetHeading.getRadians());
@@ -89,13 +82,13 @@ public class TurretTrackPose extends Command{
 
     // If robot is behind the hub, aim at the nearest corner instead of the
     // provided goal pose. `HUB_POSE` and `FIELD_CORNERS` are defined below.
-    Pose2d targetPose = robotBehindHub(robotPose, HUB_POSE) ? robotPose.nearest(FIELD_CORNERS) : m_goalPose;
+    // Pose2d targetPose = robotBehindHub(robotPose, HUB_POSE) ? robotPose.nearest(FIELD_CORNERS) : m_goalPose;
 
-    // Compute vector from robot to target in field coordinates
-    Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
+    // // Compute vector from robot to target in field coordinates
+    // Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
 
         // Angle from field +X axis to target (degrees)
-        double angleToTargetFieldDeg = Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX()));
+        double angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
         Logger.recordOutput("Turret/angleToTarget", angleToTargetFieldDeg);
 
         // Robot heading in degrees (field frame)
@@ -121,7 +114,7 @@ public class TurretTrackPose extends Command{
     Logger.recordOutput("Turret/flippedRelative", flippedRelative);
 
         Logger.recordOutput("Turret/targetHeading", turretCmdDeg);
-        Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
+        // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
 
     }
 

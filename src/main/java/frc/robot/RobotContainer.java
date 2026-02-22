@@ -48,6 +48,7 @@ import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOServo;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShootingCalculator;
+import frc.robot.subsystems.shooter.ShootingParameters;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
@@ -71,8 +72,6 @@ public class RobotContainer {
                     AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0),
             new Rotation2d());
 
-    private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
-
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -91,7 +90,8 @@ public class RobotContainer {
     private final Turret s_Turret;
     private final Intake s_Intake;
     private final SendableChooser<Command> m_chooser;
-    private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
+//     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
+    private ShootingParameters m_shootingParameters;
     private final Vision s_Vision;
 
     public RobotContainer() {
@@ -131,6 +131,8 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(270.0 - 65)))));
+
+        m_shootingParameters = new ShootingParameters(drivetrain);
         // new VisionIOPhotonVision("front-right-cam", new Transform3d(new
         // Translation3d(
         // Units.inchesToMeters(10.92),
@@ -185,7 +187,7 @@ public class RobotContainer {
                         .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
                 ));
-        s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
+        s_Hood.setDefaultCommand(s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub.getTranslation()).hoodAngle()));
         // s_Hood.setDefaultCommand(s_Hood.tunableShot());
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
@@ -200,7 +202,7 @@ public class RobotContainer {
         joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
         joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+                s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub.getTranslation()).rpm()),
                 Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
                         s_Shooter.stop(),
                         s_Indexer.stop()));
@@ -216,7 +218,7 @@ public class RobotContainer {
         joystick.a().whileTrue(new RotateToPose(drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
                 .toPose2d().transformBy(new Transform2d(new Translation2d(-0.4, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, m_hub, () -> drivetrain.getState().Pose));
+        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(m_hub.getTranslation()).turretAngle().getDegrees(), () -> drivetrain.getState().Pose, s_Turret));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,

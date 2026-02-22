@@ -1,16 +1,15 @@
-import java.security.KeyStore.Entry;
+package frc.robot.subsystems.shooter;
 import java.util.Map;
 
-import edu.wpi.first.math.MathUtil;
+import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.shooter.Shooter;
+
 
 @SuppressWarnings("static-access")
 public class ShootingParameters {
@@ -19,7 +18,9 @@ public class ShootingParameters {
 
     private static final InterpolatingDoubleTreeMap m_hoodTable = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap m_shooterTable = new InterpolatingDoubleTreeMap();
-    private static final InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
+    private static InterpolatingDoubleTreeMap m_timeOfFlightTable;
+
+    private final double kLATENCYCOMPENSATION = 0.1;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
         m_hoodTable.put(Units.inchesToMeters(63.625), 25.0);
@@ -62,22 +63,22 @@ public class ShootingParameters {
         // ShooterParameters(60.0, 25.0, 1.2));
     }
 
-    private Hood m_hood;
-    private Shooter m_shooter;
+    private CommandSwerveDrivetrain m_drivetrain;
 
-    public ShootingParameters(Hood hood, Shooter shooter) {
-        m_hood = hood;
-        m_shooter = shooter;
+    public ShootingParameters(CommandSwerveDrivetrain drivetrain) {
+        m_drivetrain = drivetrain;
     }
 
-    public ShooterCommand calculate(
-            Translation2d robotPosition,
-            Translation2d robotVelocity,
-            Translation2d goalPosition,
-            double latencyCompensation) {
+    public ShooterCommand calculate(Translation2d goalPosition) {
+
+        SwerveDriveState drivetrainState = m_drivetrain.getState();
+
+        Translation2d robotPosition = drivetrainState.Pose.getTranslation();
+        Translation2d robotVelocity = new Translation2d(drivetrainState.Speeds.vxMetersPerSecond, drivetrainState.Speeds.vyMetersPerSecond);
+
         // 1. Project future position
         Translation2d futurePos = robotPosition.plus(
-                robotVelocity.times(latencyCompensation));
+                robotVelocity.times(kLATENCYCOMPENSATION));
 
         // 2. Get target vector
         Translation2d toGoal = goalPosition.minus(futurePos);
@@ -102,29 +103,34 @@ public class ShootingParameters {
         Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
 
         // 6. Extract results
-        Rotation2d turretAngle = shotVelocity.getAngle().plus(Rotation2d.k180deg);
+        Rotation2d turretAngle = shotVelocity.getAngle();
         double requiredVelocity = shotVelocity.getNorm();
 
-        double velocityRatio = requiredVelocity / horizontalVelocity;
+        double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
+        double requiredRPS = m_shooterTable.get(effectiveDistance);
 
-        // Splitting correction
-        double rpmFactor = Math.sqrt(velocityRatio);
-        double hoodFactor = Math.sqrt(velocityRatio);
+        return new ShooterCommand(turretAngle, requiredRPS, baseline.hoodAngle);
 
-        // Apply RPM
-        double requiredRpm = baseline.rps() * rpmFactor;
+        // double velocityRatio = requiredVelocity / horizontalVelocity;
 
-        // Apply hood angle correction
-        double totalVelocity = horizontalVelocity / Math.cos(Units.degreesToRadians(ballReleaseAngle));
-        double targetHorizFromHood = horizontalVelocity * hoodFactor;
-        double ratio = MathUtil.clamp(targetHorizFromHood / totalVelocity, 0.0, 1.0);
-        double adjustedHood = Math.toDegrees(Math.acos(ratio));
+        // // Splitting correction
+        // double rpmFactor = Math.sqrt(velocityRatio);
+        // double hoodFactor = Math.sqrt(velocityRatio);
 
-        // 7. Use table in reverse: velocity → effective distance → RPM
-        // double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
-        // double requiredRpm = m_shooterTable.get(effectiveDistance);
+        // // Apply RPM
+        // double requiredRpm = baseline.rps() * rpmFactor;
 
-        return new ShooterCommand(turretAngle, requiredRpm, adjustedHood);
+        // // Apply hood angle correction
+        // double totalVelocity = horizontalVelocity / Math.cos(Units.degreesToRadians(ballReleaseAngle));
+        // double targetHorizFromHood = horizontalVelocity * hoodFactor;
+        // double ratio = MathUtil.clamp(targetHorizFromHood / totalVelocity, 0.0, 1.0);
+        // double adjustedHood = Math.toDegrees(Math.acos(ratio));
+
+        // // 7. Use table in reverse: velocity → effective distance → RPM
+        // // double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
+        // // double requiredRpm = m_shooterTable.get(effectiveDistance);
+
+        // return new ShooterCommand(turretAngle, requiredRpm, adjustedHood);
     }
 
     public double velocityToEffectiveDistance(double velocity) {
@@ -153,6 +159,7 @@ public class ShootingParameters {
     public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {
     }
 
+    //Returned requirements
     public record ShooterCommand(Rotation2d turretAngle, double rpm, double hoodAngle) {
     }
 }
