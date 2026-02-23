@@ -6,6 +6,7 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.hood.Hood;
@@ -43,29 +44,6 @@ public class ShootingParameters {
         m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625)/1.2, Units.inchesToMeters(103.625));
         m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40)/1.2, Units.inchesToMeters(103.625 + 40));
         m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40 + 40)/1.2, Units.inchesToMeters(103.625 + 40 + 40));
-
-        // private Map<Double, Double> m_timeOfFlightEntries = Map.ofEntries(
-        // Map.Entry<Units.inchesToMeters(63.625), 1.2>,
-        // Map.Entry<Units.inchesToMeters(103.625), 1.2>,
-        // Map.entry(Units.inchesToMeters(63.625), 1.2),
-        // Map.entry(Units.inchesToMeters(103.625), 1.2),
-        // Map.entry(Units.inchesToMeters(103.625+40), 1.2),
-        // Map.entry(Units.inchesToMeters(103.625+40+40), 1.2)
-        // );
-
-        // m_timeOfFlightTable.put(Units.inchesToMeters(63.625), 1.2);
-        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625), 1.2);
-        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40), 1.2);
-        // m_timeOfFlightTable.put(Units.inchesToMeters(103.625+40+40), 1.2);
-
-        // shooterTable.put(Units.inchesToMeters(63.625), new ShooterParameters(47.0,
-        // 25.0, 1.2));
-        // shooterTable.put(Units.inchesToMeters(103.625), new ShooterParameters(52.0,
-        // 25.0, 1.2));
-        // shooterTable.put(Units.inchesToMeters(103.625+40), new
-        // ShooterParameters(55.0, 25.0, 1.2));
-        // shooterTable.put(Units.inchesToMeters(103.625+40+40), new
-        // ShooterParameters(60.0, 25.0, 1.2));
     }
 
     private CommandSwerveDrivetrain m_drivetrain;
@@ -79,11 +57,19 @@ public class ShootingParameters {
         SwerveDriveState drivetrainState = m_drivetrain.getState();
 
         Translation2d robotPosition = drivetrainState.Pose.getTranslation();
-        Translation2d robotVelocity = new Translation2d(drivetrainState.Speeds.vxMetersPerSecond, drivetrainState.Speeds.vyMetersPerSecond);
+        Translation2d robotVelocity = new Translation2d(ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vxMetersPerSecond, ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vyMetersPerSecond);
 
-        // 1. Project future position
-        Translation2d futurePos = robotPosition.plus(
-                robotVelocity.times(kLATENCYCOMPENSATION));
+        // --- ADDED RECURSION LOOP ---
+        double predictedDistance = robotPosition.getDistance(goalPosition);
+        double timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
+        Translation2d futurePos = robotPosition;
+
+        for (int i = 0; i < 3; i++) {
+            futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION + timeOfFlight));
+            predictedDistance = futurePos.getDistance(goalPosition);
+            timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
+        }
+        // --- END RECURSION ---
 
         // 2. Get target vector
         Translation2d toGoal = goalPosition.minus(futurePos);
@@ -97,7 +83,7 @@ public class ShootingParameters {
                 m_timeOfFlightTable.get(distance));
 
         double horizontalVelocity = distance / baseline.timeOfFlight();
-        
+
         // 4. Build target velocity vector
         Translation2d targetVelocity = targetDirection.times(horizontalVelocity);
 
@@ -110,52 +96,10 @@ public class ShootingParameters {
 
         double effectiveDistance = m_horizontalVelocityToDistanceTable.get(requiredVelocity);
         double requiredRPS = m_shooterTable.get(effectiveDistance);
+        double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
 
-        return new ShooterCommand(turretAngle, requiredRPS, baseline.hoodAngle);
-
-        // double velocityRatio = requiredVelocity / horizontalVelocity;
-
-        // // Splitting correction
-        // double rpmFactor = Math.sqrt(velocityRatio);
-        // double hoodFactor = Math.sqrt(velocityRatio);
-
-        // // Apply RPM
-        // double requiredRpm = baseline.rps() * rpmFactor;
-
-        // // Apply hood angle correction
-        // double totalVelocity = horizontalVelocity / Math.cos(Units.degreesToRadians(ballReleaseAngle));
-        // double targetHorizFromHood = horizontalVelocity * hoodFactor;
-        // double ratio = MathUtil.clamp(targetHorizFromHood / totalVelocity, 0.0, 1.0);
-        // double adjustedHood = Math.toDegrees(Math.acos(ratio));
-
-        // // 7. Use table in reverse: velocity → effective distance → RPM
-        // // double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
-        // // double requiredRpm = m_shooterTable.get(effectiveDistance);
-
-        // return new ShooterCommand(turretAngle, requiredRpm, adjustedHood);
+        return new ShooterCommand(turretAngle, requiredRPS, requiredHoodAngle);
     }
-
-    // public double velocityToEffectiveDistance(double velocity) {
-    //     // Binary search or iterate through table to find distance
-    //     // where (distance / ToF) = velocity
-    //     // Most InterpolatingTreeMap implementations support inverse lookup
-    //     // or you can build a reverse map: velocity → distance
-
-    //     for (Map.Entry<Double, Double> entry : Map.of(
-    //             Units.inchesToMeters(63.625), 1.2,
-    //             Units.inchesToMeters(103.625), 1.2,
-    //             Units.inchesToMeters(103.625 + 40), 1.2,
-    //             Units.inchesToMeters(103.625 + 40 + 40), 1.2).entrySet()) {
-
-    //         double dist = entry.getKey();
-    //         double vel = dist / entry.getValue();
-    //         if (vel >= velocity) {
-    //             return dist; // Interpolate for better accuracy
-    //         }
-    //     }
-
-    //     return Units.inchesToMeters(103.625 + 40 + 40); // Clamp to max
-    // }
 
     // Simple data class for the LUT
     public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {
