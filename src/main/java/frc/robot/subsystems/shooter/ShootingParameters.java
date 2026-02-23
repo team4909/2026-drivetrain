@@ -18,7 +18,8 @@ public class ShootingParameters {
 
     private static final InterpolatingDoubleTreeMap m_hoodTable = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap m_shooterTable = new InterpolatingDoubleTreeMap();
-    private static InterpolatingDoubleTreeMap m_timeOfFlightTable;
+    private static InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
+    private static final InterpolatingDoubleTreeMap m_horizontalVelocityToDistanceTable = new InterpolatingDoubleTreeMap();
 
     private final double kLATENCYCOMPENSATION = 0.1;//If shots land ahead, lower number. If shots land behind, increase number
 
@@ -33,11 +34,15 @@ public class ShootingParameters {
         m_shooterTable.put(Units.inchesToMeters(103.625 + 40), 55.0);
         m_shooterTable.put(Units.inchesToMeters(103.625 + 40 + 40), 60.0);
 
-        m_timeOfFlightTable = m_timeOfFlightTable.ofEntries(
-                Map.entry(Units.inchesToMeters(63.625), 1.2),
-                Map.entry(Units.inchesToMeters(103.625), 1.2),
-                Map.entry(Units.inchesToMeters(103.625 + 40), 1.2),
-                Map.entry(Units.inchesToMeters(103.625 + 40 + 40), 1.2));
+        m_timeOfFlightTable.put(Units.inchesToMeters(63.625), 1.2);
+        m_timeOfFlightTable.put(Units.inchesToMeters(103.625), 1.2);
+        m_timeOfFlightTable.put(Units.inchesToMeters(103.625 + 40), 1.2);
+        m_timeOfFlightTable.put(Units.inchesToMeters(103.625 + 40 + 40), 1.2);
+
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(63.625)/1.2, Units.inchesToMeters(63.625));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625)/1.2, Units.inchesToMeters(103.625));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40)/1.2, Units.inchesToMeters(103.625 + 40));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40 + 40)/1.2, Units.inchesToMeters(103.625 + 40 + 40));
 
         // private Map<Double, Double> m_timeOfFlightEntries = Map.ofEntries(
         // Map.Entry<Units.inchesToMeters(63.625), 1.2>,
@@ -91,11 +96,8 @@ public class ShootingParameters {
                 m_hoodTable.get(distance),
                 m_timeOfFlightTable.get(distance));
 
-        double ballReleaseAngle = 90 - baseline.hoodAngle(); // cos90 = 0, multiplying ball velocity by 0 means ball
-                                                             // straight up.
-        double horizontalVelocity = distance / baseline.timeOfFlight()
-                * Math.cos(Units.degreesToRadians(ballReleaseAngle));
-
+        double horizontalVelocity = distance / baseline.timeOfFlight();
+        
         // 4. Build target velocity vector
         Translation2d targetVelocity = targetDirection.times(horizontalVelocity);
 
@@ -106,7 +108,7 @@ public class ShootingParameters {
         Rotation2d turretAngle = shotVelocity.getAngle();
         double requiredVelocity = shotVelocity.getNorm();
 
-        double effectiveDistance = velocityToEffectiveDistance(requiredVelocity);
+        double effectiveDistance = m_horizontalVelocityToDistanceTable.get(requiredVelocity);
         double requiredRPS = m_shooterTable.get(effectiveDistance);
 
         return new ShooterCommand(turretAngle, requiredRPS, baseline.hoodAngle);
@@ -133,27 +135,27 @@ public class ShootingParameters {
         // return new ShooterCommand(turretAngle, requiredRpm, adjustedHood);
     }
 
-    public double velocityToEffectiveDistance(double velocity) {
-        // Binary search or iterate through table to find distance
-        // where (distance / ToF) = velocity
-        // Most InterpolatingTreeMap implementations support inverse lookup
-        // or you can build a reverse map: velocity → distance
+    // public double velocityToEffectiveDistance(double velocity) {
+    //     // Binary search or iterate through table to find distance
+    //     // where (distance / ToF) = velocity
+    //     // Most InterpolatingTreeMap implementations support inverse lookup
+    //     // or you can build a reverse map: velocity → distance
 
-        for (Map.Entry<Double, Double> entry : Map.of(
-                Units.inchesToMeters(63.625), 1.2,
-                Units.inchesToMeters(103.625), 1.2,
-                Units.inchesToMeters(103.625 + 40), 1.2,
-                Units.inchesToMeters(103.625 + 40 + 40), 1.2).entrySet()) {
+    //     for (Map.Entry<Double, Double> entry : Map.of(
+    //             Units.inchesToMeters(63.625), 1.2,
+    //             Units.inchesToMeters(103.625), 1.2,
+    //             Units.inchesToMeters(103.625 + 40), 1.2,
+    //             Units.inchesToMeters(103.625 + 40 + 40), 1.2).entrySet()) {
 
-            double dist = entry.getKey();
-            double vel = dist / entry.getValue();
-            if (vel >= velocity) {
-                return dist; // Interpolate for better accuracy
-            }
-        }
+    //         double dist = entry.getKey();
+    //         double vel = dist / entry.getValue();
+    //         if (vel >= velocity) {
+    //             return dist; // Interpolate for better accuracy
+    //         }
+    //     }
 
-        return Units.inchesToMeters(103.625 + 40 + 40); // Clamp to max
-    }
+    //     return Units.inchesToMeters(103.625 + 40 + 40); // Clamp to max
+    // }
 
     // Simple data class for the LUT
     public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {
