@@ -16,19 +16,19 @@ public class Hood extends SubsystemBase{
     private final HoodIOInputsAutoLogged m_inputs = new HoodIOInputsAutoLogged();
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/HoodPosition", 1000);
 
-    private double inmin = 32; // min hood angle
-    private double inmax = 48; // max hood angle
-    private double outmin = 1000.0; // min pulse width
-    private double outmax = 2000.0; // max pulse width
+    // private double inmin = 32; // min hood angle
+    // private double inmax = 48; // max hood angle
+    // private double outmin = 1000.0; // min pulse width
+    // private double outmax = 2000.0; // max pulse width
     
     public Hood(HoodIO io){
         super("Hood");
         m_io = io;
     }
 
-    public double map(double x) {
-        return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
-    }
+    // public double map(double x) {
+    //     return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
+    // }
     
     public Command extendHood (){
         return this.run (() -> m_io.setPosition(2000)).withName("ExtendHood");

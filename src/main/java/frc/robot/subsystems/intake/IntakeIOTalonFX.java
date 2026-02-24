@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -35,15 +36,15 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeExtender = new TalonFX(kIntakeExtenderID, kCanbus);
 
         final TalonFXConfiguration cfg = new TalonFXConfiguration();
-        cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
+        cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-        cfg.Slot0.kP = 0.3;
+        cfg.Slot0.kP = .5;
         cfg.Slot0.kI = 0;
         cfg.Slot0.kD = 0;
 
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
-
+        
         // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
         // extenderSlot0Configs.kP = 10;
 

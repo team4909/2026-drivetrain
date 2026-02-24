@@ -54,6 +54,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
+    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
@@ -139,7 +141,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-        System.out.println(TunerConstants.kDriveGearRatio);
+        // System.out.println(TunerConstants.kDriveGearRatio);
+
+        Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
+        Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
+
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
+            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        }
+        // else {
+        //     m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // }
     }
 
     /**
@@ -164,8 +176,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
-      
 
+        Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
+        Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
+
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
+            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        }
+        // else {
+        //      m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // }
       
     }
 
@@ -203,6 +223,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+        Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
+        Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
+
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
+            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        }
+        // else {
+        //      m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // }
+
+        
     }
 
     /**
@@ -267,10 +298,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public double getDistanceFromHub(){
-        Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
-        Logger.recordOutput("DriveState/hubCenter", aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)));
+        // Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
+
+
+        Logger.recordOutput("DriveState/hubCenter", new Pose2d(m_hubCenter, Rotation2d.kZero));
         Logger.recordOutput("DriveState/InterpTableDist", this.getState().Pose.getTranslation().getDistance(m_hubCenter));
+        Logger.recordOutput("DriveState/behindHub", robotBehindHub());
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
+    }
+
+    public boolean robotBehindHub() {
+        // Simple X-based check; adapt this to your field's coordinate convention if needed.
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+            return this.getState().Pose.getX() < m_hubCenter.getX();
+        }
+        return this.getState().Pose.getX() > m_hubCenter.getX();
     }
 
     private void startSimThread() {
