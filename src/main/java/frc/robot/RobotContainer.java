@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -108,9 +109,15 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeDownGo", s_Intake.intakeAndExtend());
         NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
         NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
+        NamedCommands.registerCommand("IntakeGo", s_Intake.intake());
+        NamedCommands.registerCommand("IntakeZeroDown", s_Intake.reZeroDown());
+        NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))));
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
+        NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
         NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
-        NamedCommands.registerCommand("ShootAndIndex", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())));
+        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
@@ -234,7 +241,7 @@ public class RobotContainer {
         // ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 100),s_Hood.extendHood(), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
@@ -278,8 +285,9 @@ public class RobotContainer {
                 .onTrue(s_Intake.stow());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
         joystick.rightBumper()
-                .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
-                .onFalse(Commands.sequence(s_Intake.stowAndStop()));
+                // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
+                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))))
+                .onFalse(Commands.sequence(s_Intake.Extend()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
     }

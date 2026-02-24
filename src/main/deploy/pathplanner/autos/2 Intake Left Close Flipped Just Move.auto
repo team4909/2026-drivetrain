@@ -5,52 +5,59 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "HoodDown"
+            "pathName": "Left Trench to Close Balls"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "wait",
                 "data": {
-                  "pathName": "Left Trench to Balls"
+                  "waitTime": 2.0
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "IntakeDownGo"
+                  "name": "ShootAndIndex"
                 }
               }
             ]
           }
         },
         {
-          "type": "wait",
+          "type": "race",
           "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "IntakeStop"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootIndexStop"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Balls to Hub Front"
+            "pathName": "Close Balls to Balls"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "HoodInterp"
+            "pathName": "Balls to Left Trench Shot"
           }
         },
         {

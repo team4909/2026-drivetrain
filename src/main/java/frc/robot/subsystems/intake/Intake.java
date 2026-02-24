@@ -82,6 +82,12 @@ public class Intake extends SubsystemBase {
         });
     }
 
+    public Command reZeroDown() {
+        return this.runOnce(() ->{
+            m_io.setPosition(10);
+        });
+    }
+
     @Override
     public void periodic() {
         m_io.updateInputs(m_inputs);
