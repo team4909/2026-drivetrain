@@ -25,10 +25,10 @@ public class ShootingParameters {
     private final double kLATENCYCOMPENSATION = 0.1;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
-        m_hoodTable.put(Units.inchesToMeters(63.625), 25.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625), 25.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625 + 40), 25.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625 + 40 + 40), 25.0);
+        m_hoodTable.put(Units.inchesToMeters(63.625), 1100.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625), 1300.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625 + 40), 1650.0);
+        m_hoodTable.put(Units.inchesToMeters(103.625 + 40 + 40), 1925.0);
 
         m_shooterTable.put(Units.inchesToMeters(63.625), 47.0);
         m_shooterTable.put(Units.inchesToMeters(103.625), 52.0);
