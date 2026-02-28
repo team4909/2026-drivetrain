@@ -281,9 +281,10 @@ public class RobotContainer {
        joystick.leftBumper()
                 .onTrue(s_Intake.Extend());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
-        joystick.povLeft()
+        joystick.x()
                 .onTrue(s_Intake.stow());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
+        joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
         joystick.rightBumper()
                 // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
                 .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))))

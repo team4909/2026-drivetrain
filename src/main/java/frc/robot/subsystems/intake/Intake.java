@@ -16,6 +16,7 @@ public class Intake extends SubsystemBase {
 
     private final double Stowed = 0.0;
     private final double Extended = -7;
+    private final double Bump = -6;
 
 
     public Intake(IntakeIO io) {
@@ -68,7 +69,15 @@ public class Intake extends SubsystemBase {
             m_io.setExtenderSetpoint(Stowed);
             // m_io.setSpeed(0);
             m_inputs.setpoint = "Stowed";
-        }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+        }).withName("Stow").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+    }
+
+    public Command bump() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Bump);
+            // m_io.setSpeed(0);
+            m_inputs.setpoint = "Bump";
+        }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
     }
 
     public Command setpointFromTuning() {
