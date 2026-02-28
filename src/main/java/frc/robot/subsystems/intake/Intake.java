@@ -13,7 +13,6 @@ public class Intake extends SubsystemBase {
     private final IntakeIOInputsAutoLogged m_inputs = new IntakeIOInputsAutoLogged();
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
-
     private final double Stowed = 0.0;
     private final double Extended = -7;
 
@@ -34,6 +33,10 @@ public class Intake extends SubsystemBase {
 
     public Command intake() {
         return this.run(() -> m_io.setSpeed(-1)).withName("IntakeIn");
+    }
+
+    public Command intakeVelocity() {
+        return this.run(() -> m_io.setVelocity(10.0)).withName("IntakeInVelocity");
     }
 
     public Command outtake() {
