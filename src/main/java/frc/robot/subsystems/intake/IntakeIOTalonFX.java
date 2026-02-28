@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.Rotations;
 
+import java.io.ObjectInputFilter.Config;
+
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -36,7 +38,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeExtender = new TalonFX(kIntakeExtenderID, kCanbus);
 
         final TalonFXConfiguration cfg = new TalonFXConfiguration();
-        cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
+        cfg.CurrentLimits.SupplyCurrentLimit = 5.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
         cfg.Slot0.kP = 0.3;
         cfg.Slot0.kI = 0;
@@ -44,6 +46,10 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
+
+        final TalonFXConfiguration config = new TalonFXConfiguration();
+        config.CurrentLimits.SupplyCurrentLimit = 20;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
         
         // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
         // extenderSlot0Configs.kP = 10;
@@ -51,6 +57,11 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         m_intakeExtender.getConfigurator().apply(cfg);
        m_intakeExtender.getConfigurator().apply(extenderConfigs);
+
+       m_intakeRoller.getConfigurator().apply(config);
+       m_intakeRollerLeft.getConfigurator().apply(config);
+
+
 
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 

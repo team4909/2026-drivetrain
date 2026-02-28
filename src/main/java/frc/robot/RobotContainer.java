@@ -30,6 +30,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -94,7 +95,11 @@ public class RobotContainer {
     public RobotContainer() {
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
             m_hub = m_hub.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
-    }
+    }   
+        RobotController.setBrownoutVoltage(6.25);
+        System.out.println(RobotController.getBrownoutVoltage());
+        
+        
 
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
@@ -128,15 +133,15 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(90.0 + 65)))),
-                new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-11.935828),
-                        Units.inchesToMeters(11.338099),
-                        Units.inchesToMeters(14.3875)),
-                        new Rotation3d(
-                                Units.degreesToRadians(7.435472),
-                                Units.degreesToRadians(-30),
-                                Units.degreesToRadians(192.5)
-                        ))),
+                // new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
+                //         Units.inchesToMeters(-11.935828),
+                //         Units.inchesToMeters(11.338099),
+                //         Units.inchesToMeters(14.3875)),
+                //         new Rotation3d(
+                //                 Units.degreesToRadians(7.435472),
+                //                 Units.degreesToRadians(-30),
+                //                 Units.degreesToRadians(192.5)
+                //         ))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
                 // Units.inchesToMeters(10.92),
@@ -246,6 +251,7 @@ public class RobotContainer {
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
+                        // s_Hood.
                         s_Shooter.stop(),
                         s_Indexer.stop()));
 

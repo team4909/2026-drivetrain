@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.153552068473608,
-        "y": 7.961883024251071
+        "x": 8.696880001625406,
+        "y": 8.518581432018728
       },
       "isLocked": false,
       "linkedName": "Left Trench Balls"
     },
     {
       "anchor": {
-        "x": 3.075363636363636,
-        "y": 7.137352272727274
+        "x": 1.9818116975748925,
+        "y": 6.1375320970042795
       },
       "prevControl": {
-        "x": 4.996519258202567,
-        "y": 8.000699001426534
+        "x": 2.201768901565184,
+        "y": 8.1559629101316
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.7605804111245452,
-      "rotationDegrees": -3.459660070041259
+      "waypointRelativePos": 0.6950959488272961,
+      "rotationDegrees": 1.5134230063641814
     }
   ],
   "constraintZones": [],
@@ -47,7 +47,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.392925187392386
+    "rotation": 137.93567344642116
   },
   "reversed": false,
   "folder": null,
