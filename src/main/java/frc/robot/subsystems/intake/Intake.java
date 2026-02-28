@@ -15,7 +15,8 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
 
     private final double Stowed = 0.0;
-    private final double Extended = 17.5;
+    private final double Extended = -8.9;
+    private final double Bump = -6;
 
 
     public Intake(IntakeIO io) {
@@ -33,7 +34,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intake() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("IntakeIn");
+        return this.run(() -> m_io.setSpeed(1)).withName("IntakeIn");
     }
 
     public Command outtake() {
@@ -43,10 +44,17 @@ public class Intake extends SubsystemBase {
     public Command intakeAndExtend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
-            m_io.setSpeed(-1);
+            m_io.setSpeed(1);
             m_inputs.setpoint = "Extend";
         }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
     }
+
+    // public Command oscillate() {
+    //     Commands.parallel(
+    //         m_io.setSpeed(1),
+    //        Commands.repeatingSequence(Commands.race(Extend(), Commands.waitSeconds(0.1)), Commands.race(bump(), Commands.waitSeconds(0.1)))
+    //     );
+    // }
 
      public Command Extend() {
         return this.run(() -> {
@@ -69,6 +77,22 @@ public class Intake extends SubsystemBase {
             // m_io.setSpeed(0);
             m_inputs.setpoint = "Stowed";
         }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+    }
+    
+    public Command bump() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Bump);
+            // m_io.setSpeed(0);
+            m_inputs.setpoint = "Bump";
+        }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
+    }
+
+    public Command bumpAndRun() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(Bump);
+            m_io.setSpeed(1);
+            m_inputs.setpoint = "Bump";
+        }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
     }
 
     public Command setpointFromTuning() {
