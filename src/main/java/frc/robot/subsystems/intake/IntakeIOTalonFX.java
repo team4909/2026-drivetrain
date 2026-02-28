@@ -15,12 +15,12 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
-    private final TalonFX m_intakeRoller;
+  private final TalonFX m_intakeRoller;
     private final TalonFX m_intakeExtender;
     private final TalonFX m_intakeRollerLeft;
     private PositionVoltage m_extenderRequest;
   
-    private final int kIntakeRollerID = 56;
+   private final int kIntakeRollerID = 56;
     private final int kIntakeRollerLeaderID = 57;
     private final int kIntakeExtenderID = 55;
 
@@ -38,7 +38,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         final TalonFXConfiguration cfg = new TalonFXConfiguration();
         cfg.CurrentLimits.SupplyCurrentLimit = 30.0;
         cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-        cfg.Slot0.kP = .5;
+        cfg.Slot0.kP = 1;
         cfg.Slot0.kI = 0;
         cfg.Slot0.kD = 0;
 
@@ -76,9 +76,9 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {
-        m_inputs.speed = m_intakeRoller.getVelocity().getValueAsDouble();
-        m_inputs.statorCurrent = m_intakeRoller.getStatorCurrent().getValueAsDouble();
-        m_inputs.supplyCurrent = m_intakeRoller.getSupplyCurrent().getValueAsDouble();
+        m_inputs.speed = m_intakeRollerLeft.getVelocity().getValueAsDouble();
+        m_inputs.statorCurrent = m_intakeRollerLeft.getStatorCurrent().getValueAsDouble();
+        m_inputs.supplyCurrent = m_intakeRollerLeft.getSupplyCurrent().getValueAsDouble();
         m_inputs.position = m_intakeExtender.getPosition().getValueAsDouble();
     }
     

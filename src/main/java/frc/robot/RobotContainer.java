@@ -121,13 +121,13 @@ public class RobotContainer {
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-9.423484),
-                        Units.inchesToMeters(10.544861),
-                        Units.inchesToMeters(7.844)), // 682965
+                        Units.inchesToMeters(-9.88538),
+                        Units.inchesToMeters(10.762213),
+                        Units.inchesToMeters(8.314941)), // 682965
                         new Rotation3d(
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
-                                Units.degreesToRadians(90.0 + 65)))),
+                                Units.degreesToRadians(90.0 + 65)))), //90.0 + 65
                 new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
                         Units.inchesToMeters(-11.935828),
                         Units.inchesToMeters(11.338099),
@@ -136,6 +136,24 @@ public class RobotContainer {
                                 Units.degreesToRadians(7.435472),
                                 Units.degreesToRadians(-30),
                                 Units.degreesToRadians(192.5)
+                        ))),
+                new VisionIOPhotonVision("top-back-left-cam", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-9.240063 - 21.5),
+                        Units.inchesToMeters(10.072250 - 2),
+                        Units.inchesToMeters(15.539060)),
+                        new Rotation3d(
+                                Units.degreesToRadians(-5.6737923),
+                                Units.degreesToRadians(-21),
+                                Units.degreesToRadians(66)
+                        ))),
+                new VisionIOPhotonVision("top-back-left-cam1", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-9.24006310 - 21), //-9.24006310
+                        Units.inchesToMeters(10.072250 - 2), //10.072250
+                        Units.inchesToMeters(15.539060)), //15.539060
+                        new Rotation3d(
+                                Units.degreesToRadians(-5.6737923), //5.6737923
+                                Units.degreesToRadians(-21), //-21
+                                Units.degreesToRadians(66) //69.656
                         ))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
@@ -148,13 +166,13 @@ public class RobotContainer {
                 // Units.degreesToRadians(45)))),
                 new VisionIOPhotonVision("back-right-cam", new Transform3d(
                         new Translation3d(
-                                Units.inchesToMeters(-9.423484),
-                                Units.inchesToMeters(-10.544861),
-                                Units.inchesToMeters(7.844)),
+                                Units.inchesToMeters(-9.888875),
+                                Units.inchesToMeters(-10.761876),
+                                Units.inchesToMeters(8.314941)),
                         new Rotation3d(
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
-                                Units.degreesToRadians(270.0 - 65)))));
+                                Units.degreesToRadians(270.0 - 65))))); //270.0 - 65
         // new VisionIOPhotonVision("front-right-cam", new Transform3d(new
         // Translation3d(
         // Units.inchesToMeters(10.92),
@@ -287,8 +305,8 @@ public class RobotContainer {
         joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
         joystick.rightBumper()
                 // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
-                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))))
-                .onFalse(Commands.sequence(s_Intake.Extend()));
+                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.1))))
+                .onFalse(Commands.sequence(s_Intake.Extend(), s_Intake.stop()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
     }
