@@ -11,6 +11,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
 
 public class IntakeIOTalonFX implements IntakeIO {
@@ -44,6 +47,10 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
+
+        final TalonFXConfiguration intakeConfigs = new TalonFXConfiguration();
+        intakeConfigs.CurrentLimits.SupplyCurrentLimit = 30.0;
+        intakeConfigs.CurrentLimits.SupplyCurrentLimitEnable = true;
         
         // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
         // extenderSlot0Configs.kP = 10;
@@ -51,6 +58,9 @@ public class IntakeIOTalonFX implements IntakeIO {
 
         m_intakeExtender.getConfigurator().apply(cfg);
        m_intakeExtender.getConfigurator().apply(extenderConfigs);
+
+       m_intakeRoller.getConfigurator().apply(intakeConfigs);
+       m_intakeRollerLeft.getConfigurator().apply(intakeConfigs);
 
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 
