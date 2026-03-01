@@ -50,6 +50,7 @@ import frc.robot.subsystems.intake.IntakeIOTalonFX;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.shooter.ShootingCalculator;
+import frc.robot.subsystems.shooter.ShootingParameters;
 import frc.robot.subsystems.turret.Turret;
 import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.turret.TurretTrackPose;
@@ -88,13 +89,15 @@ public class RobotContainer {
     private final Turret s_Turret;
     private final Intake s_Intake;
     private final SendableChooser<Command> m_chooser;
-    private ShootingCalculator m_shootingCalculator = new ShootingCalculator(s_Drivetrain);
+//     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
+    private ShootingParameters m_shootingParameters;
     private final Vision s_Vision;
 
     public RobotContainer() {
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
             m_hub = m_hub.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
     }
+
 
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
         s_Shooter = new Shooter(new ShooterIOTalonFX());
@@ -114,8 +117,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))));
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
         NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
-        NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(m_shootingCalculator::getHoodPosition));
-        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
+        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
@@ -172,7 +175,9 @@ public class RobotContainer {
                         new Rotation3d(
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
-                                Units.degreesToRadians(270.0 - 65))))); //270.0 - 65
+                                Units.degreesToRadians(270.0 - 65)))));
+
+        m_shootingParameters = new ShootingParameters(s_Drivetrain);
         // new VisionIOPhotonVision("front-right-cam", new Transform3d(new
         // Translation3d(
         // Units.inchesToMeters(10.92),
@@ -230,8 +235,11 @@ public class RobotContainer {
         // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
 
         s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(), 
-        s_Hood.goTo(m_shootingCalculator::getHoodPosition), 
+        s_Hood.goTo((() -> m_shootingParameters.calculate(m_hub).hoodAngle())), 
         s_Drivetrain::robotBehindHub));
+
+
+        // s_Hood.setDefaultCommand(s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
         // s_Hood.setDefaultCommand(s_Hood.tunableShot());
         joystick.start().onTrue(s_Drivetrain.runOnce(() -> s_Drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
@@ -260,17 +268,25 @@ public class RobotContainer {
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
                 Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
                         s_Shooter.stop(),
-                        s_Indexer.stop()));
+                        s_Indexer.stop()
+                ));
+        
+        
+                // joystick.rightTrigger().whileTrue(Commands.parallel(
+                // s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()),
+                // Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
+                //         s_Shooter.stop(),
+                //         s_Indexer.stop()));
 
         // joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
         //         .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(s_Turret, new Pose2d(m_hub, Rotation2d.kZero), () -> s_Drivetrain.getState().Pose));
+        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(m_hub).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,
