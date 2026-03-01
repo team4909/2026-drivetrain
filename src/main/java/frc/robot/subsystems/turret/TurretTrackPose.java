@@ -29,11 +29,13 @@ public class TurretTrackPose extends Command{
     private Supplier<Pose2d> m_robotPoseSupplier;
     private List<Pose2d> FIELD_CORNERS;
     private DoubleSupplier m_requiredAngle;
+    private Translation2d m_hub;
 
-    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret){
+    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret, Translation2d hub){
         m_turret = turret;
         m_requiredAngle = requiredAngle;
         m_robotPoseSupplier = robotPoseSupplier;
+        m_hub = hub;
 
         // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)        
     if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
@@ -99,6 +101,16 @@ public class TurretTrackPose extends Command{
         // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(currentRobotPose, m_goalPose));
 
         Pose2d robotPose = m_robotPoseSupplier.get();
+        double angleToTargetFieldDeg;
+        
+        if (robotBehindHub(robotPose, m_hub)) {
+            Pose2d nearestCorner = robotPose.nearest(FIELD_CORNERS);
+            Translation2d toTarget = nearestCorner.getTranslation().minus(robotPose.getTranslation());
+            angleToTargetFieldDeg = Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX()));
+        } else {
+            angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
+        }
+
 
     // If robot is behind the hub, aim at the nearest corner instead of the
     // provided goal pose. `HUB_POSE` and `FIELD_CORNERS` are defined below.
@@ -108,7 +120,7 @@ public class TurretTrackPose extends Command{
     // Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
 
         // Angle from field +X axis to target (degrees)
-        double angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
+        // double angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
         Logger.recordOutput("Turret/angleToTarget", angleToTargetFieldDeg);
 
         // Robot heading in degrees (field frame)
@@ -140,7 +152,7 @@ public class TurretTrackPose extends Command{
 
 
 
-    private boolean robotBehindHub(Pose2d robotPose, Pose2d hubPose) {
+    private boolean robotBehindHub(Pose2d robotPose, Translation2d hubPose) {
         if(robotPose==null){return false;}
 
         // Simple X-based check; adapt this to your field's coordinate convention if needed.

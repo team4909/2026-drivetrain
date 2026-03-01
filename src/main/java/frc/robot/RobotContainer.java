@@ -267,7 +267,7 @@ public class RobotContainer {
         //         ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(() -> 100), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
@@ -286,7 +286,7 @@ public class RobotContainer {
         // joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
         //         .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(m_hub).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret));
+        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(m_hub).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret, m_hub));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,
