@@ -12,7 +12,11 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.Units;
+
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 
 public class IntakeIOTalonFX implements IntakeIO {
 
@@ -20,6 +24,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     private final TalonFX m_intakeExtender;
     private final TalonFX m_intakeRollerLeft;
     private PositionVoltage m_extenderRequest;
+    private final VelocityTorqueCurrentFOC m_velocityTorque = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
   
    private final int kIntakeRollerID = 56;
     private final int kIntakeRollerLeaderID = 57;
@@ -44,11 +49,12 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.Slot0.kD = 0;
 
         final TalonFXConfiguration rollerCfg = new TalonFXConfiguration();
-        cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
-        cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
-        cfg.Slot0.kP = .5;
-        cfg.Slot0.kI = 0;
-        cfg.Slot0.kD = 0;
+        rollerCfg.CurrentLimits.SupplyCurrentLimit = 40.0;
+        rollerCfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+        rollerCfg.Slot0.kP = 10;
+        rollerCfg.Slot0.kI = 0;
+        rollerCfg.Slot0.kD = 0;
+
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
 
@@ -77,7 +83,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void setVelocity(double velocity) {
-        m_intakeRollerLeft.setControl(new VelocityVoltage(velocity));
+        m_intakeRollerLeft.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(velocity)));
     }
 
     @Override
