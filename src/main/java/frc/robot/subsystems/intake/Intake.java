@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakePID() {
-         return this.run(() -> m_io.setVelocity(90)).withName("IntakePID");
+         return this.run(() -> m_io.setVelocity(70)).withName("IntakePID");
     }
 
     public Command intakeVelocity() {

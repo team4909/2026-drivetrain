@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -46,7 +47,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
-    
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -54,71 +55,72 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d()
+            .transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.k180deg)).getTranslation();
+    private List<Translation2d> FIELD_CORNERS;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+    /*
+     * SysId routine for characterizing translation. This is used to find PID gains
+     * for the drive motors.
+     */
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,        // Use default ramp rate (1 V/s)
-            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
-            null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> setControl(m_translationCharacterization.withVolts(output)),
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> setControl(m_translationCharacterization.withVolts(output)),
+                    null,
+                    this));
 
-    /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
+    /*
+     * SysId routine for characterizing steer. This is used to find PID gains for
+     * the steer motors.
+     */
     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            null,        // Use default ramp rate (1 V/s)
-            Volts.of(7), // Use dynamic voltage of 7 V
-            null,        // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            volts -> setControl(m_steerCharacterization.withVolts(volts)),
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(7), // Use dynamic voltage of 7 V
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdSteer_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    volts -> setControl(m_steerCharacterization.withVolts(volts)),
+                    null,
+                    this));
 
     /*
      * SysId routine for characterizing rotation.
-     * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
+     * This is used to find PID gains for the FieldCentricFacingAngle
+     * HeadingController.
+     * See the documentation of SwerveRequest.SysIdSwerveRotation for info on
+     * importing the log to SysId.
      */
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
-        new SysIdRoutine.Config(
-            /* This is in radians per second², but SysId only supports "volts per second" */
-            Volts.of(Math.PI / 6).per(Second),
-            /* This is in radians per second, but SysId only supports "volts" */
-            Volts.of(Math.PI),
-            null, // Use default timeout (10 s)
-            // Log state with SignalLogger class
-            state -> SignalLogger.writeString("SysIdRotation_State", state.toString())
-        ),
-        new SysIdRoutine.Mechanism(
-            output -> {
-                /* output is actually radians per second, but SysId only supports "volts" */
-                setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
-                /* also log the requested output for SysId */
-                SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
-            },
-            null,
-            this
-        )
-    );
+            new SysIdRoutine.Config(
+                    /* This is in radians per second², but SysId only supports "volts per second" */
+                    Volts.of(Math.PI / 6).per(Second),
+                    /* This is in radians per second, but SysId only supports "volts" */
+                    Volts.of(Math.PI),
+                    null, // Use default timeout (10 s)
+                    // Log state with SignalLogger class
+                    state -> SignalLogger.writeString("SysIdRotation_State", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    output -> {
+                        /* output is actually radians per second, but SysId only supports "volts" */
+                        setControl(m_rotationCharacterization.withRotationalRate(output.in(Volts)));
+                        /* also log the requested output for SysId */
+                        SignalLogger.writeDouble("Rotational_Rate", output.in(Volts));
+                    },
+                    null,
+                    this));
 
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
@@ -126,17 +128,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
      * getters in the classes.
      *
-     * @param drivetrainConstants   Drivetrain-wide constants for the swerve drive
-     * @param modules               Constants for each specific module
+     * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
+     * @param modules             Constants for each specific module
      */
     public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
+            SwerveDrivetrainConstants drivetrainConstants,
+            SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -146,19 +149,37 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
         Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
 
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
-            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+            m_hubCenter = m_hubCenter.rotateAround(
+                    new Translation2d(aprilTagLayout.getFieldLength() / 2, aprilTagLayout.getFieldWidth() / 2),
+                    Rotation2d.k180deg);
+        }
+
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(0, 1.5),
+                    new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5));
+        }
+        else {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(aprilTagLayout.getFieldLength(), 1.5),
+                    new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5));
         }
         // else {
-        //     m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // m_hubCenter = m_hubCenter.rotateAround(new
+        // Translation2d(aprilTagLayout.getFieldLength()/2,
+        // aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
         // }
     }
 
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
      * getters in the classes.
      *
      * @param drivetrainConstants     Drivetrain-wide constants for the swerve drive
@@ -168,10 +189,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param modules                 Constants for each specific module
      */
     public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            SwerveModuleConstants<?, ?, ?>... modules) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
         if (Utils.isSimulation()) {
             startSimThread();
@@ -180,13 +200,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
         Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
 
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
-            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+            m_hubCenter = m_hubCenter.rotateAround(
+                    new Translation2d(aprilTagLayout.getFieldLength() / 2, aprilTagLayout.getFieldWidth() / 2),
+                    Rotation2d.k180deg);
+        }
+
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(0, 1.5),
+                    new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5));
+        }
+        else {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(aprilTagLayout.getFieldLength(), 1.5),
+                    new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5));
         }
         // else {
-        //      m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // m_hubCenter = m_hubCenter.rotateAround(new
+        // Translation2d(aprilTagLayout.getFieldLength()/2,
+        // aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
         // }
-      
+
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -196,48 +232,73 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
-     * This constructs the underlying hardware devices, so users should not construct
-     * the devices themselves. If they need the devices, they can access them through
+     * This constructs the underlying hardware devices, so users should not
+     * construct
+     * the devices themselves. If they need the devices, they can access them
+     * through
      * getters in the classes.
      *
-     * @param drivetrainConstants       Drivetrain-wide constants for the swerve drive
+     * @param drivetrainConstants       Drivetrain-wide constants for the swerve
+     *                                  drive
      * @param odometryUpdateFrequency   The frequency to run the odometry loop. If
-     *                                  unspecified or set to 0 Hz, this is 250 Hz on
+     *                                  unspecified or set to 0 Hz, this is 250 Hz
+     *                                  on
      *                                  CAN FD, and 100 Hz on CAN 2.0.
-     * @param odometryStandardDeviation The standard deviation for odometry calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
+     * @param odometryStandardDeviation The standard deviation for odometry
+     *                                  calculation
+     *                                  in the form [x, y, theta]ᵀ, with units in
+     *                                  meters
      *                                  and radians
-     * @param visionStandardDeviation   The standard deviation for vision calculation
-     *                                  in the form [x, y, theta]ᵀ, with units in meters
+     * @param visionStandardDeviation   The standard deviation for vision
+     *                                  calculation
+     *                                  in the form [x, y, theta]ᵀ, with units in
+     *                                  meters
      *                                  and radians
      * @param modules                   Constants for each specific module
      */
     public CommandSwerveDrivetrain(
-        SwerveDrivetrainConstants drivetrainConstants,
-        double odometryUpdateFrequency,
-        Matrix<N3, N1> odometryStandardDeviation,
-        Matrix<N3, N1> visionStandardDeviation,
-        SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+            SwerveDrivetrainConstants drivetrainConstants,
+            double odometryUpdateFrequency,
+            Matrix<N3, N1> odometryStandardDeviation,
+            Matrix<N3, N1> visionStandardDeviation,
+            SwerveModuleConstants<?, ?, ?>... modules) {
+        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
+                modules);
         if (Utils.isSimulation()) {
             startSimThread();
         }
         Logger.recordOutput("DriverStationPresent", DriverStation.getAlliance().isPresent());
         Logger.recordOutput("DriverStationColor", DriverStation.getAlliance().get());
 
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)){
-            m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+            m_hubCenter = m_hubCenter.rotateAround(
+                    new Translation2d(aprilTagLayout.getFieldLength() / 2, aprilTagLayout.getFieldWidth() / 2),
+                    Rotation2d.k180deg);
         }
+
+
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue) {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(0, 1.5),
+                    new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5));
+        }
+        else {
+            FIELD_CORNERS = List.of(
+                    new Translation2d(aprilTagLayout.getFieldLength(), 1.5),
+                    new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5));
+        }
+
         // else {
-        //      m_hubCenter = m_hubCenter.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // m_hubCenter = m_hubCenter.rotateAround(new
+        // Translation2d(aprilTagLayout.getFieldLength()/2,
+        // aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
         // }
 
-        
     }
 
     /**
-     * Returns a command that applies the specified control request to this swerve drivetrain.
+     * Returns a command that applies the specified control request to this swerve
+     * drivetrain.
      *
      * @param request Function returning the request to apply
      * @return Command to run
@@ -258,12 +319,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public Command startLogger() {
-       return this.runOnce(() -> SignalLogger.start());
+        return this.runOnce(() -> SignalLogger.start());
     }
 
     public Command stopLogger() {
         return this.runOnce(() -> SignalLogger.stop());
-     }
+    }
 
     /**
      * Runs the SysId Dynamic test in the given direction for the routine
@@ -280,36 +341,50 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void periodic() {
         /*
          * Periodically try to apply the operator perspective.
-         * If we haven't applied the operator perspective before, then we should apply it regardless of DS state.
-         * This allows us to correct the perspective in case the robot code restarts mid-match.
-         * Otherwise, only check and apply the operator perspective if the DS is disabled.
-         * This ensures driving behavior doesn't change until an explicit disable event occurs during testing.
+         * If we haven't applied the operator perspective before, then we should apply
+         * it regardless of DS state.
+         * This allows us to correct the perspective in case the robot code restarts
+         * mid-match.
+         * Otherwise, only check and apply the operator perspective if the DS is
+         * disabled.
+         * This ensures driving behavior doesn't change until an explicit disable event
+         * occurs during testing.
          */
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
-                    allianceColor == Alliance.Red
-                        ? kRedAlliancePerspectiveRotation
-                        : kBlueAlliancePerspectiveRotation
-                );
+                        allianceColor == Alliance.Red
+                                ? kRedAlliancePerspectiveRotation
+                                : kBlueAlliancePerspectiveRotation);
                 m_hasAppliedOperatorPerspective = true;
             });
         }
     }
 
-    public double getDistanceFromHub(){
-        // Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
-
+    public double getDistanceFromHub() {
+        // Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new
+        // Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0),
+        // Rotation2d.k180deg)).getTranslation();
 
         Logger.recordOutput("DriveState/hubCenter", new Pose2d(m_hubCenter, Rotation2d.kZero));
-        Logger.recordOutput("DriveState/InterpTableDist", this.getState().Pose.getTranslation().getDistance(m_hubCenter));
+        Logger.recordOutput("DriveState/InterpTableDist",
+                this.getState().Pose.getTranslation().getDistance(m_hubCenter));
         Logger.recordOutput("DriveState/behindHub", robotBehindHub());
         return this.getState().Pose.getTranslation().getDistance(m_hubCenter);
     }
 
+    public double getDistanceFromNearestCorner() {
+        Translation2d nearestCorner = this.getState().Pose.getTranslation().nearest(FIELD_CORNERS);
+        Logger.recordOutput("DriveState/nearestCorner", new Pose2d(nearestCorner, Rotation2d.kZero));
+        Logger.recordOutput("DriveState/CornerDist", this.getState().Pose.getTranslation().getDistance(nearestCorner));
+        return this.getState().Pose.getTranslation().getDistance(nearestCorner);
+    }
+    
+
     public boolean robotBehindHub() {
-        // Simple X-based check; adapt this to your field's coordinate convention if needed.
-        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
+        // Simple X-based check; adapt this to your field's coordinate convention if
+        // needed.
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get().equals(Alliance.Red)) {
             return this.getState().Pose.getX() < m_hubCenter.getX();
         }
         return this.getState().Pose.getX() > m_hubCenter.getX();
@@ -330,7 +405,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 
-     public void resetPose(Pose2d pose) {
+    public void resetPose(Pose2d pose) {
         if (pose == null) {
             return;
         }

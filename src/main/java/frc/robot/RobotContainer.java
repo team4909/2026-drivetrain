@@ -89,7 +89,7 @@ public class RobotContainer {
     private final Turret s_Turret;
     private final Intake s_Intake;
     private final SendableChooser<Command> m_chooser;
-//     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(drivetrain);
+    private ShootingCalculator m_shootingCalculator = new ShootingCalculator(s_Drivetrain);
     private ShootingParameters m_shootingParameters;
     private final Vision s_Vision;
 
@@ -278,14 +278,14 @@ public class RobotContainer {
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         //         s_Shooter.tuningShoot(),
-        //         Commands.sequence(Commands.waitSeconds(4), s_Indexer.feed())
+        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
         //         )).onFalse(Commands.parallel(
         //                 s_Shooter.stop(),
         //                 s_Indexer.stop()
         //         ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(s_Shooter.shoot(() -> 100), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
@@ -339,7 +339,7 @@ public class RobotContainer {
         joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
         joystick.rightBumper()
                 // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
-                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.1))))
+                .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))))
                 .onFalse(Commands.sequence(s_Intake.Extend(), s_Intake.stop()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
