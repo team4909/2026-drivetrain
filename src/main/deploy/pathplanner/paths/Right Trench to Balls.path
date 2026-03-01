@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 8.27,
-        "y": 0.6903566333808839
+        "x": 8.532265060240965,
+        "y": 0.0026746987951798973
       },
       "isLocked": false,
       "linkedName": "Right Trench Start"
@@ -28,7 +28,16 @@
       "linkedName": "Right Trench Balls"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2348547717842484,
+      "rotationDegrees": -179.4586409618385
+    },
+    {
+      "waypointRelativePos": 0.45892116182572495,
+      "rotationDegrees": 87.90310348354063
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -62,7 +71,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 179.10299672403346
   },
   "useDefaultConstraints": false
 }
