@@ -42,14 +42,22 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.Slot0.kI = 0;
         cfg.Slot0.kD = 0;
 
+        final TalonFXConfiguration rollerCfg = new TalonFXConfiguration();
+        cfg.CurrentLimits.SupplyCurrentLimit = 40.0;
+        cfg.CurrentLimits.SupplyCurrentLimitEnable = true;
+        cfg.Slot0.kP = .5;
+        cfg.Slot0.kI = 0;
+        cfg.Slot0.kD = 0;
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
         
         // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
         // extenderSlot0Configs.kP = 10;
 
-
-        m_intakeExtender.getConfigurator().apply(cfg);
+        m_intakeRoller.getConfigurator().apply(rollerCfg);
+        m_intakeRollerLeft.getConfigurator().apply(rollerCfg);
+        //free me from krish
+        //m_intakeExtender.getConfigurator().apply(cfg);
        m_intakeExtender.getConfigurator().apply(extenderConfigs);
 
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
@@ -75,11 +83,19 @@ public class IntakeIOTalonFX implements IntakeIO {
 
 
     @Override
+    public void setVelocity(double velocity) {
+        m_intakeRollerLeft.setControl(new PositionVoltage(velocity));
+        m_intakeRoller.setControl(new PositionVoltage(velocity));
+    }
+
+    
+    @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {
         m_inputs.speed = m_intakeRollerLeft.getVelocity().getValueAsDouble();
         m_inputs.statorCurrent = m_intakeRollerLeft.getStatorCurrent().getValueAsDouble();
         m_inputs.supplyCurrent = m_intakeRollerLeft.getSupplyCurrent().getValueAsDouble();
         m_inputs.position = m_intakeExtender.getPosition().getValueAsDouble();
+        m_inputs.velocity = m_intakeExtender.getVelocity().getValueAsDouble();
     }
     
 }

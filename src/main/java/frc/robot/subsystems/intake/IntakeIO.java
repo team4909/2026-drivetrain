@@ -12,11 +12,14 @@ public interface IntakeIO {
         public double statorCurrent = 0.0;
         public double supplyCurrent = 0.0;
         public double position = 0.0;
+        public double velocity = 0.0;
 
         public String setpoint = "";
     }
 
     public void setSpeed(double speed);
+
+    public void setVelocity(double velocity);
 
     public default void setExtenderSetpoint(double rotations) {}
 
