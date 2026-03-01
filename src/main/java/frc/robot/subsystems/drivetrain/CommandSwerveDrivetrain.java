@@ -2,6 +2,7 @@ package frc.robot.subsystems.drivetrain;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -55,6 +56,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_hasAppliedOperatorPerspective = false;
 
     private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+    private List<Pose2d> FIELD_CORNERS;
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -313,6 +315,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             return this.getState().Pose.getX() < m_hubCenter.getX();
         }
         return this.getState().Pose.getX() > m_hubCenter.getX();
+    }
+
+    public Pose2d getNearestCorner(){
+        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
+        FIELD_CORNERS = List.of(
+            new Pose2d(new Translation2d(1,2), Rotation2d.kZero),
+            new Pose2d(new Translation2d(1, aprilTagLayout.getFieldWidth() - 2), Rotation2d.kZero)
+        );
+        }
+        else {
+            FIELD_CORNERS = List.of(
+                new Pose2d(new Translation2d(aprilTagLayout.getFieldLength()-1,2), Rotation2d.kZero),
+                new Pose2d(new Translation2d(aprilTagLayout.getFieldLength()-1, aprilTagLayout.getFieldWidth() - 2), Rotation2d.kZero)
+            );
+        }
+        return this.getState().Pose.nearest(FIELD_CORNERS);
     }
 
     private void startSimThread() {
