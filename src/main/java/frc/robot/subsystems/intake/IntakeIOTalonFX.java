@@ -7,6 +7,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -50,21 +51,14 @@ public class IntakeIOTalonFX implements IntakeIO {
         cfg.Slot0.kD = 0;
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
-        
-        // final Slot0Configs extenderSlot0Configs = new Slot0Configs();
-        // extenderSlot0Configs.kP = 10;
 
         m_intakeRoller.getConfigurator().apply(rollerCfg);
         m_intakeRollerLeft.getConfigurator().apply(rollerCfg);
-        //free me from krish
-        //m_intakeExtender.getConfigurator().apply(cfg);
        m_intakeExtender.getConfigurator().apply(extenderConfigs);
 
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 
-
-    m_extenderRequest = new PositionVoltage(0).withSlot(0);
-
+        m_extenderRequest = new PositionVoltage(0).withSlot(0);
     }
 
     @Override
@@ -81,14 +75,11 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeExtender.setPosition(position);
     }
 
-
     @Override
     public void setVelocity(double velocity) {
-        m_intakeRollerLeft.setControl(new PositionVoltage(velocity));
-        m_intakeRoller.setControl(new PositionVoltage(velocity));
+        m_intakeRollerLeft.setControl(new VelocityVoltage(velocity));
     }
 
-    
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {
         m_inputs.speed = m_intakeRollerLeft.getVelocity().getValueAsDouble();
@@ -97,5 +88,4 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_inputs.position = m_intakeExtender.getPosition().getValueAsDouble();
         m_inputs.velocity = m_intakeExtender.getVelocity().getValueAsDouble();
     }
-    
 }

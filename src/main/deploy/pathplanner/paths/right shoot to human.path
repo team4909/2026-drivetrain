@@ -3,44 +3,39 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.663837375178317,
-        "y": 0.6
+        "x": 3.669,
+        "y": 0.724
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.005734664764621,
-        "y": 0.5609700427960058
+        "x": 2.7077951807228917,
+        "y": 1.0080240963855418
       },
       "isLocked": false,
-      "linkedName": "Right Trench Start"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.8947788873038505,
-        "y": 2.3076890156918695
+        "x": 0.7080240963855422,
+        "y": 0.669265060240964
       },
       "prevControl": {
-        "x": 5.992796005706134,
-        "y": 1.2725962910128399
+        "x": 1.8663614457831328,
+        "y": 1.018951807228916
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Trench Ball Pass"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.8272921108741849,
-      "rotationDegrees": 42.15996118564091
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7859554355165327,
+      "minWaypointRelativePos": 0.004962779156327543,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.5,
+        "maxVelocity": 1.0,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -52,7 +47,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.21,
+    "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -61,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.193489423981998
+    "rotation": 179.32596310201546
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.10299672403346
+    "rotation": -15.100999999999999
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

@@ -4,9 +4,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.indexer.Indexer;
 
 public class Intake extends SubsystemBase {
     private final IntakeIO m_io;
@@ -16,6 +14,8 @@ public class Intake extends SubsystemBase {
     private final double Stowed = 0.0;
     private final double Extended = -8.9;
     private final double Bump = -6;
+    private final double kIntakeVelocity = 10.0;
+    private final double kOuttakeVelocity = -10.0;
 
 
     public Intake(IntakeIO io) {
@@ -25,15 +25,15 @@ public class Intake extends SubsystemBase {
     }
 
     public Command run() {
-        return this.run(() -> m_io.setSpeed(m_velocity.get())).withName("IntakeRun");
+        return this.run(() -> m_io.setVelocity(m_velocity.get())).withName("IntakeRun");
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setSpeed(0)).withName("IntakeStop");
+        return this.run(() -> m_io.setVelocity(0)).withName("IntakeStop");
     }
 
     public Command intake() {
-        return this.run(() -> m_io.setSpeed(1)).withName("IntakeIn");
+        return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakeIn");
     }
 
     public Command intakeVelocity() {
@@ -41,28 +41,20 @@ public class Intake extends SubsystemBase {
     }
 
     public Command outtake() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("IntakeOut");
+        return this.run(() -> m_io.setVelocity(kOuttakeVelocity)).withName("IntakeOut");
     }
 
     public Command intakeAndExtend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
-            m_io.setSpeed(1);
+            m_io.setVelocity(kIntakeVelocity);
             m_inputs.setpoint = "Extend";
         }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
     }
 
-    // public Command oscillate() {
-    //     Commands.parallel(
-    //         m_io.setSpeed(1),
-    //        Commands.repeatingSequence(Commands.race(Extend(), Commands.waitSeconds(0.1)), Commands.race(bump(), Commands.waitSeconds(0.1)))
-    //     );
-    // }
-
      public Command Extend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
-            // m_io.setSpeed(-1);
             m_inputs.setpoint = "Extend";
         }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
     }
@@ -70,14 +62,13 @@ public class Intake extends SubsystemBase {
     public Command stowAndStop() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
-            m_io.setSpeed(0);
+            m_io.setVelocity(0);
             m_inputs.setpoint = "Stowed";
         }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
     }
     public Command stow() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
-            // m_io.setSpeed(0);
             m_inputs.setpoint = "Stowed";
         }).withName("Stow").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
     }
@@ -85,7 +76,6 @@ public class Intake extends SubsystemBase {
     public Command bump() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Bump);
-            // m_io.setSpeed(0);
             m_inputs.setpoint = "Bump";
         }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
     }
@@ -93,7 +83,7 @@ public class Intake extends SubsystemBase {
     public Command bumpAndRun() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Bump);
-            m_io.setSpeed(1);
+            m_io.setVelocity(kIntakeVelocity);
             m_inputs.setpoint = "Bump";
         }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
     }
