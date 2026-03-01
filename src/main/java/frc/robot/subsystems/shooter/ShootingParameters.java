@@ -1,6 +1,8 @@
 package frc.robot.subsystems.shooter;
 import java.util.Map;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,28 +24,34 @@ public class ShootingParameters {
     private static InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap m_horizontalVelocityToDistanceTable = new InterpolatingDoubleTreeMap();
 
-    private final double kLATENCYCOMPENSATION = 0.1;//If shots land ahead, lower number. If shots land behind, increase number
+    private final double kLATENCYCOMPENSATION = -1.2;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
-        m_hoodTable.put(Units.inchesToMeters(63.625), 1100.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625), 1300.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625 + 40), 1650.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625 + 40 + 40), 1925.0);
+        m_hoodTable.put(Units.inchesToMeters(63.234), 1000.0);
+        m_hoodTable.put(Units.inchesToMeters(93.234), 1100.0);
+        m_hoodTable.put(Units.inchesToMeters(123.234), 1150.0);
+        m_hoodTable.put(Units.inchesToMeters(153.234), 1500.0);
+        m_hoodTable.put(Units.inchesToMeters(183.234), 1750.0);
 
-        m_shooterTable.put(Units.inchesToMeters(63.625), 47.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625), 52.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625 + 40), 55.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625 + 40 + 40), 60.0);
+        m_shooterTable.put(Units.inchesToMeters(63.234), 47.0);
+        m_shooterTable.put(Units.inchesToMeters(93.234), 49.0);
+        m_shooterTable.put(Units.inchesToMeters(123.234), 54.0);
+        m_shooterTable.put(Units.inchesToMeters(153.234), 57.0);
+        m_shooterTable.put(Units.inchesToMeters(183.234), 65.0);
 
-        m_timeOfFlightTable.put(Units.inchesToMeters(63.625), 1.2);
-        m_timeOfFlightTable.put(Units.inchesToMeters(103.625), 1.2);
-        m_timeOfFlightTable.put(Units.inchesToMeters(103.625 + 40), 1.2);
-        m_timeOfFlightTable.put(Units.inchesToMeters(103.625 + 40 + 40), 1.2);
 
-        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(63.625)/1.2, Units.inchesToMeters(63.625));
-        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625)/1.2, Units.inchesToMeters(103.625));
-        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40)/1.2, Units.inchesToMeters(103.625 + 40));
-        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(103.625 + 40 + 40)/1.2, Units.inchesToMeters(103.625 + 40 + 40));
+        m_timeOfFlightTable.put(Units.inchesToMeters(63.234), 0.93);
+        m_timeOfFlightTable.put(Units.inchesToMeters(93.234), 1.11);
+        m_timeOfFlightTable.put(Units.inchesToMeters(123.234), 1.22);
+        m_timeOfFlightTable.put(Units.inchesToMeters(153.234), 1.22);
+        m_timeOfFlightTable.put(Units.inchesToMeters(183.234), 1.24);
+
+
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(63.234)/0.93, Units.inchesToMeters(63.234));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(93.234)/1.11, Units.inchesToMeters(93.234));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(123.234)/1.22, Units.inchesToMeters(123.234));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(153.234)/1.22, Units.inchesToMeters(153.234));
+        m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(183.234)/1.24, Units.inchesToMeters(183.234));
     }
 
     private CommandSwerveDrivetrain m_drivetrain;
@@ -57,6 +65,8 @@ public class ShootingParameters {
         SwerveDriveState drivetrainState = m_drivetrain.getState();
 
         Translation2d robotPosition = drivetrainState.Pose.getTranslation();
+        Logger.recordOutput("ShootOnTheMove/currentPose", robotPosition);
+
         Translation2d robotVelocity = new Translation2d(ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vxMetersPerSecond, ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vyMetersPerSecond);
 
         // --- ADDED RECURSION LOOP ---
@@ -97,6 +107,14 @@ public class ShootingParameters {
         double effectiveDistance = m_horizontalVelocityToDistanceTable.get(requiredVelocity);
         double requiredRPS = m_shooterTable.get(effectiveDistance);
         double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
+
+        Logger.recordOutput("ShootOnTheMove/hoodAngle", requiredHoodAngle);
+        Logger.recordOutput("ShootOnTheMove/requiredRPS", requiredRPS);
+        Logger.recordOutput("ShootOnTheMove/effectiveDistance", effectiveDistance);
+        Logger.recordOutput("ShootOnTheMove/hubDistance", distance);
+        Logger.recordOutput("ShootOnTheMove/futurePose", futurePos);
+        Logger.recordOutput("ShootOnTheMove/turretAngle", turretAngle.getDegrees());
+
 
         return new ShooterCommand(turretAngle, requiredRPS, requiredHoodAngle);
     }

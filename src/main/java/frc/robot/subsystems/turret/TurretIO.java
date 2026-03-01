@@ -10,6 +10,7 @@ public interface TurretIO {
         public double volts = 0.0;
         public double current = 0.0;
         public double rotations;
+        public double turretRotations = 0.0;
     }
 
     public default void setSpeed(double speed){}
