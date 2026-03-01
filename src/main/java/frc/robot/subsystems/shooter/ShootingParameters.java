@@ -24,7 +24,7 @@ public class ShootingParameters {
     private static InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap m_horizontalVelocityToDistanceTable = new InterpolatingDoubleTreeMap();
 
-    private final double kLATENCYCOMPENSATION = -1.2;//If shots land ahead, lower number. If shots land behind, increase number
+    private final double kLATENCYCOMPENSATION = 0.1; //-1.2;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
         m_hoodTable.put(Units.inchesToMeters(63.234), 1000.0);
@@ -71,14 +71,14 @@ public class ShootingParameters {
 
         // --- ADDED RECURSION LOOP ---
         double predictedDistance = robotPosition.getDistance(goalPosition);
-        double timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
-        Translation2d futurePos = robotPosition;
+        // double timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
+        Translation2d futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION));
 
-        for (int i = 0; i < 3; i++) {
-            futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION + timeOfFlight));
-            predictedDistance = futurePos.getDistance(goalPosition);
-            timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
-        }
+        // for (int i = 0; i < 3; i++) {
+        //     futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION + timeOfFlight));
+        //     predictedDistance = futurePos.getDistance(goalPosition);
+        //     timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
+        // }
         // --- END RECURSION ---
 
         // 2. Get target vector
