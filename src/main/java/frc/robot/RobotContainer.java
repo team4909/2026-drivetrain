@@ -131,32 +131,50 @@ public class RobotContainer {
                                 Units.degreesToRadians(0.0),
                                 Units.degreesToRadians(-20),
                                 Units.degreesToRadians(90.0 + 65)))), //90.0 + 65
-                new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-11.935828),
-                        Units.inchesToMeters(11.338099),
-                        Units.inchesToMeters(14.3875)),
+                // new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
+                //         Units.inchesToMeters(-11.935828),
+                //         Units.inchesToMeters(11.338099),
+                //         Units.inchesToMeters(14.3875)),
+                //         new Rotation3d(
+                //                 Units.degreesToRadians(7.435472),
+                //                 Units.degreesToRadians(-30),
+                //                 Units.degreesToRadians(192.5)
+                //         ))),
+                new VisionIOPhotonVision("left-cam", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-6.748188),
+                        Units.inchesToMeters(12.487542),
+                        Units.inchesToMeters(8.315411)),
                         new Rotation3d(
-                                Units.degreesToRadians(7.435472),
-                                Units.degreesToRadians(-30),
-                                Units.degreesToRadians(192.5)
+                                Units.degreesToRadians(0),
+                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(90)
                         ))),
-                new VisionIOPhotonVision("top-back-left-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-9.240063 - 21.5),
-                        Units.inchesToMeters(10.072250 - 2),
-                        Units.inchesToMeters(15.539060)),
+                new VisionIOPhotonVision("left-cam1", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-6.748188), //-9.24006310
+                        Units.inchesToMeters(12.487542), //10.072250
+                        Units.inchesToMeters(8.315411)), //15.539060
                         new Rotation3d(
-                                Units.degreesToRadians(-5.6737923),
-                                Units.degreesToRadians(-21),
-                                Units.degreesToRadians(66)
+                                Units.degreesToRadians(0), //5.6737923
+                                Units.degreesToRadians(-20), //-21
+                                Units.degreesToRadians(90) //69.656
                         ))),
-                new VisionIOPhotonVision("top-back-left-cam1", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-9.24006310 - 21), //-9.24006310
-                        Units.inchesToMeters(10.072250 - 2), //10.072250
-                        Units.inchesToMeters(15.539060)), //15.539060
+                new VisionIOPhotonVision("right-cam", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-6.748188),
+                        Units.inchesToMeters(-12.487542),
+                        Units.inchesToMeters(8.315411)),
                         new Rotation3d(
-                                Units.degreesToRadians(-5.6737923), //5.6737923
-                                Units.degreesToRadians(-21), //-21
-                                Units.degreesToRadians(66) //69.656
+                                Units.degreesToRadians(0),
+                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(270)
+                        ))),
+                new VisionIOPhotonVision("right-cam1", new Transform3d(new Translation3d(
+                        Units.inchesToMeters(-6.748188),
+                        Units.inchesToMeters(-12.487542),
+                        Units.inchesToMeters(8.315411)),
+                        new Rotation3d(
+                                Units.degreesToRadians(0),
+                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(270) //69.656
                         ))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
@@ -250,7 +268,7 @@ public class RobotContainer {
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.back().whileTrue(s_Intake.reZero());
 
-        joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
+        joystick.leftTrigger().whileTrue(s_Intake.intakePID()).onFalse(s_Intake.stop());
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         //         s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
