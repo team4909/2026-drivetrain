@@ -10,6 +10,8 @@ public class Turret extends SubsystemBase{
 
     private final TurretIO m_io;
     private final TurretIOInputsAutoLogged m_inputs = new TurretIOInputsAutoLogged();
+    private double turretDegrees = 0;
+    // private final TurretIOInputsAutoLogged m_inputs = new TurretIOInputsAutoLogged();
 
     public Turret (TurretIO io) {
         m_io = io;
