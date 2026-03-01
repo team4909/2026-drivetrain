@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 6.173937232524964,
-        "y": 0.27631954350927357
+        "y": 0.276319543509274
       },
       "isLocked": false,
       "linkedName": "Right Trench Ball Pass"
@@ -53,7 +53,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 1.1934894239819978
+    "rotation": 1.193489423981998
   },
   "useDefaultConstraints": true
 }

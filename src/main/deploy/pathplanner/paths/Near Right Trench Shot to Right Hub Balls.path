@@ -3,39 +3,39 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.1500240963855415,
-        "y": 3.3684096385542173
+        "x": 3.6694337349397586,
+        "y": 0.7239036144578312
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.593168674698794,
-        "y": 0.47225301204819425
+        "x": 5.964686746987951,
+        "y": 0.7020481927710842
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Near Right Trench Shot"
     },
     {
       "anchor": {
-        "x": 3.669,
-        "y": 0.724
+        "x": 5.789409638554216,
+        "y": 3.3246987951807228
       },
       "prevControl": {
-        "x": 6.991457831325301,
-        "y": 0.05731325301204726
+        "x": 6.936819277108433,
+        "y": -0.07381927710843339
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Hub Balls"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0.0
+      "waypointRelativePos": 0.19502074688796894,
+      "rotationDegrees": 0.7635365434583973
     },
     {
-      "waypointRelativePos": 0.8655601659751008,
-      "rotationDegrees": 0.1285653709186002
+      "waypointRelativePos": 0.7344398340248957,
+      "rotationDegrees": 109.69268976139065
     }
   ],
   "constraintZones": [],
@@ -51,13 +51,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -15.100999999999999
+    "rotation": 90.7538483330708
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 90.75
+    "rotation": -15.101098161385476
   },
   "useDefaultConstraints": true
 }

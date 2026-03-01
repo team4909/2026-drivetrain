@@ -14,8 +14,8 @@ public class Intake extends SubsystemBase {
     private final double Stowed = 0.0;
     private final double Extended = -8.9;
     private final double Bump = -6;
-    private final double kIntakeVelocity = 10.0;
-    private final double kOuttakeVelocity = -10.0;
+    private final double kIntakeVelocity = 70.0;
+    private final double kOuttakeVelocity = -70.0;
 
 
     public Intake(IntakeIO io) {
@@ -37,11 +37,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command intakePID() {
-         return this.run(() -> m_io.setVelocity(70)).withName("IntakePID");
-    }
-
-    public Command intakeVelocity() {
-        return this.run(() -> m_io.setVelocity(10.0)).withName("IntakeInVelocity");
+         return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakePID");
     }
 
     public Command outtake() {

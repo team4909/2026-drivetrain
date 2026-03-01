@@ -114,12 +114,12 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
         NamedCommands.registerCommand("IntakeGo", s_Intake.intake());
         NamedCommands.registerCommand("IntakeZeroDown", s_Intake.reZeroDown());
-        NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.Extend(), Commands.waitSeconds(0.1)), Commands.race(s_Intake.stow(), Commands.waitSeconds(0.1))));
+        NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))));
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
         NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
         NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
         NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
-        NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(() -> 60), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,

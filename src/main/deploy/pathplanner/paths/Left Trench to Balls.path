@@ -28,7 +28,20 @@
       "linkedName": "Left Trench Balls"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.16631130063965915,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -63.589338758311925
+    },
+    {
+      "waypointRelativePos": 0.7228144989338992,
+      "rotationDegrees": -88.24771266832128
+    }
+  ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
@@ -37,6 +50,19 @@
       "constraints": {
         "maxVelocity": 2.0,
         "maxAcceleration": 1000.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.1566509115462513,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
