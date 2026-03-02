@@ -268,7 +268,7 @@ public class RobotContainer {
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
         joystick.back().whileTrue(s_Intake.reZero());
 
-        joystick.leftTrigger().whileTrue(s_Intake.intakePID()).onFalse(s_Intake.stop());
+        joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         //         s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),

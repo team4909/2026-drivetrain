@@ -38,6 +38,12 @@
                 "data": {
                   "name": "HoodDown"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeDownGo"
+                }
               }
             ]
           }
