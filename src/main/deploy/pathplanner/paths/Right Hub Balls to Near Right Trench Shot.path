@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.859387518691026,
-        "y": 1.1401387174948008
+        "x": 6.018891566265061,
+        "y": 0.6801927710843372
       },
       "isLocked": false,
       "linkedName": "Right Hub Balls"
     },
     {
       "anchor": {
-        "x": 3.6694337349397586,
-        "y": 0.7239036144578312
+        "x": 3.2213975903614456,
+        "y": 0.8113253012048198
       },
       "prevControl": {
-        "x": 7.0667047075606275,
-        "y": 0.31513552068473705
+        "x": 6.6199156626506035,
+        "y": 0.29772289156626475
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,7 +51,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -15.101098161385476
+    "rotation": -24.96278983080703
   },
   "reversed": false,
   "folder": null,
