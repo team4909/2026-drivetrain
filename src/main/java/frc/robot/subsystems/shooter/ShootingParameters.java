@@ -60,64 +60,37 @@ public class ShootingParameters {
         m_drivetrain = drivetrain;
     }
 
-    public ShooterCommand calculate(Translation2d goalPosition) {
+public ShooterCommand calculate(Translation2d goalPosition) {
+    SwerveDriveState drivetrainState = m_drivetrain.getState();
+    Translation2d robotPosition = drivetrainState.Pose.getTranslation();
 
-        SwerveDriveState drivetrainState = m_drivetrain.getState();
+    Translation2d robotVelocity = new Translation2d(
+        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vxMetersPerSecond, 
+        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vyMetersPerSecond
+    );
 
-        Translation2d robotPosition = drivetrainState.Pose.getTranslation();
-        Logger.recordOutput("ShootOnTheMove/currentPose", robotPosition);
+    double timeOfFlight = m_timeOfFlightTable.get(robotPosition.getDistance(goalPosition));
+    Translation2d futurePos = robotPosition;
 
-        Translation2d robotVelocity = new Translation2d(ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vxMetersPerSecond, ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vyMetersPerSecond);
-
-        // --- ADDED RECURSION LOOP ---
-        double predictedDistance = robotPosition.getDistance(goalPosition);
-        // double timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
-        Translation2d futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION));
-
-        // for (int i = 0; i < 3; i++) {
-        //     futurePos = robotPosition.plus(robotVelocity.times(kLATENCYCOMPENSATION + timeOfFlight));
-        //     predictedDistance = futurePos.getDistance(goalPosition);
-        //     timeOfFlight = m_timeOfFlightTable.get(predictedDistance);
-        // }
-        // --- END RECURSION ---
-
-        // 2. Get target vector
-        Translation2d toGoal = goalPosition.minus(futurePos);
-        double distance = toGoal.getNorm();
-        Translation2d targetDirection = toGoal.div(distance);
-
-        // 3. Look up baseline velocity from table
-        ShooterParameters baseline = new ShooterParameters(
-                m_shooterTable.get(distance),
-                m_hoodTable.get(distance),
-                m_timeOfFlightTable.get(distance));
-
-        double horizontalVelocity = distance / baseline.timeOfFlight();
-
-        // 4. Build target velocity vector
-        Translation2d targetVelocity = targetDirection.times(horizontalVelocity);
-
-        // 5. THE MAGIC: subtract robot velocity
-        Translation2d shotVelocity = targetVelocity.minus(robotVelocity);
-
-        // 6. Extract results
-        Rotation2d turretAngle = shotVelocity.getAngle();
-        double requiredVelocity = shotVelocity.getNorm();
-
-        double effectiveDistance = m_horizontalVelocityToDistanceTable.get(requiredVelocity);
-        double requiredRPS = m_shooterTable.get(effectiveDistance);
-        double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
-
-        Logger.recordOutput("ShootOnTheMove/hoodAngle", requiredHoodAngle);
-        Logger.recordOutput("ShootOnTheMove/requiredRPS", requiredRPS);
-        Logger.recordOutput("ShootOnTheMove/effectiveDistance", effectiveDistance);
-        Logger.recordOutput("ShootOnTheMove/hubDistance", distance);
-        Logger.recordOutput("ShootOnTheMove/futurePose", futurePos);
-        Logger.recordOutput("ShootOnTheMove/turretAngle", turretAngle.getDegrees());
-
-
-        return new ShooterCommand(turretAngle, requiredRPS, requiredHoodAngle);
+    for (int i = 0; i < 3; i++) {
+        futurePos = robotPosition.plus(robotVelocity.times(timeOfFlight + kLATENCYCOMPENSATION));
+        timeOfFlight = m_timeOfFlightTable.get(futurePos.getDistance(goalPosition));
     }
+
+    Translation2d toGoal = goalPosition.minus(futurePos);
+    double effectiveDistance = toGoal.getNorm();
+
+    Rotation2d turretAngle = toGoal.getAngle();
+
+    double requiredRPS = m_shooterTable.get(effectiveDistance);
+    double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
+
+    // Logging
+    Logger.recordOutput("ShootOnTheMove/futurePose", futurePos);
+    Logger.recordOutput("ShootOnTheMove/turretAngle", turretAngle.getDegrees());
+
+    return new ShooterCommand(turretAngle, requiredRPS, requiredHoodAngle);
+}
 
     // Simple data class for the LUT
     public record ShooterParameters(double rps, double hoodAngle, double timeOfFlight) {
