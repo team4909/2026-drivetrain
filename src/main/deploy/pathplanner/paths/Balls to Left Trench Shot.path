@@ -3,37 +3,42 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 8.0,
+        "y": 3.195
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 8.153552068473608,
+        "y": 7.961883024251071
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Trench Balls"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 3.075363636363636,
+        "y": 7.137352272727274
       },
       "prevControl": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 4.996519258202567,
+        "y": 8.000699001426534
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Left Trench Shot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7605804111245452,
+      "rotationDegrees": -3.459660070041259
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 5.21,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 53.392925187392386
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -90.0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

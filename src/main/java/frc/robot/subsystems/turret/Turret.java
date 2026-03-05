@@ -1,11 +1,15 @@
 package frc.robot.subsystems.turret;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.shooter.ShooterIOInputsAutoLogged;
 
 public class Turret extends SubsystemBase{
 
     private final TurretIO m_io;
+    private final TurretIOInputsAutoLogged m_inputs = new TurretIOInputsAutoLogged();
     private double turretDegrees = 0;
     // private final TurretIOInputsAutoLogged m_inputs = new TurretIOInputsAutoLogged();
 
@@ -38,6 +42,7 @@ public class Turret extends SubsystemBase{
 
     @Override
     public void periodic() {
-        // m_io.updateInputs(m_inputs);
+        m_io.updateInputs(m_inputs);
+        Logger.processInputs(getName(), m_inputs);
     }
 }

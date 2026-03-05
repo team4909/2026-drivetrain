@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 7.8947788873038505,
+        "y": 2.3076890156918695
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 6.173937232524964,
+        "y": 0.276319543509274
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Trench Ball Pass"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 2.771069900142653,
+        "y": 1.4925534950071324
       },
       "prevControl": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 4.168445078459342,
+        "y": 1.427860199714693
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Trench Shot"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7036247334754815,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -42,13 +47,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -95.82634202955576
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 1.193489423981998
   },
   "useDefaultConstraints": true
 }

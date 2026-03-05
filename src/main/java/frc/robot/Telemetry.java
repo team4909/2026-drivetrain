@@ -52,8 +52,8 @@ public class Telemetry {
     private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
-    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.4,0), Rotation2d.k180deg)).getTranslation();
-
+    private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+    // private Translation2d corner = new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5);
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
@@ -116,6 +116,7 @@ public class Telemetry {
         SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
         Logger.recordOutput("DriveState/distanceToHub", state.Pose.getTranslation().getDistance(m_hubCenter));
+        // Logger.recordOutput("DriveState/distanceFromRedRightCorner",state.Pose.getTranslation().getDistance(corner));
 
         /* Telemeterize the pose to a Field2d */
         fieldTypePub.set("Field2d");

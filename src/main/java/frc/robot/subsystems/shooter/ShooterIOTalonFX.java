@@ -36,6 +36,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     private StatusSignal<Current> m_shooter2SupplyCurrent;
     private StatusSignal<Voltage> m_shooter2Voltage;
 
+    private double m_goalVelocity;
+
     //Using Torque control because less Feedforwards, more efficient, and easier to tune
     private final VelocityTorqueCurrentFOC m_velocityTorque = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
 
@@ -70,6 +72,8 @@ public class ShooterIOTalonFX implements ShooterIO {
         m_shooter2SupplyCurrent = m_shootermotor2.getSupplyCurrent();
         m_shooter2Voltage = m_shootermotor2.getSupplyVoltage();
 
+        m_goalVelocity = 0;
+
         BaseStatusSignal.setUpdateFrequencyForAll(100, 
             m_shooter1Velocity,
             m_shooter1StatorCurrent,
@@ -83,6 +87,7 @@ public class ShooterIOTalonFX implements ShooterIO {
     }
     @Override
     public void setVelocity(double VelocityRPS) {
+        m_goalVelocity = VelocityRPS;
         m_shootermotor1.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
     }
 
@@ -118,5 +123,7 @@ public class ShooterIOTalonFX implements ShooterIO {
         m_inputs.motor2StatorCurrent = m_shooter2StatorCurrent.getValueAsDouble();
         m_inputs.motor2SupplyCurrent = m_shooter2SupplyCurrent.getValueAsDouble();
         m_inputs.motor2Voltage = m_shooter2Voltage.getValueAsDouble();
+
+        m_inputs.goalVelocity = m_goalVelocity;
     }
 }

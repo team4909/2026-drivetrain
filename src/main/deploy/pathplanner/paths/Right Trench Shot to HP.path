@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 2.771069900142653,
+        "y": 1.4925534950071324
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 1.800671276127758,
+        "y": 1.6219461257362362
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Trench Shot"
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 0.755,
+        "y": 0.6386019971488439
       },
       "prevControl": {
-        "x": 1.0,
-        "y": 6.0
+        "x": 2.0076890156918683,
+        "y": 1.0008844507845935
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HP"
     }
   ],
   "rotationTargets": [],
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": -95.82634202955576
   },
   "useDefaultConstraints": true
 }

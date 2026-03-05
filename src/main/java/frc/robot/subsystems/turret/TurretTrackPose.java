@@ -15,20 +15,42 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurretTrackPose extends Command{
     private Turret m_turret;
     private Supplier<Pose2d> m_robotPoseSupplier;
+    private List<Pose2d> FIELD_CORNERS;
     private DoubleSupplier m_requiredAngle;
+    private Translation2d m_hub;
 
-    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret){
+    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret, Translation2d hub){
         m_turret = turret;
         m_requiredAngle = requiredAngle;
         m_robotPoseSupplier = robotPoseSupplier;
+        m_hub = hub;
+
+        // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)        
+    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
+        FIELD_CORNERS = List.of(
+            new Pose2d(new Translation2d(0,1.5), Rotation2d.kZero),
+            new Pose2d(new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
+        );
+    }
+    else {
+        FIELD_CORNERS = List.of(
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(),1.5), Rotation2d.kZero),
+            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
+        );
+    }
+    
 
         addRequirements(turret);
     }
@@ -79,6 +101,16 @@ public class TurretTrackPose extends Command{
         // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(currentRobotPose, m_goalPose));
 
         Pose2d robotPose = m_robotPoseSupplier.get();
+        double angleToTargetFieldDeg;
+        
+        if (robotBehindHub(robotPose, m_hub)) {
+            Pose2d nearestCorner = robotPose.nearest(FIELD_CORNERS);
+            Translation2d toTarget = nearestCorner.getTranslation().minus(robotPose.getTranslation());
+            angleToTargetFieldDeg = Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX()));
+        } else {
+            angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
+        }
+
 
     // If robot is behind the hub, aim at the nearest corner instead of the
     // provided goal pose. `HUB_POSE` and `FIELD_CORNERS` are defined below.
@@ -88,7 +120,7 @@ public class TurretTrackPose extends Command{
     // Translation2d toTarget = targetPose.getTranslation().minus(robotPose.getTranslation());
 
         // Angle from field +X axis to target (degrees)
-        double angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
+        // double angleToTargetFieldDeg = m_requiredAngle.getAsDouble();
         Logger.recordOutput("Turret/angleToTarget", angleToTargetFieldDeg);
 
         // Robot heading in degrees (field frame)
@@ -114,23 +146,19 @@ public class TurretTrackPose extends Command{
     Logger.recordOutput("Turret/flippedRelative", flippedRelative);
 
         Logger.recordOutput("Turret/targetHeading", turretCmdDeg);
-        // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
+       // Logger.recordOutput("Turret/robotBehindTarget", robotBehindTarget(robotPose, m_goalPose));
 
     }
 
-    // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)
-    private static final List<Pose2d> FIELD_CORNERS = List.of(
-        new Pose2d(0, aprilTagLayout.getFieldWidth(), new Rotation2d()),
-        new Pose2d(0, 0.0, new Rotation2d())
-        // new Pose2d(8.23, 5.49, new Rotation2d()),
-        // new Pose2d(0.0, 5.49, new Rotation2d())
-    );
 
-    // Example hub position (center of field) — change if your coordinate system differs
-    private static final Pose2d HUB_POSE = new Pose2d(new Translation2d(AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getTagPose(26).get().getX() + Units.inchesToMeters(47.0) / 2.0, AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark).getFieldWidth() / 2.0), new Rotation2d());
 
-    private boolean robotBehindHub(Pose2d robotPose, Pose2d hubPose) {
+    private boolean robotBehindHub(Pose2d robotPose, Translation2d hubPose) {
+        if(robotPose==null){return false;}
+
         // Simple X-based check; adapt this to your field's coordinate convention if needed.
+        if(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            return robotPose.getX() < hubPose.getX();
+        }
         return robotPose.getX() > hubPose.getX();
     }
 
@@ -154,9 +182,9 @@ public class TurretTrackPose extends Command{
             pose.getTranslation().unaryMinus().rotateBy(rotationInverse), rotationInverse);
       }
 
-    private boolean robotBehindTarget(Pose2d robotPose, Pose2d targetPose) {
-        return robotPose.getX() > targetPose.getX();
-    }
+    // private boolean robotBehindTarget(Pose2d robotPose, Pose2d targetPose) {
+    //     return robotPose.getX() > targetPose.getX();
+    // }
 
 
     
