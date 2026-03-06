@@ -38,12 +38,6 @@
                 "data": {
                   "name": "HoodDown"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeDownGo"
-                }
               }
             ]
           }
@@ -61,7 +55,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Half Balls to Near Right Trench Shot"
+                  "pathName": "Half Balls to Right Trench Shot"
                 }
               },
               {
@@ -118,6 +112,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "IntakeDownGo"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
@@ -131,12 +131,6 @@
                 "type": "named",
                 "data": {
                   "name": "HoodDown"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeDownGo"
                 }
               },
               {

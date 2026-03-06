@@ -3,38 +3,54 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.811265060240963,
-        "y": 3.9038674698795175
+        "x": 6.0057346647646215,
+        "y": 3.8732667617689023
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.018891566265061,
-        "y": 0.6801927710843372
+        "x": 6.445649072753208,
+        "y": 0.34101283880171307
       },
       "isLocked": false,
       "linkedName": "Right Hub Balls"
     },
     {
       "anchor": {
-        "x": 3.2213975903614456,
-        "y": 0.8113253012048198
+        "x": 4.750684736091298,
+        "y": 0.6256633380884444
       },
       "prevControl": {
-        "x": 6.6199156626506035,
-        "y": 0.29772289156626475
+        "x": 5.354475121801107,
+        "y": 0.5195023911504553
+      },
+      "nextControl": {
+        "x": 3.5732667617689007,
+        "y": 0.8326818830242522
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.771069900142653,
+        "y": 1.4925534950071324
+      },
+      "prevControl": {
+        "x": 3.508573466476462,
+        "y": 0.14693295292439523
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Near Right Trench Shot"
+      "linkedName": "Right Trench Shot"
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 1.0,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.8655601659751008,
+      "waypointRelativePos": 1.415778251599145,
       "rotationDegrees": 0.1285653709186002
     }
   ],
@@ -51,7 +67,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -24.96278983080703
+    "rotation": -95.82634202955576
   },
   "reversed": false,
   "folder": null,

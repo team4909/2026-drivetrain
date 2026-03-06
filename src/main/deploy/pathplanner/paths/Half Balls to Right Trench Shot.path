@@ -8,27 +8,31 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.48878313253012,
-        "y": 0.6036987951807222
+        "x": 7.700699001426534,
+        "y": 0.030485021398003465
       },
       "isLocked": false,
       "linkedName": "Right Trench Half Balls"
     },
     {
       "anchor": {
-        "x": 3.2213975903614456,
-        "y": 0.8113253012048198
+        "x": 2.771069900142653,
+        "y": 1.4925534950071324
       },
       "prevControl": {
-        "x": 5.723843373493977,
-        "y": 0.4288554216867475
+        "x": 4.1296291012838795,
+        "y": -0.22828815977175365
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Near Right Trench Shot"
+      "linkedName": "Right Trench Shot"
     }
   ],
   "rotationTargets": [
+    {
+      "waypointRelativePos": 0.3923240938166313,
+      "rotationDegrees": 0.0
+    },
     {
       "waypointRelativePos": 0.7975103734439861,
       "rotationDegrees": 0.0
@@ -47,7 +51,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -24.96278983080703
+    "rotation": -95.82634202955576
   },
   "reversed": false,
   "folder": null,
