@@ -36,8 +36,8 @@ public class ShootingParameters {
         m_hoodTable.put(Units.inchesToMeters(63.625), 1100.0);
         m_hoodTable.put(Units.inchesToMeters(103.625), 1300.0);
         m_hoodTable.put(Units.inchesToMeters(103.625+40), 1650.0);
-        m_hoodTable.put(Units.inchesToMeters(103.625+40+40), 1925.0);
-        // m_hoodTable.put(Units.inchesToMeters(183.234), 1750.0);
+        // m_hoodTable.put(Units.inchesToMeters(103.625+40+40), 1925.0);
+        m_hoodTable.put(Units.inchesToMeters(183.234), 1750.0);
 
         // m_shooterTable.put(Units.inchesToMeters(63.234), 47.0);
         // m_shooterTable.put(Units.inchesToMeters(93.234), 49.0);
@@ -45,11 +45,11 @@ public class ShootingParameters {
         // m_shooterTable.put(Units.inchesToMeters(153.234), 57.0);
         // m_shooterTable.put(Units.inchesToMeters(183.234), 65.0);
 
-        m_shooterTable.put(Units.inchesToMeters(63.625), 47.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625), 52.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625+40), 55.0);
-        m_shooterTable.put(Units.inchesToMeters(103.625+40+40), 60.0);
-        // m_shooterTable.put(Units.inchesToMeters(183.234), 65.0);
+        m_shooterTable.put(Units.inchesToMeters(63.625), 45.0); //47
+        m_shooterTable.put(Units.inchesToMeters(103.625), 50.0); //52
+        m_shooterTable.put(Units.inchesToMeters(103.625+40), 53.0); //55
+        // m_shooterTable.put(Units.inchesToMeters(103.625+40+40), 60.0);
+        m_shooterTable.put(Units.inchesToMeters(183.234), 63.0); //65
 
 
         m_timeOfFlightTable.put(Units.inchesToMeters(63.234), 0.93);

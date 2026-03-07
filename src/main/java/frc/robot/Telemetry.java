@@ -1,5 +1,9 @@
 package frc.robot;
 
+import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -23,9 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
-
-import org.littletonrobotics.junction.Logger;
 
 public class Telemetry {
     private final double MaxSpeed;
@@ -53,6 +54,9 @@ public class Telemetry {
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
     private Translation2d m_hubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+    private Translation2d m_redHubCenter = m_hubCenter.rotateAround(
+                    new Translation2d(aprilTagLayout.getFieldLength() / 2, aprilTagLayout.getFieldWidth() / 2),
+                    Rotation2d.k180deg);
     // private Translation2d corner = new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5);
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
@@ -116,6 +120,7 @@ public class Telemetry {
         SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
         Logger.recordOutput("DriveState/distanceToHub", state.Pose.getTranslation().getDistance(m_hubCenter));
+        Logger.recordOutput("DriveState/redHubDist", state.Pose.getTranslation().getDistance(m_redHubCenter));
         // Logger.recordOutput("DriveState/distanceFromRedRightCorner",state.Pose.getTranslation().getDistance(corner));
 
         /* Telemeterize the pose to a Field2d */
