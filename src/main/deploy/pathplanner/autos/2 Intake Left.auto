@@ -5,41 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeDownGo"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoodDown"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Right Trench Start to Half Balls"
-                }
-              }
-            ]
+            "name": "IntakeDownGo"
           }
         },
         {
@@ -49,7 +17,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Half Balls to Right Trench Start Moving"
+                  "pathName": "Left Trench to Half Balls"
                 }
               },
               {
@@ -57,12 +25,6 @@
                 "data": {
                   "name": "HoodDown"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "IntakeStop"
-                }
               }
             ]
           }
@@ -74,19 +36,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Right Trench Start Moving to HP"
+                  "pathName": "Half Balls to Left Trench Shot"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootAndIndex"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "HoodInterp"
+                  "name": "HoodDown"
                 }
               }
             ]
@@ -96,12 +52,6 @@
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "ShootAndIndex"
-                }
-              },
               {
                 "type": "named",
                 "data": {
@@ -111,7 +61,63 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 2.0
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootAndIndex"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "IntakeOscillate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "IntakeDownGo"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left Trench Shot to Left Hub Balls"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoodDown"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShootIndexStop"
                 }
               }
             ]
@@ -124,9 +130,41 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HP to Right Shot"
+                  "pathName": "Left Hub Balls to Left Trench Shot"
                 }
               },
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoodDown"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "HoodInterp"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
@@ -134,9 +172,9 @@
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "HoodInterp"
+                  "waitTime": 10.0
                 }
               },
               {

@@ -58,9 +58,11 @@ public class IntakeIOTalonFX implements IntakeIO {
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
 
+        m_intakeExtender.getConfigurator().apply(extenderConfigs);
+        m_intakeExtender.getConfigurator().apply(cfg);
         m_intakeRoller.getConfigurator().apply(rollerCfg);
         m_intakeRollerLeft.getConfigurator().apply(rollerCfg);
-       m_intakeExtender.getConfigurator().apply(extenderConfigs);
+       
 
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 

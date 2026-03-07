@@ -340,7 +340,7 @@ public class RobotContainer {
         joystick.rightBumper()
                 // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(), s_Intake.stowAndStop()).repeatedly())
                 .whileTrue(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))))
-                .onFalse(Commands.sequence(s_Intake.Extend(), s_Intake.stop()));
+                .onFalse(Commands.sequence(s_Intake.Extend()));
 
         s_Drivetrain.registerTelemetry(logger::telemeterize);
     }
