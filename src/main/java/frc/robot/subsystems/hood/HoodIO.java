@@ -11,6 +11,10 @@ public interface HoodIO{
     }
     public default void setPosition(int position) {}
 
+     public default void setPosition(double position) {}
+
+    public default void updateInputs(HoodIOInputsAutoLogged inputs) {}
+
     // public void updateInputs(HoodIOInputsAutoLogged m_inputs);
 
 

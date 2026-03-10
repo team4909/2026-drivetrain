@@ -43,6 +43,7 @@ import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIORevServoHub;
+import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
 import frc.robot.subsystems.intake.Intake;
@@ -105,7 +106,8 @@ public class RobotContainer {
         // Create intake and give it a reference to the indexer so combined
         // intake+index commands can be created inside the intake subsystem.
         s_Intake = new Intake(new IntakeIOTalonFX());
-        s_Hood = new Hood(new HoodIORevServoHub());
+        //s_Hood = new Hood(new HoodIORevServoHub());
+        s_Hood = new Hood(new HoodIOTalonFX());
         // s_Shooter = new Shooter(new ShooterIOTalonFX());
         s_Turret = new Turret(new TurretIOTalonFX());
 
