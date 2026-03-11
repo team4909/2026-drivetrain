@@ -1,12 +1,13 @@
 package frc.robot.subsystems.hood;
 
-import edu.wpi.first.math.MathUtil;
+import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 
 public class HoodIOTalonFX implements HoodIO {
     private final TalonFX m_hoodMotor;
@@ -20,36 +21,43 @@ public class HoodIOTalonFX implements HoodIO {
 
     // Convert legacy pulse-width setpoints (1000-2000) into Falcon rotations.
     private static final double kMinRotations = 0.0;
-    private static final double kMaxRotations = 0.35;
+    private static final double kMaxRotations = 0.73;
 
     public HoodIOTalonFX() {
         m_hoodMotor = new TalonFX(kHoodMotorID, kCanbus);
 
         final TalonFXConfiguration config = new TalonFXConfiguration();
-        config.CurrentLimits.SupplyCurrentLimit = 30.0;
+        config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.Slot0.kP = 0.1;
-        config.Slot0.kI = 0.0;
-        config.Slot0.kD = 0.5;
-
-        final MotorOutputConfigs motorOutputConfigs = new MotorOutputConfigs();
-        motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.Slot0.kP = 20.0;
+        config.Slot0.kI = 6.0;
+        config.Slot0.kD = 0.01;
+        config.Slot0.kS = 2.0;
 
         m_hoodMotor.getConfigurator().apply(config);
-        m_hoodMotor.getConfigurator().apply(motorOutputConfigs);
+
+        m_hoodMotor.setPosition(0);
+    }
+
+    public double map(double x) {
+        return (x - kMinPulseWidth) * (kMaxRotations - kMinRotations) / (kMaxPulseWidth - kMinPulseWidth) + kMinRotations;
     }
 
     @Override
     public void setPosition(double position) {
-        final double clampedPulseWidth = MathUtil.clamp(position, kMinPulseWidth, kMaxPulseWidth);
-        final double targetRotations = MathUtil.interpolate(
-            kMinRotations,
-            kMaxRotations,
-            (clampedPulseWidth - kMinPulseWidth) / (kMaxPulseWidth - kMinPulseWidth)
-        );
+        // final double clampedPulseWidth = MathUtil.clamp(position, kMinPulseWidth, kMaxPulseWidth);
+        // final double targetRotations = MathUtil.interpolate(
+        //     kMinRotations,
+        //     kMaxRotations,
+        //     (clampedPulseWidth - kMinPulseWidth) / (kMaxPulseWidth - kMinPulseWidth)
+        // );
 
-        m_hoodMotor.setControl(m_positionRequest.withPosition(targetRotations));
+        m_hoodMotor.setControl(m_positionRequest.withPosition( -MathUtil.clamp(map(position), kMinRotations, kMaxRotations)));
+        Logger.recordOutput("Hood/map", -MathUtil.clamp(map(position), kMinRotations, kMaxRotations));
     }
+
+
 
     @Override
     public void updateInputs(HoodIOInputsAutoLogged inputs) {

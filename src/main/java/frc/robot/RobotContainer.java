@@ -254,17 +254,18 @@ public class RobotContainer {
                 ));
         // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
 
-        s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(), 
-        s_Hood.goTo((() -> m_shootingParameters.calculate(m_hub).hoodAngle())), 
-        s_Drivetrain::robotBehindHub));
+        // s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(),  
+        // s_Hood.goTo((() -> m_shootingParameters.calculate(m_hub).hoodAngle())), 
+        // s_Drivetrain::robotBehindHub));
 
+        s_Hood.setDefaultCommand(s_Hood.retractHood());
 
         // s_Hood.setDefaultCommand(s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
         // s_Hood.setDefaultCommand(s_Hood.tunableShot());
         joystick.start().onTrue(s_Drivetrain.runOnce(() -> s_Drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
-        joystick.povRight().whileTrue(s_Hood.retractHood());
+        joystick.povRight().whileTrue(s_Hood.extendHood());
         joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
@@ -287,17 +288,33 @@ public class RobotContainer {
         //         ));
 
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Hood.extendHood(), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()), s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
                         s_Shooter.stop(),
                         s_Indexer.stop(),
-                        s_Intake.Extend()
+                        s_Intake.Extend(),
+                        s_Hood.retractHood()
                 ));
         
-        
+        // untested new hood control 
+        // joystick.rightTrigger().whileTrue(Commands.parallel(
+        //         s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()),
+        //         new ConditionalCommand(
+        //                 Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+        //                 Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+        //                 // Condition: true when robot is behind the hub (X greater than hub X)
+        //                 s_Drivetrain::robotBehindHub)))
+        //         .onFalse(Commands.parallel(
+        //                 s_Hood.retractHood(),
+        //                 s_Shooter.stop(),
+        //                 s_Indexer.stop(),
+        //                 s_Intake.Extend()
+        //         ));
+
+
                 // joystick.rightTrigger().whileTrue(Commands.parallel(
                 // s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()),
                 // Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed()))).onFalse(Commands.parallel(
