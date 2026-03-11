@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class Hood extends SubsystemBase{
     private final HoodIO m_io;
     private final HoodIOInputsAutoLogged m_inputs = new HoodIOInputsAutoLogged();
-    private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/HoodPosition", 1000);
+    private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/HoodPosition", 0);
 
     // private double inmin = 32; // min hood angle
     // private double inmax = 48; // max hood angle
@@ -35,19 +35,19 @@ public class Hood extends SubsystemBase{
     } 
 
      public Command retractHood (){
-        return this.run (() -> m_io.setPosition(1000)).withName("RetractHood");
+        return this.run (() -> m_io.setPosition(0)).withName("RetractHood");
     } 
 
-    public Command testShotHood (){
-        return this.run (() -> m_io.setPosition(1500)).withName("testShotHood");
-    } 
+    // public Command testShotHood (){
+    //     return this.run (() -> m_io.setPosition(1500)).withName("testShotHood");
+    // } 
 
     public Command goTo (DoubleSupplier pulseWidth){
-        return this.run (() -> m_io.setPosition(((int) pulseWidth.getAsDouble()))).repeatedly().withName("goToHood");
+        return this.run (() -> m_io.setPosition((pulseWidth.getAsDouble()))).repeatedly().withName("goToHood");
     }
 
     public Command tunableShot (){
-        return this.run (() -> m_io.setPosition((int) m_position.get())).withName("tunableShot");
+        return this.runOnce (() -> m_io.setPosition(m_position.get())).withName("tunableShot").repeatedly();
     } 
 
     // public double getBallReleaseAngle() {

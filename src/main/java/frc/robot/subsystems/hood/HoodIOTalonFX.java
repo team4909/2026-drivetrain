@@ -30,8 +30,8 @@ public class HoodIOTalonFX implements HoodIO {
         config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.Slot0.kP = 20.0;
-        config.Slot0.kI = 6.0;
+        config.Slot0.kP = 25;
+        config.Slot0.kI = 6;
         config.Slot0.kD = 0.01;
         config.Slot0.kS = 2.0;
 
@@ -53,8 +53,8 @@ public class HoodIOTalonFX implements HoodIO {
         //     (clampedPulseWidth - kMinPulseWidth) / (kMaxPulseWidth - kMinPulseWidth)
         // );
 
-        m_hoodMotor.setControl(m_positionRequest.withPosition( -MathUtil.clamp(map(position), kMinRotations, kMaxRotations)));
-        Logger.recordOutput("Hood/map", -MathUtil.clamp(map(position), kMinRotations, kMaxRotations));
+        m_hoodMotor.setControl(m_positionRequest.withPosition( -MathUtil.clamp(position, kMinRotations, kMaxRotations)));
+        Logger.recordOutput("Hood/map", -MathUtil.clamp(position, kMinRotations, kMaxRotations));
     }
 
 
