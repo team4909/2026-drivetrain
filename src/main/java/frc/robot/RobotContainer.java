@@ -283,13 +283,13 @@ public class RobotContainer {
         //                 s_Shooter.stop(),
         //                 s_Indexer.stop()));
 
-        joystick.rightTrigger().whileTrue(Commands.parallel(
-                s_Shooter.tuningShoot(),
-                Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
-                )).onFalse(Commands.parallel(
-                        s_Shooter.stop(),
-                        s_Indexer.stop()
-                ));
+        // joystick.rightTrigger().whileTrue(Commands.parallel(
+        //         s_Shooter.tuningShoot(),
+        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
+        //         )).onFalse(Commands.parallel(
+        //                 s_Shooter.stop(),
+        //                 s_Indexer.stop()
+        //         ));
 
 
         //USE THIS

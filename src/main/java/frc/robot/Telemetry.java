@@ -119,6 +119,8 @@ public class Telemetry {
         SignalLogger.writeDoubleArray("DriveState/ModuleStates", m_moduleStatesArray);
         SignalLogger.writeDoubleArray("DriveState/ModuleTargets", m_moduleTargetsArray);
         SignalLogger.writeDouble("DriveState/OdometryPeriod", state.OdometryPeriod, "seconds");
+
+        Logger.recordOutput("DriveState/Pose", state.Pose);
         Logger.recordOutput("DriveState/distanceToHub", state.Pose.getTranslation().getDistance(m_hubCenter));
         Logger.recordOutput("DriveState/redHubDist", state.Pose.getTranslation().getDistance(m_redHubCenter));
         // Logger.recordOutput("DriveState/distanceFromRedRightCorner",state.Pose.getTranslation().getDistance(corner));
