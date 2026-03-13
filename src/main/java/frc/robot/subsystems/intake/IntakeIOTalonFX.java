@@ -1,24 +1,37 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Rotations;
-
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.DifferentialMechanism.DisabledReasonValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.Units;
-
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 
 public class IntakeIOTalonFX implements IntakeIO {
+
+    private StatusSignal<AngularVelocity> m_intakeRollerRightVelocity;
+    private StatusSignal<Current> m_intakeRollerRightStatorCurrent;
+    private StatusSignal<Voltage> m_intakeRollerRightVoltage;
+
+    private StatusSignal<AngularVelocity> m_intakeRollerLeftVelocity;
+    private StatusSignal<Current> m_intakeRollerLeftStatorCurrent;
+    private StatusSignal<Voltage> m_intakeRollerLeftVoltage;
+
+    private StatusSignal<AngularVelocity> m_intakeExtenderVelocity;
+    private StatusSignal<Current> m_intakeExtenderStatorCurrent;
+    private StatusSignal<Angle> m_intakeExtenderPosition;
+    private StatusSignal<Voltage> m_intakeExtenderVoltage;
 
   private final TalonFX m_intakeRoller;
     private final TalonFX m_intakeExtender;
@@ -67,6 +80,19 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeRoller.setControl(new Follower(kIntakeRollerLeaderID, MotorAlignmentValue.Opposed));
 
         m_extenderRequest = new PositionVoltage(0).withSlot(0);
+
+        BaseStatusSignal.setUpdateFrequencyForAll(100, 
+            m_intakeRollerRightVelocity,
+            m_intakeRollerRightStatorCurrent,
+            m_intakeRollerRightVoltage,
+            m_intakeRollerLeftVelocity,
+            m_intakeRollerLeftStatorCurrent,
+            m_intakeRollerLeftVoltage,
+            m_intakeExtenderVelocity,
+            m_intakeExtenderStatorCurrent,
+            m_intakeExtenderPosition,
+            m_intakeExtenderVoltage
+        );
     }
 
     @Override
@@ -90,10 +116,37 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {
-        m_inputs.speed = m_intakeRollerLeft.getVelocity().getValueAsDouble();
-        m_inputs.statorCurrent = m_intakeRollerLeft.getStatorCurrent().getValueAsDouble();
-        m_inputs.supplyCurrent = m_intakeRollerLeft.getSupplyCurrent().getValueAsDouble();
-        m_inputs.position = m_intakeExtender.getPosition().getValueAsDouble();
-        m_inputs.velocity = m_intakeExtender.getVelocity().getValueAsDouble();
+        m_inputs.intakeRollerRightConnected = 
+            BaseStatusSignal.refreshAll(
+                m_intakeRollerRightVelocity,
+                m_intakeRollerRightStatorCurrent,
+                m_intakeRollerRightVoltage
+            ).isOK();
+        m_inputs.intakeRollerLeftConnected = 
+            BaseStatusSignal.refreshAll(
+                m_intakeRollerLeftVelocity,
+                m_intakeRollerLeftStatorCurrent,
+                m_intakeRollerLeftVoltage
+            ).isOK();
+        m_inputs.intakeExtenderConnected = 
+            BaseStatusSignal.refreshAll(
+                m_intakeExtenderVelocity,
+                m_intakeExtenderStatorCurrent,
+                m_intakeExtenderPosition,
+                m_intakeExtenderVoltage
+            ).isOK();
+
+            m_inputs.intakeRollerRightVelocity = m_intakeRollerRightVelocity.getValueAsDouble();
+            m_inputs.statorCurrentIntakeRollerRight = m_intakeRollerRightStatorCurrent.getValueAsDouble();
+            m_inputs.intakeRollerRightVoltage = m_intakeRollerRightVoltage.getValueAsDouble();
+
+            m_inputs.intakeRollerLeftVelocity = m_intakeRollerLeftVelocity.getValueAsDouble();
+            m_inputs.statorCurrentIntakeRollerLeft = m_intakeRollerLeftStatorCurrent.getValueAsDouble();
+            m_inputs.intakeRollerLeftVoltage = m_intakeRollerLeftVoltage.getValueAsDouble();
+
+            m_inputs.intakeExtenderVelocity = m_intakeExtenderVelocity.getValueAsDouble();
+            m_inputs.statorCurrentIntakeExtender = m_intakeExtenderStatorCurrent.getValueAsDouble();
+            m_inputs.IntakeExtenderPosition = m_intakeExtenderPosition.getValueAsDouble();
+            m_inputs.intakeExtenderVoltage = m_intakeExtenderVoltage.getValueAsDouble();
     }
 }

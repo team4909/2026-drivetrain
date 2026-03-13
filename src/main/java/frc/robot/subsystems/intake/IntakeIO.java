@@ -8,11 +8,23 @@ public interface IntakeIO {
 
     @AutoLog
     public static class IntakeIOInputs {
-        public double speed = 0.0;
-        public double statorCurrent = 0.0;
-        public double supplyCurrent = 0.0;
-        public double position = 0.0;
-        public double velocity = 0.0;
+        public double statorCurrentIntakeRollerRight = 0.0;
+        public double statorCurrentIntakeRollerLeft = 0.0;
+        public double statorCurrentIntakeExtender = 0.0;
+
+        public double IntakeExtenderPosition = 0.0;
+
+        public double intakeRollerRightVelocity = 0.0;
+        public double intakeRollerLeftVelocity = 0.0;
+        public double intakeExtenderVelocity = 0.0;
+
+        public double intakeRollerRightVoltage = 0.0;
+        public double intakeRollerLeftVoltage = 0.0;
+        public double intakeExtenderVoltage = 0.0;
+
+        public boolean intakeRollerRightConnected = false;
+        public boolean intakeRollerLeftConnected = false;
+        public boolean intakeExtenderConnected = false;
 
         public String setpoint = "";
     }
