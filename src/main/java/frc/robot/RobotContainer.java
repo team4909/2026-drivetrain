@@ -9,8 +9,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,7 +17,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -29,20 +26,19 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
@@ -57,9 +53,6 @@ import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -93,6 +86,7 @@ public class RobotContainer {
     private ShootingCalculator m_shootingCalculator = new ShootingCalculator(s_Drivetrain);
     private ShootingParameters m_shootingParameters;
     private final Vision s_Vision;
+    private Trigger m_canSeeTag;
 
     public RobotContainer() {
         if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
@@ -237,6 +231,8 @@ public class RobotContainer {
         SmartDashboard.putData("Auto Chooser", m_chooser);
 
         configureBindings();
+
+        m_canSeeTag = new Trigger(s_Vision::canSeeTag);
     }
 
     private void configureBindings() {
@@ -292,6 +288,7 @@ public class RobotContainer {
         //         ));
 
 
+        
         //USE THIS
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
                 Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Hood.extendHood(), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
@@ -303,6 +300,18 @@ public class RobotContainer {
                         s_Indexer.stop(),
                         s_Intake.Extend(),
                         s_Hood.retractHood()
+                ));
+
+        (joystick.rightTrigger().and(m_canSeeTag)).whileTrue(new ConditionalCommand(
+                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(new InstantCommand(()-> joystick.setRumble(RumbleType.kBothRumble, MaxAngularRate)), Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                // Condition: true when robot is behind the hub (X greater than hub X)
+                s_Drivetrain::robotBehindHub))
+                .onFalse(Commands.parallel(
+                        s_Shooter.stop(),
+                        s_Indexer.stop(),
+                        s_Intake.Extend(),
+                        new InstantCommand(() -> joystick.setRumble(RumbleType.kBothRumble, 0))
                 ));
         
         // untested new hood control 
