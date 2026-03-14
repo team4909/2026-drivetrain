@@ -152,8 +152,8 @@ public class RobotContainer {
                                 Units.degreesToRadians(90)
                         ))),
                 new VisionIOPhotonVision("left-cam1", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-6.748188), //-9.24006310
-                        Units.inchesToMeters(12.487542), //10.072250
+                        Units.inchesToMeters(-6.748188 -6.52), //-9.24006310
+                        Units.inchesToMeters(12.487542 + 1.17), //10.072250
                         Units.inchesToMeters(8.315411)), //15.539060
                         new Rotation3d(
                                 Units.degreesToRadians(0), //5.6737923
