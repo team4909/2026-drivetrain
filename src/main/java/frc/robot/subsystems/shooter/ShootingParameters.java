@@ -39,9 +39,10 @@ public class ShootingParameters {
         m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20), 0.15);
         m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20), 0.15);
         m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 0.17);
+        
         m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 0.32);
         m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 0.4);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 0.49);
+        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 0.54);
 
         // m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 0.5);
 
@@ -65,8 +66,8 @@ public class ShootingParameters {
         m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 60.0*1.05);
 
 
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 64.5*1.07);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 74.0*1.08);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 64.5*1.17); //64.5*1.17
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 74.0*1.2);
         m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 95.0);
 
         // m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 64.0);
