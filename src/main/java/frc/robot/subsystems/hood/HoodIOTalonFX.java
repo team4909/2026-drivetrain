@@ -1,13 +1,17 @@
 package frc.robot.subsystems.hood;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DutyCycle;
 
 public class HoodIOTalonFX implements HoodIO {
     private final TalonFX m_hoodMotor;
@@ -55,6 +59,15 @@ public class HoodIOTalonFX implements HoodIO {
 
         m_hoodMotor.setControl(m_positionRequest.withPosition( -MathUtil.clamp(position, kMinRotations, kMaxRotations)));
         Logger.recordOutput("Hood/map", -MathUtil.clamp(position, kMinRotations, kMaxRotations));
+    }
+    
+    public void resetMotorPosition(double rotations){
+        m_hoodMotor.setPosition(Rotations.of(rotations));
+    }
+
+    public void setSpeed(double speed) {
+        //negative position/speed is hood up.
+        m_hoodMotor.setControl(new DutyCycleOut(speed));
     }
 
 

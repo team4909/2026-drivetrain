@@ -12,6 +12,8 @@ public interface HoodIO{
     // public default void setPosition(int position) {}
 
      public default void setPosition(double position) {}
+     public default void setSpeed(double speed) {}
+     public default void resetMotorPosition(double rotations) {}
 
     public default void updateInputs(HoodIOInputsAutoLogged inputs) {}
 
