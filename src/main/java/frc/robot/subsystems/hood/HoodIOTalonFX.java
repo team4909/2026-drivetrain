@@ -25,7 +25,7 @@ public class HoodIOTalonFX implements HoodIO {
 
     // Convert legacy pulse-width setpoints (1000-2000) into Falcon rotations.
     private static final double kMinRotations = 0.0;
-    private static final double kMaxRotations = 0.73;
+    private static final double kMaxRotations = 0.685;
 
     public HoodIOTalonFX() {
         m_hoodMotor = new TalonFX(kHoodMotorID, kCanbus);

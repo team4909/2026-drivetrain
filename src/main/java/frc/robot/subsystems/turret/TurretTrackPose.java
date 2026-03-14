@@ -23,33 +23,25 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
 
 public class TurretTrackPose extends Command{
     private Turret m_turret;
     private Supplier<Pose2d> m_robotPoseSupplier;
-    private List<Pose2d> FIELD_CORNERS;
+    private List<Translation2d> FIELD_CORNERS;
     private DoubleSupplier m_requiredAngle;
     private Translation2d m_hub;
+    private CommandSwerveDrivetrain m_Drivetrain;
 
-    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret, Translation2d hub){
+    public TurretTrackPose(DoubleSupplier requiredAngle, Supplier<Pose2d> robotPoseSupplier, Turret turret, CommandSwerveDrivetrain drivetrain){
         m_turret = turret;
         m_requiredAngle = requiredAngle;
         m_robotPoseSupplier = robotPoseSupplier;
-        m_hub = hub;
 
-        // Field corner & hub definitions (placeholder coordinates — adjust to your field origin/units)        
-    if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue){
-        FIELD_CORNERS = List.of(
-            new Pose2d(new Translation2d(0,1.5), Rotation2d.kZero),
-            new Pose2d(new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
-        );
-    }
-    else {
-        FIELD_CORNERS = List.of(
-            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(),1.5), Rotation2d.kZero),
-            new Pose2d(new Translation2d(aprilTagLayout.getFieldLength(), aprilTagLayout.getFieldWidth() - 1.5), Rotation2d.kZero)
-        );
-    }
+        m_Drivetrain = drivetrain;
+        
+        FIELD_CORNERS = m_Drivetrain.getFieldCorners();
+        m_hub = m_Drivetrain.getHubCenter();
     
 
         addRequirements(turret);
@@ -71,6 +63,10 @@ public class TurretTrackPose extends Command{
 
     @Override
     public void execute() {
+        m_hub = m_Drivetrain.getHubCenter();
+        FIELD_CORNERS = m_Drivetrain.getFieldCorners();
+        
+
         //         Pose2d currentRobotPose = m_robotPoseSupplier.get();
         // Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentRobotPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
         // Rotation2d targetHeading = robotToTargetTranslation.getAngle();
@@ -104,8 +100,8 @@ public class TurretTrackPose extends Command{
         double angleToTargetFieldDeg;
         
         if (robotBehindHub(robotPose, m_hub)) {
-            Pose2d nearestCorner = robotPose.nearest(FIELD_CORNERS);
-            Translation2d toTarget = nearestCorner.getTranslation().minus(robotPose.getTranslation());
+            Translation2d nearestCorner = robotPose.getTranslation().nearest(FIELD_CORNERS);
+            Translation2d toTarget = nearestCorner.minus(robotPose.getTranslation());
             angleToTargetFieldDeg = Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX()));
         } else {
             angleToTargetFieldDeg = m_requiredAngle.getAsDouble();

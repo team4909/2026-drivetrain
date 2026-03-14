@@ -7,9 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
-
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -19,30 +16,22 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
-import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.hood.Hood;
-import frc.robot.subsystems.hood.HoodIORevServoHub;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.indexer.IndexerIOTalonFX;
@@ -57,9 +46,6 @@ import frc.robot.subsystems.turret.TurretIOTalonFX;
 import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIOTalonFX;
-import static frc.robot.subsystems.vision.VisionConstants.aprilTagLayout;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -68,9 +54,9 @@ public class RobotContainer {
     private SwerveRequest.ApplyRobotSpeeds m_drive;
 //     LoggedNetworkNumber tunableNumber = new LoggedNetworkNumber("/Tuning/MyTunableNumber", 0.0);
 
-    private Translation2d m_hub = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
+//     private Translation2d m_hub = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(-0.6,0), Rotation2d.k180deg)).getTranslation();
 
-//     private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
+    //private final LoggedNetworkNumber Translation_P = new LoggedNetworkNumber("/Tuning/Elevator/L1Setpoint", 10);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -95,9 +81,9 @@ public class RobotContainer {
     private final Vision s_Vision;
 
     public RobotContainer() {
-        if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
-            m_hub = m_hub.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
-    }
+        // if (DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red){
+        //     m_hub = m_hub.rotateAround(new Translation2d(aprilTagLayout.getFieldLength()/2, aprilTagLayout.getFieldWidth()/2), Rotation2d.k180deg);
+        // }
 
 
         m_drive = new SwerveRequest.ApplyRobotSpeeds();
@@ -119,8 +105,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("IntakeOscillate", Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))));
         NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
         NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
-        NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
-        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
+        NamedCommands.registerCommand("HoodInterp", s_Hood.goTo(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).hoodAngle()));
+        NamedCommands.registerCommand("ShootAndIndex",  Commands.parallel(s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("Pass", Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
         NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(),s_Indexer.stop()));
 
@@ -148,7 +134,7 @@ public class RobotContainer {
                         Units.inchesToMeters(8.315411)),
                         new Rotation3d(
                                 Units.degreesToRadians(0),
-                                Units.degreesToRadians(-20),
+                                Units.degreesToRadians(-5),
                                 Units.degreesToRadians(90)
                         ))),
                 new VisionIOPhotonVision("left-cam1", new Transform3d(new Translation3d(
@@ -157,7 +143,7 @@ public class RobotContainer {
                         Units.inchesToMeters(8.315411)), //15.539060
                         new Rotation3d(
                                 Units.degreesToRadians(0), //5.6737923
-                                Units.degreesToRadians(-20), //-21
+                                Units.degreesToRadians(-5), //-21
                                 Units.degreesToRadians(90) //69.656
                         ))),
                 new VisionIOPhotonVision("right-cam", new Transform3d(new Translation3d(
@@ -269,7 +255,9 @@ public class RobotContainer {
         joystick.start().onTrue(s_Drivetrain.runOnce(() -> s_Drivetrain.seedFieldCentric()));
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
-        // joystick.povRight().whileTrue(s_Hood.extendHood());
+
+        joystick.povRight().whileTrue(s_Hood.zeroHood());
+
         joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
         joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
@@ -294,8 +282,8 @@ public class RobotContainer {
 
         //USE THIS
         joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Hood.extendHood(), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))), s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()), s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Hood.extendHood(), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
+                Commands.parallel(s_Hood.goTo(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).hoodAngle()), s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
@@ -304,6 +292,21 @@ public class RobotContainer {
                         s_Intake.Extend(),
                         s_Hood.retractHood()
                 ));
+
+
+        (joystick.rightTrigger().and(joystick.leftTrigger())).whileTrue(
+                new ConditionalCommand(
+                Commands.parallel(s_Hood.extendHood(), s_Shooter.shoot(m_shootingCalculator::getShooterSpeed), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly(), s_Intake.intake()),
+                Commands.parallel(s_Hood.goTo(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).hoodAngle()), s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()), s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly(), s_Intake.intake()),
+                // Condition: true when robot is behind the hub (X greater than hub X)
+                s_Drivetrain::robotBehindHub))
+                .onFalse(Commands.parallel(
+                        s_Shooter.stop(),
+                        s_Indexer.stop(),
+                        s_Intake.Extend(),
+                        s_Hood.retractHood()
+                )
+        );
         
         // untested new hood control 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
@@ -330,7 +333,7 @@ public class RobotContainer {
         // joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
         //         .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(m_hub).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret, m_hub));
+        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,

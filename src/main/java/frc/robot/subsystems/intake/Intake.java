@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setVelocity(0)).withName("IntakeStop");
+        return this.run(() -> m_io.setSpeed(0)).withName("IntakeStop");
     }
 
     public Command intake() {
