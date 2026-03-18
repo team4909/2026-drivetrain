@@ -112,13 +112,13 @@ public class RobotContainer {
 
         s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-9.88538),
-                        Units.inchesToMeters(10.762213),
-                        Units.inchesToMeters(8.314941)), // 682965
+                        Units.inchesToMeters(-9.734833),//(-9.88538
+                        Units.inchesToMeters(10.537752),//10.762213
+                        Units.inchesToMeters(8.506015)), // 8.314941
                         new Rotation3d(
                                 Units.degreesToRadians(0.0),
-                                Units.degreesToRadians(-20),
-                                Units.degreesToRadians(90.0 + 65)))), //90.0 + 65
+                                Units.degreesToRadians(-25),
+                                Units.degreesToRadians(90.0 + 80)))), //90.0 + 65
                 // new VisionIOPhotonVision("back-center-cam", new Transform3d(new Translation3d(
                 //         Units.inchesToMeters(-11.935828),
                 //         Units.inchesToMeters(11.338099),
@@ -129,40 +129,40 @@ public class RobotContainer {
                 //                 Units.degreesToRadians(192.5)
                 //         ))),
                 new VisionIOPhotonVision("left-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-6.748188),
-                        Units.inchesToMeters(12.487542),
-                        Units.inchesToMeters(8.315411)),
+                        Units.inchesToMeters(-6.622807),//-6.748188
+                        Units.inchesToMeters(12.471590),//12.487542
+                        Units.inchesToMeters(8.318717)),//8.315411
                         new Rotation3d(
-                                Units.degreesToRadians(0),
-                                Units.degreesToRadians(-5),
-                                Units.degreesToRadians(90)
+                                Units.degreesToRadians(8.745),
+                                Units.degreesToRadians(-25),
+                                Units.degreesToRadians(90 + 16.12)
                         ))),
                 new VisionIOPhotonVision("left-cam1", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-6.748188), //-9.24006310
-                        Units.inchesToMeters(12.487542), //10.072250
-                        Units.inchesToMeters(8.315411)), //15.539060
+                        Units.inchesToMeters(-6.622807), //-9.24006310
+                        Units.inchesToMeters(12.471590), //10.072250
+                        Units.inchesToMeters(8.318717)), //15.539060
                         new Rotation3d(
-                                Units.degreesToRadians(0), //5.6737923
-                                Units.degreesToRadians(-5), //-21
-                                Units.degreesToRadians(90) //69.656
+                                Units.degreesToRadians(8.745), //5.6737923
+                                Units.degreesToRadians(-25), //-21
+                                Units.degreesToRadians(90 + 16.12) //69.656
                         ))),
                 new VisionIOPhotonVision("right-cam", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-6.748188),
-                        Units.inchesToMeters(-12.487542),
-                        Units.inchesToMeters(8.315411)),
+                        Units.inchesToMeters(-6.62210),//-6.748188
+                        Units.inchesToMeters(-12.471590),//-12.487542
+                        Units.inchesToMeters(8.318717)),
                         new Rotation3d(
-                                Units.degreesToRadians(0),
-                                Units.degreesToRadians(-20),
-                                Units.degreesToRadians(270)
+                                Units.degreesToRadians(8.745),
+                                Units.degreesToRadians(-25),
+                                Units.degreesToRadians(270 - 16.12) //69.656
                         ))),
                 new VisionIOPhotonVision("right-cam1", new Transform3d(new Translation3d(
-                        Units.inchesToMeters(-6.748188),
-                        Units.inchesToMeters(-12.487542),
-                        Units.inchesToMeters(8.315411)),
+                        Units.inchesToMeters(-6.62210), //-9.24006310
+                        Units.inchesToMeters(-12.471590), //-10.072250
+                        Units.inchesToMeters(8.318717)),
                         new Rotation3d(
-                                Units.degreesToRadians(0),
-                                Units.degreesToRadians(-20),
-                                Units.degreesToRadians(270) //69.656
+                                Units.degreesToRadians(8.745),
+                                Units.degreesToRadians(-25),
+                                Units.degreesToRadians(270 - 16.12) //69.656
                         ))),
 
                 // new VisionIOPhotonVision("front-left-cam", new Transform3d(new Translation3d(
@@ -175,13 +175,13 @@ public class RobotContainer {
                 // Units.degreesToRadians(45)))),
                 new VisionIOPhotonVision("back-right-cam", new Transform3d(
                         new Translation3d(
-                                Units.inchesToMeters(-9.888875),
-                                Units.inchesToMeters(-10.761876),
+                                Units.inchesToMeters(-9.734833),
+                                Units.inchesToMeters(-10.537752),
                                 Units.inchesToMeters(8.314941)),
                         new Rotation3d(
                                 Units.degreesToRadians(0.0),
-                                Units.degreesToRadians(-20),
-                                Units.degreesToRadians(270.0 - 65)))));
+                                Units.degreesToRadians(-25),
+                                Units.degreesToRadians(270.0 - 80)))));
 
         m_shootingParameters = new ShootingParameters(s_Drivetrain);
         // new VisionIOPhotonVision("front-right-cam", new Transform3d(new
