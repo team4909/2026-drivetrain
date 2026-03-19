@@ -4,7 +4,9 @@ import java.util.Map;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
+import com.ctre.phoenix6.swerve.jni.SwerveJNI.DriveState;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -100,6 +102,8 @@ public class ShootingParameters {
 
 public ShooterCommand calculate(Translation2d goalPosition) {
     SwerveDriveState drivetrainState = m_drivetrain.getState();
+    Pose2d robotPose = drivetrainState.Pose;
+
     Translation2d robotPosition = drivetrainState.Pose.getTranslation();
 
     Translation2d robotVelocity = new Translation2d(
@@ -107,25 +111,33 @@ public ShooterCommand calculate(Translation2d goalPosition) {
         ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, drivetrainState.Pose.getRotation()).vyMetersPerSecond
     );
 
+    Rotation2d rotationalVelocity = new Rotation2d(
+        ChassisSpeeds.fromRobotRelativeSpeeds(drivetrainState.Speeds, robotPose.getRotation()).omegaRadiansPerSecond
+    );
+
     double timeOfFlight = m_timeOfFlightTable.get(robotPosition.getDistance(goalPosition));
     Translation2d futurePos = robotPosition;
+    Rotation2d futureRotation = robotPose.getRotation();
 
     for (int i = 0; i < 3; i++) {
         futurePos = robotPosition.plus(robotVelocity.times(timeOfFlight + kLATENCYCOMPENSATION));
+        futureRotation = robotPose.getRotation().plus(rotationalVelocity.times(timeOfFlight + kLATENCYCOMPENSATION));
         timeOfFlight = m_timeOfFlightTable.get(futurePos.getDistance(goalPosition));
     }
+
+    // futurePos = new Pose2d(futurePos, );
 
     Translation2d toGoal = goalPosition.minus(futurePos);
     double effectiveDistance = toGoal.getNorm();
 
-    Rotation2d turretAngle = toGoal.getAngle();
+    Rotation2d turretAngle = toGoal.getAngle().plus(futureRotation); //TODO: see if I need to add or subtract future rotation
 
     double requiredRPS = m_shooterTable.get(effectiveDistance);
     double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
 
     // Logging
     Logger.recordOutput("ShootOnTheMove/futurePose", futurePos);
-    Logger.recordOutput("ShootOnTheMove/turretAngle", turretAngle.getDegrees());
+    Logger.recordOutput("ShootOnTheMove/turretAngleDeg", turretAngle.getDegrees());
 
     return new ShooterCommand(turretAngle, requiredRPS, requiredHoodAngle);
 }
