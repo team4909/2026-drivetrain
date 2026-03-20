@@ -34,7 +34,7 @@ public class HoodIOTalonFX implements HoodIO {
         config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.Slot0.kP = 25;
+        config.Slot0.kP = 30;
         config.Slot0.kI = 6;
         config.Slot0.kD = 0.01;
         config.Slot0.kS = 2.0;

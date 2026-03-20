@@ -273,7 +273,7 @@ public class RobotContainer {
 
         // joystick.rightTrigger().whileTrue(Commands.parallel(
         //         s_Shooter.tuningShoot(),
-        //         Commands.sequence(Commands.waitSeconds(1), s_Indexer.feed())
+        //         Commands.sequence(Commands.waitSeconds(3), s_Indexer.feed())
         //         )).onFalse(Commands.parallel(
         //                 s_Shooter.stop(),
         //                 s_Indexer.stop()
@@ -333,7 +333,7 @@ public class RobotContainer {
         // joystick.a().whileTrue(new RotateToPose(s_Drivetrain, (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
         //         .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.kZero)))));
         // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain));
+        s_Turret.setDefaultCommand(new TurretTrackPose(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle().getDegrees(), () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain).onlyIf(s_Intake::clearOfTurret));
         // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
         // drivetrain.getState().Pose));
         // joystick.a().whileTrue(new RotateToPose(drivetrain,
