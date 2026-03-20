@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -104,6 +105,14 @@ public class Intake extends SubsystemBase {
             m_io.setPosition(10);
         });
     }
+
+    public boolean clearOfTurret() {
+        if (MathUtil.isNear(0.0, m_inputs.position, 1)) {
+            return false;
+        }
+        return true;
+    }
+
 
     @Override
     public void periodic() {
