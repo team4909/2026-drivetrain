@@ -88,8 +88,8 @@ public class ShootingParameters {
         m_timeOfFlightTable.put(Units.inchesToMeters(63.234), 0.93);
         m_timeOfFlightTable.put(Units.inchesToMeters(93.234), 1.11);
         m_timeOfFlightTable.put(Units.inchesToMeters(123.234), 1.22);
-        m_timeOfFlightTable.put(Units.inchesToMeters(153.234), 1.22);
-        m_timeOfFlightTable.put(Units.inchesToMeters(183.234), 1.24-0.15);
+        m_timeOfFlightTable.put(Units.inchesToMeters(153.234), 1.22-0.22);
+        m_timeOfFlightTable.put(Units.inchesToMeters(183.234), 1.24);
 
 
         m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(63.234)/0.93, Units.inchesToMeters(63.234));
@@ -135,7 +135,8 @@ public ShooterCommand calculate(Translation2d goalPosition) {
     Translation2d toGoal = goalPosition.minus(futurePos);
     double effectiveDistance = toGoal.getNorm();
 
-    Rotation2d turretAngle = toGoal.getAngle().plus(futureRotation); //TODO: see if I need to add or subtract future rotation
+    Rotation2d turretAngle = toGoal.getAngle();//.minus(futureRotation); //TODO: see if I need to add or subtract future rotation
+
 
     double requiredRPS = m_shooterTable.get(effectiveDistance);
     double requiredHoodAngle = m_hoodTable.get(effectiveDistance);
