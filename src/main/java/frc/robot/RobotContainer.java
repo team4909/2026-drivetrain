@@ -245,6 +245,7 @@ public class RobotContainer {
         // s_Drivetrain::robotBehindHub));
 
         s_Hood.setDefaultCommand(s_Hood.retractHood()); //USE THIS
+        s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 30));
 
         // s_Hood.setDefaultCommand(s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()));
 
@@ -256,7 +257,7 @@ public class RobotContainer {
         // joystick.x().whileTrue(s_Hood.extendHood());
         // joystick.y().whileTrue(s_Hood.retractHood());
 
-        joystick.povRight().whileTrue(s_Hood.zeroHood());
+        joystick.povRight().whileTrue(Commands.race(Commands.waitSeconds(0.75), s_Hood.runBack()).andThen(s_Hood.zeroButton()));
 
         joystick.y().whileTrue(s_Intake.reZero());
         // joystick.rightBumper().onTrue(s_Hood.tunableShot());
@@ -287,7 +288,7 @@ public class RobotContainer {
                 // Condition: true when robot is behind the hub (X greater than hub X)
                 s_Drivetrain::robotBehindHub))
                 .onFalse(Commands.parallel(
-                        s_Shooter.stop(),
+                        s_Shooter.shoot(() -> 30),
                         s_Indexer.stop(),
                         s_Intake.Extend(),
                         s_Hood.retractHood()

@@ -35,7 +35,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean atSpeed() {
-        if (m_inputs.goalVelocity == 0.0) {
+        if (m_inputs.goalVelocity == 0.0 || m_inputs.goalVelocity == 30.0) {
             return false;
         }
 

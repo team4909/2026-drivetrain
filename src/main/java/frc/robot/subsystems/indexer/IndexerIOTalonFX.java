@@ -30,6 +30,7 @@ public class IndexerIOTalonFX implements IndexerIO {
         indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
         indexerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         indexerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        indexerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         m_indexerBottomMotor.getConfigurator().apply(indexerMotorConfig);
         m_indexerTopMotor.getConfigurator().apply(indexerMotorConfig);

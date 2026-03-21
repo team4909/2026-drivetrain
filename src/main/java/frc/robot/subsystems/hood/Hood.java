@@ -31,6 +31,10 @@ public class Hood extends SubsystemBase{
     // public double map(double x) {
     //     return (x - inmin) * (outmax - outmin) / (inmax - inmin) + outmin;
     // }
+
+    public Command runBack() {
+        return this.run (() -> m_io.setSpeed(0.25));
+    }
     
     public Command extendHood (){
         return this.run (() -> m_io.setPosition(2000)).withName("ExtendHood");
@@ -55,6 +59,10 @@ public class Hood extends SubsystemBase{
     public Command tunableShot (){
         return this.runOnce (() -> m_io.setPosition(m_position.get())).withName("tunableShot").repeatedly();
     } 
+
+    public Command zeroButton() {
+        return this.runOnce(() -> m_io.resetMotorPosition(0));
+    }
 
     // public double getBallReleaseAngle() {
     //     double pulseWidth = m_io.getPosition();

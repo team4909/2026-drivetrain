@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.075363636363636,
-        "y": 7.137352272727274
+        "x": 2.6028673323823104,
+        "y": 5.7364336661911555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.201768901569186,
-        "y": 6.38336661911555
+        "x": 1.7292725975878604,
+        "y": 4.9824480125794315
       },
       "isLocked": false,
       "linkedName": "Left Trench Shot"
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.392925187392386
+    "rotation": 106.92751306414713
   },
   "useDefaultConstraints": false
 }
