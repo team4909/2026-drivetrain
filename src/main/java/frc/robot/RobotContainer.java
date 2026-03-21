@@ -270,6 +270,7 @@ public class RobotContainer {
 
                 s_Hood.setDefaultCommand(s_Hood.retractHood()); // USE THIS
                 s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 30));
+                s_Indexer.setDefaultCommand(s_Indexer.stop());
 
                 // s_Hood.setDefaultCommand(s_Hood.goTo(() ->
                 // m_shootingParameters.calculate(m_hub).hoodAngle()));

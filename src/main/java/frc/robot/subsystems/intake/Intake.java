@@ -13,7 +13,7 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
     private final double Stowed = 0.0;
-    private final double Extended = -8.9;
+    private final double Extended = -12; //-8.9
     private final double Bump = -4;
     private final double kIntakeVelocity = 70.0;
     private final double kOuttakeVelocity = -70.0;
