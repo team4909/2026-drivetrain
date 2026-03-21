@@ -36,28 +36,44 @@
         "y": 6.1245934379457925
       },
       "prevControl": {
-        "x": 5.951910692459694,
-        "y": 4.286342866061683
+        "x": 6.160982210567848,
+        "y": 4.248356062226099
       },
       "nextControl": {
-        "x": 6.963195435092722,
-        "y": 8.492368045649073
+        "x": 6.62679029957204,
+        "y": 8.000699001426534
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.5381740370898713,
-        "y": 6.823281027104137
+        "x": 4.440156918687589,
+        "y": 7.53490727532097
       },
       "prevControl": {
-        "x": 3.198045649072753,
-        "y": 7.483152639087019
+        "x": 5.671567439464627,
+        "y": 7.419009814541955
+      },
+      "nextControl": {
+        "x": 3.3403708987161194,
+        "y": 7.638416547788873
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.6028673323823104,
+        "y": 5.7364336661911555
+      },
+      "prevControl": {
+        "x": 2.7840085592011405,
+        "y": 6.887974322396576
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Left Trench Shot 2"
+      "linkedName": "Left Trench Shot"
     }
   ],
   "rotationTargets": [
@@ -74,11 +90,11 @@
       "rotationDegrees": 125.26278149446473
     },
     {
-      "waypointRelativePos": 2.315565031982934,
+      "waypointRelativePos": 2.65,
       "rotationDegrees": -179.1983641582897
     },
     {
-      "waypointRelativePos": 2.7121535181236736,
+      "waypointRelativePos": 3.4,
       "rotationDegrees": -179.4662565102497
     }
   ],
@@ -86,7 +102,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 5.21,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -95,7 +111,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 137.86240522611175
+    "rotation": 106.92751306414713
   },
   "reversed": false,
   "folder": null,
@@ -103,5 +119,5 @@
     "velocity": 0,
     "rotation": -179.6914456395379
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

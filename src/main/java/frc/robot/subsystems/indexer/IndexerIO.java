@@ -10,7 +10,8 @@ public interface IndexerIO {
     public static class IndexerIOInputs {
         public double speed = 0.0;
         public double statorCurrent = 0.0;
-        public double supplyCurrent = 0.0;
+        public double supplyCurrent = 0.0; 
+        public String command = "";
     }
 
     // Methods are how we move actions to hardware

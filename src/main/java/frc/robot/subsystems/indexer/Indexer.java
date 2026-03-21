@@ -20,27 +20,35 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command tuningShoot() {
+        m_inputs.command = "TuningShoot";
         return this.run(() -> m_io.setSpeed(m_speed.get()));
     }
 
     public Command slowFeed() {
+        m_inputs.command = "SlowShoot";
         return this.run(() -> m_io.setSpeed(-0.2)).withName("SlowShoot");
     }
 
     public Command feed() {
+        //log feed
+        m_inputs.command = "Feed";
         return this.run(() -> m_io.setSpeed(1)).withName("Shoot");
     }
 
     public Command stop() {
+        //log stop
+        m_inputs.command = "Stop";
         return this.run(() -> m_io.setSpeed(0)).withName("Stop");
     }
 
     public Command stopInstant() {
+        m_inputs.command = "StopInstant";
         return this.runOnce(() -> m_io.setSpeed(0)).withName("StopInstant");
     }
 
     public Command notintake() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("Intake");
+        m_inputs.command = "NotIntake";
+        return this.run(() -> m_io.setSpeed(-1)).withName("NotIntake");
 
     }
 
