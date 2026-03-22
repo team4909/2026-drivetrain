@@ -13,7 +13,8 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
     private final double Stowed = 0.0;
-    private final double Extended = -12; //-8.9
+    private final double Extended = -10.5; //-8.9
+    private final double BottomOscillate = -7;
     private final double Bump = -4;
     private final double kIntakeVelocity = 70.0;
     private final double kOuttakeVelocity = -70.0;
@@ -48,9 +49,17 @@ public class Intake extends SubsystemBase {
     public Command intakeAndExtend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
-            m_io.setVelocity(kIntakeVelocity);
+            m_io.setSpeed(1);
             m_inputs.setpoint = "Extend";
         }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
+    }
+
+    public Command bottomOscillate() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(BottomOscillate);
+            m_io.setSpeed(1);
+            m_inputs.setpoint = "BottomOscillate";
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - BottomOscillate) <= 0.1);
     }
 
      public Command Extend() {
@@ -84,7 +93,7 @@ public class Intake extends SubsystemBase {
     public Command bumpAndRun() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Bump);
-            m_io.setVelocity(kIntakeVelocity);
+            m_io.setSpeed(1);
             m_inputs.setpoint = "Bump";
         }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
     }
