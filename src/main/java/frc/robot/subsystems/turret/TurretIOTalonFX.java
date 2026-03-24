@@ -32,6 +32,7 @@ public class TurretIOTalonFX implements TurretIO {
     private StatusSignal<AngularVelocity> m_velocity;
     private StatusSignal<Voltage> m_voltage;
     private StatusSignal<Current> m_supplyCurrent;
+    private StatusSignal<Current> m_statorCurrent;
     private StatusSignal<Angle> m_rotations;
 
     public TurretIOTalonFX() {
@@ -62,13 +63,15 @@ public class TurretIOTalonFX implements TurretIO {
 
         m_velocity = m_motor.getVelocity();
         m_voltage = m_motor.getMotorVoltage();
-        m_supplyCurrent = m_motor.getStatorCurrent();
+        m_statorCurrent = m_motor.getStatorCurrent();
+        m_supplyCurrent = m_motor.getSupplyCurrent();
         m_rotations = m_motor.getPosition();
 
         BaseStatusSignal.setUpdateFrequencyForAll(100,
                 m_velocity,
                 m_voltage,
                 m_supplyCurrent,
+                m_statorCurrent,
                 m_rotations);
 
         // m_motor.setPosition(0, 2);
@@ -93,6 +96,7 @@ public class TurretIOTalonFX implements TurretIO {
         ).isOK();
 
         m_inputs.supplyCurrent = m_supplyCurrent.getValueAsDouble();
+        m_inputs.statorCurrent = m_statorCurrent.getValueAsDouble();
         m_inputs.rotations = m_rotations.getValueAsDouble();
         m_inputs.velocityRPS = m_velocity.getValueAsDouble();
         m_inputs.volts = m_voltage.getValueAsDouble();
