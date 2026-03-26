@@ -75,7 +75,7 @@ public class TurretIOTalonFX implements TurretIO {
                 m_rotations);
 
         // m_motor.setPosition(0, 2);
-        m_motor.setPosition(7.584, 2);
+        m_motor.setPosition(Rotations.of(0.235 / m_gearRatio), 2);
     }
 
     public void setSpeed(double speed) {
