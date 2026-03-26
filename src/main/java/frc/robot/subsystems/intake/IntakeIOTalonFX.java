@@ -127,6 +127,8 @@ public class IntakeIOTalonFX implements IntakeIO {
             m_intakePivotSupplyCurrent,
             m_intakePivotRotations
         );
+
+        m_intakeExtender.setPosition(0, 2);
     }
 
     @Override

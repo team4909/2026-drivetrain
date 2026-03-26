@@ -123,6 +123,7 @@ public class Telemetry {
         Logger.recordOutput("DriveState/Pose", state.Pose);
         Logger.recordOutput("DriveState/distanceToHub", state.Pose.getTranslation().getDistance(m_hubCenter));
         Logger.recordOutput("DriveState/redHubDist", state.Pose.getTranslation().getDistance(m_redHubCenter));
+        Logger.recordOutput("DriveState/hubCenter", new Pose2d(m_hubCenter, Rotation2d.kZero));
         // Logger.recordOutput("DriveState/distanceFromRedRightCorner",state.Pose.getTranslation().getDistance(corner));
 
         /* Telemeterize the pose to a Field2d */
