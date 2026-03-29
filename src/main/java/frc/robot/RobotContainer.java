@@ -126,6 +126,9 @@ public class RobotContainer {
                                 Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
                                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
                 NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(), s_Indexer.stop()));
+                NamedCommands.registerCommand("ShooterSpinUp", s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()));
+                NamedCommands.registerCommand("IndexerFeed", s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly());
+                NamedCommands.registerCommand("IndexerStop", s_Indexer.stop());
 
                 s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(

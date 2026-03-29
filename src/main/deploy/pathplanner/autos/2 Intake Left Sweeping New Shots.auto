@@ -19,6 +19,12 @@
                 "data": {
                   "waitTime": 0.3
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterSpinUp"
+                }
               }
             ]
           }
@@ -68,7 +74,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootAndIndex"
+                  "name": "IndexerFeed"
                 }
               },
               {
@@ -124,7 +130,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootIndexStop"
+                  "name": "IndexerStop"
                 }
               }
             ]
@@ -156,7 +162,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootAndIndex"
+                  "name": "IndexerFeed"
                 }
               },
               {
