@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -83,6 +84,7 @@ public class RobotContainer {
         private final Turret s_Turret;
         private final Intake s_Intake;
         private final SendableChooser<Command> m_chooser;
+        private final SendableChooser<Boolean> m_mirror;
         private ShootingCalculator m_shootingCalculator = new ShootingCalculator(s_Drivetrain);
         private ShootingParameters m_shootingParameters;
         private final Vision s_Vision;
@@ -241,6 +243,12 @@ public class RobotContainer {
                 }
                 m_chooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", m_chooser);
+
+                m_mirror = new SendableChooser<Boolean>();
+                m_mirror.addOption("Normal Auto", false);
+                m_mirror.addOption("Mirror Auto", true);
+                SmartDashboard.putData("Mirror Auto", m_mirror);
+                // SmartDashboard.putData("MirrorAuto", m_mirror);
 
                 configureBindings();
         }
@@ -475,7 +483,12 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return m_chooser.getSelected();
+                if (m_mirror.getSelected() != null && m_mirror.getSelected().booleanValue()) {
+                        return new PathPlannerAuto(m_chooser.getSelected().getName(), true);
+                } 
+                else {
+                        return m_chooser.getSelected();
+                }
                 // return new PathPlannerAuto("cut");
 
         }
