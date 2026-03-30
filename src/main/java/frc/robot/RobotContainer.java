@@ -261,7 +261,7 @@ public class RobotContainer {
                                                 .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                                                 .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                         ),
-                        () ->joystick.rightTrigger().getAsBoolean()));
+                        () ->joystick.rightTrigger().getAsBoolean() && !s_Drivetrain.robotBehindHub()));
                                 
                 // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
 
