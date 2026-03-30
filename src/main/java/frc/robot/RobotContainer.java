@@ -126,7 +126,8 @@ public class RobotContainer {
                                 Commands.parallel(s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
                                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()));
                 NamedCommands.registerCommand("ShootIndexStop", Commands.parallel(s_Shooter.stop(), s_Indexer.stop()));
-                NamedCommands.registerCommand("ShooterSpinUp", s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()));
+                NamedCommands.registerCommand("ShooterSpinUp", s_Shooter
+                                .shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()));
                 NamedCommands.registerCommand("IndexerFeed", s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly());
                 NamedCommands.registerCommand("IndexerStop", s_Indexer.stop());
 
@@ -249,22 +250,19 @@ public class RobotContainer {
 
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
+                // Speed cut in half when right trigger is held for SOTM
                 s_Drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                s_Drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive
-                                                                                                                     // forward
-                                                                                                                     // with
-                                                                                                                     // negative
-                                                                                                                     // Y
-                                                                                                                     // (forward)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with
-                                                                                                // negative X (left)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive
-                                                                                                            // counterclockwise
-                                                                                                            // with
-                                                                                                            // negative
-                                                                                                            // X (left)
-                                ));
+                        new ConditionalCommand(
+                        s_Drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed / 2.0) // Drive forward with negative Y
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed / 2.0) // Drive left with negative X (left)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate / 2.0) // Drive counterclockwise with negative X (left)
+                        ), 
+                        s_Drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                        ),
+                        () ->joystick.rightTrigger().getAsBoolean()));
+                                
                 // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
 
                 // s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(),
