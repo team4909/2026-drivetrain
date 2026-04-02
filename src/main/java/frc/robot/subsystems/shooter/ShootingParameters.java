@@ -24,6 +24,9 @@ public class ShootingParameters {
     private static InterpolatingDoubleTreeMap m_timeOfFlightTable = new InterpolatingDoubleTreeMap();
     private static final InterpolatingDoubleTreeMap m_horizontalVelocityToDistanceTable = new InterpolatingDoubleTreeMap();
 
+    private static final InterpolatingDoubleTreeMap m_leftRotationTable = new InterpolatingDoubleTreeMap();
+    private static final InterpolatingDoubleTreeMap m_rightRotationTable = new InterpolatingDoubleTreeMap();
+
     private LoggedNetworkNumber fudge = new LoggedNetworkNumber("/Tuning/kickerFudge", 0.03);
 
     private Turret m_turret;
@@ -31,6 +34,20 @@ public class ShootingParameters {
     private final double kLATENCYCOMPENSATION = 0.1; //-1.2;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
+        m_leftRotationTable.put(1.226, 0.0);
+        m_leftRotationTable.put(2.149, 0.0);
+        m_leftRotationTable.put(3.2, -3.0);
+        m_leftRotationTable.put(3.82, -1.5);
+        m_leftRotationTable.put(4.25, 0.0);
+        m_leftRotationTable.put(4.71, 0.0);
+
+        m_rightRotationTable.put(1.226, 0.0);
+        m_rightRotationTable.put(2.149, 1.5);
+        m_rightRotationTable.put(3.2, 3.0);
+        m_rightRotationTable.put(3.82, 1.5);
+        m_rightRotationTable.put(4.25, 4.0);
+        m_rightRotationTable.put(4.71, 4.0);
+
         // m_hoodTable.put(Units.inchesToMeters(63.234), 1000.0);
         // m_hoodTable.put(Units.inchesToMeters(93.234), 1100.0);
         // m_hoodTable.put(Units.inchesToMeters(123.234), 1150.0);
@@ -170,8 +187,17 @@ public ShooterCommand calculate(Translation2d goalPosition) {
 
     double requiredRPS = m_shooterTable.get(effectiveDistance);
 
+    // Logger.recordOutput("/shootingParams/applyingFudge", false);
+
     if(m_turret.getTurretPosition() > 0){
-        requiredRPS = requiredRPS + requiredRPS * fudge.getAsDouble() * Math.sin(Math.toRadians(m_turret.getTurretPosition()/360.0));
+        requiredRPS = requiredRPS + m_rightRotationTable.get(effectiveDistance) * Math.sin(Math.toRadians(m_turret.getTurretPosition()*360.0));
+        // Logger.recordOutput("/shootingParams/fudgeAmount", requiredRPS * fudge.getAsDouble() * Math.sin(Math.toRadians(m_turret.getTurretPosition()/360.0)));
+        // Logger.recordOutput("/shootingParams/applyingFudge", true);
+    }
+    else if(m_turret.getTurretPosition() < 0){
+        requiredRPS = requiredRPS + m_leftRotationTable.get(effectiveDistance) * Math.sin(Math.toRadians(m_turret.getTurretPosition()*360.0));
+        // Logger.recordOutput("/shootingParams/fudgeAmount", requiredRPS * fudge.getAsDouble() * Math.sin(Math.toRadians(m_turret.getTurretPosition()/360.0)));
+        // Logger.recordOutput("/shootingParams/applyingFudge", true);
     }
 
     Logger.recordOutput("/shootingParams/reqRPS", requiredRPS);
