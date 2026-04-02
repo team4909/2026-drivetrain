@@ -195,7 +195,7 @@ public ShooterCommand calculate(Translation2d goalPosition) {
         // Logger.recordOutput("/shootingParams/applyingFudge", true);
     }
     else if(m_turret.getTurretPosition() < 0){
-        requiredRPS = requiredRPS + m_leftRotationTable.get(effectiveDistance) * Math.sin(Math.toRadians(m_turret.getTurretPosition()*360.0));
+        requiredRPS = requiredRPS + m_leftRotationTable.get(effectiveDistance) * Math.sin(Math.toRadians(m_turret.getTurretPosition()*-360.0));
         // Logger.recordOutput("/shootingParams/fudgeAmount", requiredRPS * fudge.getAsDouble() * Math.sin(Math.toRadians(m_turret.getTurretPosition()/360.0)));
         // Logger.recordOutput("/shootingParams/applyingFudge", true);
     }
