@@ -182,17 +182,17 @@ public class ShootingParameters {
         // m_shooterTable.put(Units.inchesToMeters(153.234), 57.0);
         // m_shooterTable.put(Units.inchesToMeters(183.234), 65.0);
 
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25), 42.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20), 45.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20), 49.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20), 52.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20), 55.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 60.0);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25), 42.0*1.1);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20), 45.0*1.1);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20), 49.0*1.1);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20), 52.0*1.1);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20), 55.0*1.15);//*1.05);
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 60.0*1.15);//*1.05);
 
         // m_shooterTable.put(4.73, 60.0);
         // m_shooterTable.put(4.92, 60.0);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 62.0); //64.5*1.17
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 65.5); //74.0*1.2
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 62.0*1.15); //64.5*1.17
+        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 65.5*1.15); //74.0*1.2
         // m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 80.0); //95
 
         // m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 64.0);

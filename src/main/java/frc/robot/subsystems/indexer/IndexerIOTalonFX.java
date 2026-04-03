@@ -53,9 +53,9 @@ public class IndexerIOTalonFX implements IndexerIO {
         m_indexerTopMotor.getConfigurator().apply(indexerMotorConfig);
 
      
-        m_indexerTopMotor.setControl(
-            new Follower(kIndexerBottomMotorID, MotorAlignmentValue.Opposed)
-        );
+        // m_indexerTopMotor.setControl(
+        //     new Follower(kIndexerBottomMotorID, MotorAlignmentValue.Opposed)
+        // );
 
         m_spindexerVelocity = m_indexerBottomMotor.getVelocity();
         m_spindexerStatorCurrent = m_indexerBottomMotor.getStatorCurrent();
@@ -74,6 +74,7 @@ public class IndexerIOTalonFX implements IndexerIO {
     public void setSpeed(double speed) {
         m_goalVelocity = speed;
         m_indexerBottomMotor.setControl(new DutyCycleOut(speed));
+        m_indexerTopMotor.setControl(new DutyCycleOut(-speed*0.75));
     }
 
     @Override
