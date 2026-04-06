@@ -85,10 +85,10 @@ public class ShooterIOTalonFX implements ShooterIO {
         m_shootermotor4.getConfigurator().apply(shooterConfigs);
         m_hoodRoller.getConfigurator().apply(shooterConfigs);
 
-        m_shootermotor2.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
-        m_shootermotor3.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
-        m_shootermotor4.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Aligned));
-        m_hoodRoller.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Aligned));
+        // m_shootermotor2.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
+        // m_shootermotor3.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Opposed));
+        // m_shootermotor4.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Aligned));
+        // m_hoodRoller.setControl(new Follower(kShooterMotor1ID, MotorAlignmentValue.Aligned));
 
         m_shooter1Velocity = m_shootermotor1.getVelocity();
         m_shooter1StatorCurrent = m_shootermotor1.getStatorCurrent();
@@ -159,7 +159,7 @@ public class ShooterIOTalonFX implements ShooterIO {
 
     public void updateInputs(ShooterIOInputsAutoLogged m_inputs) {
         m_inputs.motor1Connected = 
-            BaseStatusSignal.refreshAll(
+            BaseStatusSignal.refreshAll(    
                 m_shooter1Velocity,
                 m_shooter1Voltage,
                 m_shooter1StatorCurrent,

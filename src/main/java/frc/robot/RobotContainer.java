@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -31,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drivetrain.RotateToPose;
 import frc.robot.subsystems.hood.Hood;
 import frc.robot.subsystems.hood.HoodIOTalonFX;
 import frc.robot.subsystems.indexer.Indexer;
@@ -41,9 +43,9 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.ShooterIOTalonFX;
 import frc.robot.subsystems.shooter.ShootingCalculator;
 import frc.robot.subsystems.shooter.ShootingParameters;
-import frc.robot.subsystems.turret.Turret;
-import frc.robot.subsystems.turret.TurretIOTalonFX;
-import frc.robot.subsystems.turret.TurretTrackPose;
+// import frc.robot.subsystems.turret.Turret;
+// import frc.robot.subsystems.turret.TurretIOTalonFX;
+// import frc.robot.subsystems.turret.TurretTrackPose;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.vision.VisionIOPhotonVision;
 
@@ -80,7 +82,7 @@ public class RobotContainer {
         private final Shooter s_Shooter;
         private final Hood s_Hood;
         private final Indexer s_Indexer;
-        private final Turret s_Turret;
+        // private final Turret s_Turret;
         private final Intake s_Intake;
         private final SendableChooser<Command> m_chooser;
         private ShootingCalculator m_shootingCalculator = new ShootingCalculator(s_Drivetrain);
@@ -104,7 +106,7 @@ public class RobotContainer {
                 // s_Hood = new Hood(new HoodIORevServoHub());
                 s_Hood = new Hood(new HoodIOTalonFX());
                 // s_Shooter = new Shooter(new ShooterIOTalonFX());
-                s_Turret = new Turret(new TurretIOTalonFX());
+                // s_Turret = new Turret(new TurretIOTalonFX());
 
                 NamedCommands.registerCommand("IntakeDownGo", s_Intake.intakeAndExtend());
                 NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
@@ -386,11 +388,11 @@ public class RobotContainer {
                 // .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0),
                 // Rotation2d.kZero)))));
                 // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-                s_Turret.setDefaultCommand(new TurretTrackPose(
-                                () -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle()
-                                                .getDegrees(),
-                                () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain)
-                                .onlyIf(s_Intake::clearOfTurret));
+                // s_Turret.setDefaultCommand(new TurretTrackPose(
+                //                 () -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle()
+                //                                 .getDegrees(),
+                //                 () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain)
+                //                 .onlyIf(s_Intake::clearOfTurret));
                 // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
                 // drivetrain.getState().Pose));
                 // joystick.a().whileTrue(new RotateToPose(drivetrain,
@@ -420,8 +422,7 @@ public class RobotContainer {
                 joystick.leftBumper()
                                 .onTrue(s_Intake.Extend());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
-                joystick.x()
-                                .onTrue(s_Intake.stow());
+                joystick.x().whileTrue(new RotateToPose(s_Drivetrain, new Pose2d(s_Drivetrain.getHubCenter(), new Rotation2d())));
                 // .onFalse(Commands.sequence(s_Intake.stow()));
                 // joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
 

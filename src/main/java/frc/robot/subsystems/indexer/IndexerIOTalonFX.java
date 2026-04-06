@@ -75,13 +75,13 @@ public class IndexerIOTalonFX implements IndexerIO {
         m_rollerFloor3Motor.getConfigurator().apply(indexerMotorConfig);
 
      
-        m_rollerFloor2Motor.setControl(
-            new Follower(m_rollerFloor1MotorID, MotorAlignmentValue.Opposed)
-        );
+        // m_rollerFloor2Motor.setControl(
+        //     new Follower(m_rollerFloor1MotorID, MotorAlignmentValue.Opposed)
+        // );
 
-         m_rollerFloor3Motor.setControl(
-            new Follower(m_rollerFloor1MotorID, MotorAlignmentValue.Opposed)
-        );
+        //  m_rollerFloor3Motor.setControl(
+        //     new Follower(m_rollerFloor1MotorID, MotorAlignmentValue.Opposed)
+        // );
 
         m_rollerFloor1Velocity = m_rollerFloor1Motor.getVelocity();
         m_rollerFloor1StatorCurrent = m_rollerFloor1Motor.getStatorCurrent();
@@ -118,15 +118,16 @@ public class IndexerIOTalonFX implements IndexerIO {
         );
     }
     @Override
-    public void setVelocity(double RPS) {  
+    public void setVelocity(double RPS) {
+        m_goalVelocity = RPS;
         m_rollerFloor1Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
-        // m_rollerFloor2Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
-        // m_rollerFloor3Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
+        m_rollerFloor2Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
+        m_rollerFloor3Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
     }
 
     @Override
     public void setSpeed(double speed) {
-        m_goalVelocity = speed;
+        // m_goalVelocity = speed;
        m_rollerFloor1Motor.setControl(new DutyCycleOut(speed));
        m_rollerFloor2Motor.setControl(new DutyCycleOut(speed));
        m_rollerFloor3Motor.setControl(new DutyCycleOut(speed));

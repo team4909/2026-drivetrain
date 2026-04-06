@@ -28,7 +28,7 @@ public interface IndexerIO {
         public boolean rollerFloor3Connected = false;
         public double rollerFloor3VelocityRPS = 0.0;
         public double rollerFloor3StatorCurrent = 0.0;
-        public double rollerFloor3SupplyCureent = 0.0;
+        public double rollerFloor3SupplyCurrent = 0.0;
         public double rollerFloor3Voltage = 0.0;
 
     
