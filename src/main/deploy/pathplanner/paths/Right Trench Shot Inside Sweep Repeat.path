@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.7155920114122676,
-        "y": 0.7809272467902997
+        "x": 3.4697574893009984,
+        "y": 0.9491298145506415
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.785777460770328,
-        "y": 0.28925820256776097
+        "x": 5.319985734664764,
+        "y": 0.04342368045649092
       },
       "isLocked": false,
       "linkedName": "Right Trench Shot Inside"
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 7.221350588776934,
-        "y": 0.9392413747818762
+        "y": 0.9392413747818764
       },
       "nextControl": {
         "x": 7.441925820256776,
@@ -48,12 +48,12 @@
     },
     {
       "anchor": {
-        "x": 3.7155920114122676,
-        "y": 0.7809272467902997
+        "x": 3.4697574893009984,
+        "y": 0.9491298145506415
       },
       "prevControl": {
-        "x": 7.377232524964336,
-        "y": 0.4315834522111266
+        "x": 6.963195435092723,
+        "y": -0.1765335235378016
       },
       "nextControl": null,
       "isLocked": false,
@@ -95,13 +95,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -16.60698057861695
+    "rotation": -28.44292862436332
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -16.60698057861695
+    "rotation": -28.44292862436332
   },
   "useDefaultConstraints": true
 }

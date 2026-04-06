@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6028673323823104,
-        "y": 5.7364336661911555
+        "x": 2.3570328102710407,
+        "y": 5.917574893009986
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8875178316690437,
-        "y": 7.664293865905849
+        "x": 2.641683309557774,
+        "y": 7.84543509272468
       },
       "isLocked": false,
       "linkedName": "Left Trench Shot"
@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 2.6028673323823104,
-        "y": 5.7364336661911555
+        "x": 2.3570328102710407,
+        "y": 5.917574893009986
       },
       "prevControl": {
-        "x": 2.564051355206847,
-        "y": 7.509029957203994
+        "x": 2.3182168330955775,
+        "y": 7.690171184022825
       },
       "nextControl": null,
       "isLocked": false,
@@ -98,7 +98,7 @@
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 1.0874200426439204,
+      "waypointRelativePos": 1.1940298507462646,
       "rotationDegrees": 178.63875344008974
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "waypointRelativePos": 2.4520255863539226,
-      "rotationDegrees": 179.92375425530238
+      "rotationDegrees": 179.9237542553024
     },
     {
       "waypointRelativePos": 2.9637526652452104,
@@ -149,13 +149,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 106.92751306414713
+    "rotation": 139.76364169072613
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 106.92751306414713
+    "rotation": 139.76364169072613
   },
   "useDefaultConstraints": true
 }
