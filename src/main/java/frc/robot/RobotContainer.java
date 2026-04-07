@@ -16,7 +16,6 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drivetrain.CommandSwerveDrivetrain;
@@ -422,7 +420,7 @@ public class RobotContainer {
                 joystick.leftBumper()
                                 .onTrue(s_Intake.Extend());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
-                joystick.x().whileTrue(new RotateToPose(s_Drivetrain, new Pose2d(s_Drivetrain.getHubCenter(), new Rotation2d())));
+                joystick.x().whileTrue(new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
                 // .onFalse(Commands.sequence(s_Intake.stow()));
                 // joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
 
@@ -431,6 +429,7 @@ public class RobotContainer {
                                 Commands.parallel(
                                                 s_Hood.extendHood(),
                                                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
+
                                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()))
                                 .onFalse(
                                                 Commands.parallel(
@@ -451,6 +450,7 @@ public class RobotContainer {
                                                                 .calculate(s_Drivetrain.getHubCenter()).hoodAngle()),
                                                 s_Shooter.shoot(() -> m_shootingParameters
                                                                 .calculate(s_Drivetrain.getHubCenter()).rpm()),
+                                                new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed),
                                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly())
 
                 ).onFalse(

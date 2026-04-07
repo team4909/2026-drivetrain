@@ -125,13 +125,13 @@ public class IndexerIOTalonFX implements IndexerIO {
         m_rollerFloor3Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
     }
 
-    @Override
-    public void setSpeed(double speed) {
-        // m_goalVelocity = speed;
-       m_rollerFloor1Motor.setControl(new DutyCycleOut(speed));
-       m_rollerFloor2Motor.setControl(new DutyCycleOut(speed));
-       m_rollerFloor3Motor.setControl(new DutyCycleOut(speed));
-    }
+    // @Override
+    // public void setSpeed(double speed) {
+    //     // m_goalVelocity = speed;
+    //    m_rollerFloor1Motor.setControl(new DutyCycleOut(speed));
+    //    m_rollerFloor2Motor.setControl(new DutyCycleOut(speed));
+    //    m_rollerFloor3Motor.setControl(new DutyCycleOut(speed));
+    // }
 
     @Override
     public void setBrakeMode(boolean enableBrakeMode) {

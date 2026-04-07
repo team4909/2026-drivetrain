@@ -24,10 +24,10 @@ public class Indexer extends SubsystemBase {
         return this.run(() -> m_io.setVelocity(m_speed.get()));
     }
 
-    public Command slowFeed() {
-        m_inputs.command = "SlowShoot";
-        return this.run(() -> m_io.setVelocity(-0.2)).withName("SlowShoot");
-    }
+    // public Command slowFeed() {
+    //     m_inputs.command = "SlowShoot";
+    //     return this.run(() -> m_io.setVelocity(-0.2)).withName("SlowShoot");
+    // }
 
     public Command feed() {
         //log feed
@@ -49,7 +49,6 @@ public class Indexer extends SubsystemBase {
     public Command notintake() {
         m_inputs.command = "NotIntake";
         return this.run(() -> m_io.setVelocity (-100)).withName("NotIntake");
-
     }
 
     @Override

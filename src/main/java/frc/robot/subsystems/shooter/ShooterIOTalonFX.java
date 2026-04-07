@@ -145,6 +145,10 @@ public class ShooterIOTalonFX implements ShooterIO {
     public void setVelocity(double VelocityRPS) {
         m_goalVelocity = VelocityRPS;
         m_shootermotor1.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
+        m_shootermotor2.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
+        m_shootermotor3.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
+        m_shootermotor4.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
+        m_hoodRoller.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(VelocityRPS)));
     }
 
     @Override

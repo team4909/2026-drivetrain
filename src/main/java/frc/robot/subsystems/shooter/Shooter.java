@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command shoot(DoubleSupplier velocity){
-        return this.run(() -> m_io.setVelocity((int) velocity.getAsDouble())).repeatedly().withName("Shoot");
+        return this.run(() -> m_io.setVelocity(velocity.getAsDouble())).repeatedly().withName("Shoot");
     }
 
     public boolean atSpeed() {

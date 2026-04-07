@@ -1,5 +1,7 @@
 package frc.robot.subsystems.drivetrain;
 
+import java.util.function.DoubleSupplier;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class RotateToPose extends Command{
@@ -24,9 +27,16 @@ public class RotateToPose extends Command{
     private SwerveRequest.ApplyRobotSpeeds m_driveRequest;
     private Rotation2d m_targetHeading;
 
-    public RotateToPose(CommandSwerveDrivetrain drivetrain, Pose2d goalPose){
+    private DoubleSupplier m_xVelocitySupplier;
+    private DoubleSupplier m_yVelocitySupplier;
+
+    public RotateToPose(CommandSwerveDrivetrain drivetrain, DoubleSupplier xVelocity, DoubleSupplier yVelocity) {
         m_drivetrain = drivetrain;
-        m_goalPose = goalPose;
+
+        m_xVelocitySupplier = xVelocity;
+        m_yVelocitySupplier = yVelocity;
+
+        m_goalPose = new Pose2d(drivetrain.getHubCenter(), new Rotation2d());
         m_rotationController = new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(100 * Math.PI/10, 100 * Math.PI/10));
         m_driveRequest = new SwerveRequest.ApplyRobotSpeeds()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
@@ -62,10 +72,20 @@ public class RotateToPose extends Command{
 
   @Override
   public void execute() {
+
     Pose2d currentPose = m_drivetrain.getState().Pose;
 
     Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
     m_targetHeading = robotToTargetTranslation.getAngle();//.rotateBy(Rotation2d.k180deg);
+
+    if(m_drivetrain.robotBehindHub()) {
+      if (m_drivetrain.getAlliance() == Alliance.Red) {
+        m_targetHeading = Rotation2d.k180deg;
+      }
+      else {
+        m_targetHeading = Rotation2d.kZero;
+      }
+    }
 
 
 
@@ -99,7 +119,13 @@ public class RotateToPose extends Command{
     //             new Transform2d(new Translation2d(driveVelocityScalar, 0.0), new Rotation2d()))
     //         .getTranslation();
 
-    final ChassisSpeeds CS = new ChassisSpeeds(0,0,thetaVelocity);//(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+    
+
+    ChassisSpeeds CS = new ChassisSpeeds(m_xVelocitySupplier.getAsDouble(), m_yVelocitySupplier.getAsDouble(), 0);//(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+
+    CS = ChassisSpeeds.fromFieldRelativeSpeeds(CS, currentPose.getRotation());
+
+    CS = new ChassisSpeeds(CS.vxMetersPerSecond, CS.vyMetersPerSecond, thetaVelocity);
 
     m_drivetrain.setControl(m_driveRequest.withSpeeds(CS));
 

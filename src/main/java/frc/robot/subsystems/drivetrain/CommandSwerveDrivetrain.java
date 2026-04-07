@@ -51,6 +51,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private boolean m_appliedAllianceColor = false;
 
+    private Alliance m_alliance = Alliance.Blue;
+
     private Translation2d m_blueHubCenter = aprilTagLayout.getTagPose(26).orElse(new Pose3d()).toPose2d()
             .transformBy(new Transform2d(new Translation2d(-0.6, 0), Rotation2d.k180deg)).getTranslation();
 
@@ -305,6 +307,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     m_hubCenter = m_blueHubCenter.rotateAround(
                             new Translation2d(aprilTagLayout.getFieldLength() / 2, aprilTagLayout.getFieldWidth() / 2),
                             Rotation2d.k180deg);
+                    
+                            m_alliance = Alliance.Red;
 
                     FIELD_CORNERS = List.of(
                             new Translation2d(aprilTagLayout.getFieldLength(), 1.5),
@@ -312,9 +316,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
 
                 else {
+
+                    m_hubCenter = m_blueHubCenter;
+
                     FIELD_CORNERS = List.of(
                             new Translation2d(0, 1.5),
                             new Translation2d(0, aprilTagLayout.getFieldWidth() - 1.5));
+                    
+                    m_alliance = Alliance.Blue;
                 }
 
                 m_appliedAllianceColor = true;
@@ -342,6 +351,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Logger.recordOutput("DriveState/CornerDist",
         // this.getState().Pose.getTranslation().getDistance(nearestCorner));
         return this.getState().Pose.getTranslation().getDistance(nearestCorner);
+    }
+
+    public Translation2d getNearestCorner() {
+        return this.getState().Pose.getTranslation().nearest(FIELD_CORNERS);
     }
 
     public boolean robotBehindHub() {
@@ -377,6 +390,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Translation2d getHubCenter(){
         return m_hubCenter;
+    }
+
+    public Alliance getAlliance() {
+        return m_alliance;
     }
 
     public List<Translation2d> getFieldCorners(){

@@ -36,7 +36,7 @@ public interface IndexerIO {
     }
 
     // Methods are how we move actions to hardware
-    public void setSpeed(double speed);
+    // public void setSpeed(double speed);
 
     public void setBrakeMode(boolean enableBrakeMode);
 
