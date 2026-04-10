@@ -1,5 +1,8 @@
 package frc.robot.subsystems.drivetrain;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import java.net.DatagramSocket;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
@@ -19,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.generated.TunerConstants;
 
 public class RotateToPose extends Command{
     private CommandSwerveDrivetrain m_drivetrain;
@@ -76,7 +80,7 @@ public class RotateToPose extends Command{
     Pose2d currentPose = m_drivetrain.getState().Pose;
 
     Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
-    m_targetHeading = robotToTargetTranslation.getAngle();//.rotateBy(Rotation2d.k180deg);
+    m_targetHeading = robotToTargetTranslation.getAngle().plus(Rotation2d.k180deg);
 
     if(m_drivetrain.robotBehindHub()) {
       if (m_drivetrain.getAlliance() == Alliance.Red) {
@@ -118,10 +122,10 @@ public class RotateToPose extends Command{
     //         .transformBy(
     //             new Transform2d(new Translation2d(driveVelocityScalar, 0.0), new Rotation2d()))
     //         .getTranslation();
+    double xVel = m_xVelocitySupplier.getAsDouble() > 0.2 ? m_xVelocitySupplier.getAsDouble() : 0.0;
+    double yVel = m_yVelocitySupplier.getAsDouble() > 0.2 ? m_yVelocitySupplier.getAsDouble() : 0.0;
 
-    
-
-    ChassisSpeeds CS = new ChassisSpeeds(m_xVelocitySupplier.getAsDouble(), m_yVelocitySupplier.getAsDouble(), 0);//(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
+    ChassisSpeeds CS = new ChassisSpeeds(xVel,yVel, 0);//(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
 
     CS = ChassisSpeeds.fromFieldRelativeSpeeds(CS, currentPose.getRotation());
 

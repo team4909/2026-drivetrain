@@ -458,7 +458,7 @@ public class RobotContainer {
                                                 s_Shooter.shoot(() -> m_shootingParameters
                                                                 .calculate(s_Drivetrain.getHubCenter()).rpm()),
                                                 new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed),
-                                                s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly())
+                                                s_Indexer.feed().beforeStarting(Commands.waitSeconds(1.5)))
 
                 ).onFalse(
                                 Commands.parallel(
