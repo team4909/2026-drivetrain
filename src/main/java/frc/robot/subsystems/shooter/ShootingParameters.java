@@ -29,60 +29,25 @@ public class ShootingParameters {
     private final double kLATENCYCOMPENSATION = 0.1; //-1.2;//If shots land ahead, lower number. If shots land behind, increase number
 
     static {
-        // m_hoodTable.put(Units.inchesToMeters(63.234), 1000.0);
-        // m_hoodTable.put(Units.inchesToMeters(93.234), 1100.0);
-        // m_hoodTable.put(Units.inchesToMeters(123.234), 1150.0);
-        // m_hoodTable.put(Units.inchesToMeters(153.234), 1500.0);
-        // m_hoodTable.put(Units.inchesToMeters(183.234), 1750.0);
+        m_hoodTable.put(1.5, 0.0);
+        m_hoodTable.put(2.0, 0.25);
+        m_hoodTable.put(2.5, 0.4);
+        m_hoodTable.put(3.0, 0.6);
+        m_hoodTable.put(3.5, 0.8);
+        m_hoodTable.put(4.0, 1.25);
+        m_hoodTable.put(4.5, 1.45);
+        m_hoodTable.put(5.0, 1.7);
+        m_hoodTable.put(5.65, 1.85);
 
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25), 0.01);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20), 0.1);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20), 0.1);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20), 0.15);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20), 0.15);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 0.17);
-
-        // m_hoodTable.put(4.73, 0.3);
-        // m_hoodTable.put(4.92, 0.45);
-
-        
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 0.4);
-        m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 0.52);
-        // m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 0.54);
-
-        // m_hoodTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 0.5);
-
-
-
-        // m_hoodTable.put(Units.inchesToMeters(103.625+40), 1650.0);
-        // // m_hoodTable.put(Units.inchesToMeters(103.625+40+40), 1925.0);
-        // m_hoodTable.put(Units.inchesToMeters(183.234), 1750.0);
-
-        // m_shooterTable.put(Units.inchesToMeters(63.234), 47.0);
-        // m_shooterTable.put(Units.inchesToMeters(93.234), 49.0);
-        // m_shooterTable.put(Units.inchesToMeters(123.234), 54.0);
-        // m_shooterTable.put(Units.inchesToMeters(153.234), 57.0);
-        // m_shooterTable.put(Units.inchesToMeters(183.234), 65.0);
-
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25), 42.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20), 45.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20), 49.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20), 52.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20), 55.0);//*1.05);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20), 60.0);//*1.05);
-
-        // m_shooterTable.put(4.73, 60.0);
-        // m_shooterTable.put(4.92, 60.0);
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20), 62.0); //64.5*1.17
-        m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20), 65.5); //74.0*1.2
-        // m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 80.0); //95
-
-        // m_shooterTable.put(Units.inchesToMeters(32+26.75+13.25+20+20+20+20+20+20+20+20), 64.0);
-
-
-        // m_shooterTable.put(Units.inchesToMeters(103.625+40), 53.0); //55
-        // // m_shooterTable.put(Units.inchesToMeters(103.625+40+40), 60.0);
-        // m_shooterTable.put(Units.inchesToMeters(183.234), 63.0); //65
+        m_shooterTable.put(1.5, 27.5);
+        m_shooterTable.put(2.0, 27.5);
+        m_shooterTable.put(2.5, 30.5);
+        m_shooterTable.put(3.0, 31.0);
+        m_shooterTable.put(3.5, 33.0);
+        m_shooterTable.put(4.0, 33.0);
+        m_shooterTable.put(4.5, 34.0);
+        m_shooterTable.put(5.0, 35.0);
+        m_shooterTable.put(5.65, 38.0);
 
         m_timeOfFlightTable.put(2.5, 0.98);
         m_timeOfFlightTable.put(3.73, 1.2);

@@ -42,7 +42,7 @@ public interface IntakeIO {
 
     public void setSpeed(double speed);
 
-    public void setVelocity(double velocity);
+    // public void setVelocity(double velocity);
 
     public default void setExtenderSetpoint(double rotations) {}
 

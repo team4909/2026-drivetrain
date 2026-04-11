@@ -25,11 +25,11 @@ public interface IndexerIO {
         public double rollerFloor2SupplyCurrent = 0.0;
         public double rollerFloor2Voltage = 0.0;
         
-        public boolean rollerFloor3Connected = false;
-        public double rollerFloor3VelocityRPS = 0.0;
-        public double rollerFloor3StatorCurrent = 0.0;
-        public double rollerFloor3SupplyCurrent = 0.0;
-        public double rollerFloor3Voltage = 0.0;
+        public boolean kickerConnected = false;
+        public double kickerVelocityRPS = 0.0;
+        public double kickerStatorCurrent = 0.0;
+        public double kickerSupplyCurrent = 0.0;
+        public double kickerVoltage = 0.0;
 
     
         public double goalVelocity = 0.0;
@@ -40,7 +40,11 @@ public interface IndexerIO {
 
     public void setBrakeMode(boolean enableBrakeMode);
 
-    public void setVelocity(double rps);
+    public void setVelocity(double RPS);
+
+    public void setVelocityKicker(double RPS);
+
+    public void setDutyCycle(double dutyCycle);
 
     // Get Hardware Data to Business Logic
     public void updateInputs(IndexerIOInputsAutoLogged m_inputs);

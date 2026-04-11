@@ -30,7 +30,7 @@ public class IntakeIOTalonFX implements IntakeIO {
     private final TalonFX m_intakeExtender;
     private final TalonFX m_intakeRollerLeft;
     private PositionVoltage m_extenderRequest;
-    private final VelocityTorqueCurrentFOC m_velocityTorque = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
+    // private final VelocityTorqueCurrentFOC m_velocityTorque = new VelocityTorqueCurrentFOC(0.0).withSlot(0);
 
     private StatusSignal<AngularVelocity> m_intakeRoller1Velocity;
     private StatusSignal<Current> m_intakeRoller1StatorCurrent;
@@ -59,7 +59,7 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     private final double m_gearRatio = m_gearBox;
 
-    private final String kCanbus = "CANivore2";
+    private final String kCanbus = "rio";
 
     public IntakeIOTalonFX() {
         m_intakeRollerLeft = new TalonFX(kIntakeRollerLeaderID, kCanbus);
@@ -78,7 +78,7 @@ public class IntakeIOTalonFX implements IntakeIO {
         rollerCfg.CurrentLimits.SupplyCurrentLimitEnable = true;
         rollerCfg.Slot0.kP = 10;
         rollerCfg.Slot0.kI = 0;
-        rollerCfg.Slot0.kD = 0;
+        rollerCfg.Slot0.kD = 0.1;
 
         final MotorOutputConfigs extenderConfigs = new MotorOutputConfigs();
         extenderConfigs.NeutralMode = NeutralModeValue.Brake;
@@ -147,10 +147,10 @@ public class IntakeIOTalonFX implements IntakeIO {
         m_intakeExtender.setPosition(position);
     }
 
-    @Override
-    public void setVelocity(double velocity) {
-        m_intakeRollerLeft.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(velocity)));
-    }
+    // @Override
+    // public void setVelocity(double velocity) {
+    //     m_intakeRollerLeft.setControl(m_velocityTorque.withVelocity(Units.RotationsPerSecond.of(velocity)));
+    // }
 
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged m_inputs) {

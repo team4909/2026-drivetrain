@@ -26,9 +26,9 @@ public class Intake extends SubsystemBase {
 
     }
 
-    public Command run() {
-        return this.run(() -> m_io.setVelocity(m_velocity.get())).withName("IntakeRun");
-    }
+    // public Command run() {
+    //     return this.run(() -> m_io.setVelocity(m_velocity.get())).withName("IntakeRun");
+    // }
 
     public Command stop() {
         return this.run(() -> m_io.setSpeed(0)).withName("IntakeStop");
@@ -38,12 +38,12 @@ public class Intake extends SubsystemBase {
         return this.run(() -> m_io.setSpeed(1)).withName("IntakeIn");
     }
 
-    public Command intakePID() {
-         return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakePID");
-    }
+    // public Command intakePID() {
+    //      return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakePID");
+    // }
 
     public Command outtake() {
-        return this.run(() -> m_io.setVelocity(kOuttakeVelocity)).withName("IntakeOut");
+        return this.run(() -> m_io.setSpeed(-1)).withName("Outtake");
     }
 
     public Command intakeAndExtend() {
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
     public Command stowAndStop() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
-            m_io.setVelocity(0);
+            m_io.setSpeed(0);
             m_inputs.setpoint = "Stowed";
         }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.intakePivotRotations - Stowed) <= 0.1);
     }

@@ -31,7 +31,7 @@ public class HoodIOTalonFX implements HoodIO {
 
     // Convert legacy pulse-width setpoints (1000-2000) into Falcon rotations.
     private static final double kMinRotations = 0.0;
-    private static final double kMaxRotations = 0.685;
+    private static final double kMaxRotations = 2.7;
 
     private StatusSignal<AngularVelocity> m_hoodVelocity;
     private StatusSignal<Voltage> m_hoodVoltage;
@@ -47,8 +47,8 @@ public class HoodIOTalonFX implements HoodIO {
         config.CurrentLimits.SupplyCurrentLimit = 40.0;
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.Slot0.kP = 25;
-        config.Slot0.kI = 6;
+        config.Slot0.kP = 30;
+        config.Slot0.kI = 10;
         config.Slot0.kD = 0.01;
         config.Slot0.kS = 2.0;
 
@@ -117,7 +117,7 @@ public class HoodIOTalonFX implements HoodIO {
         m_inputs.hoodStatorCurrent = m_hoodStatorCurrent.getValueAsDouble();
         m_inputs.hoodSupplyCurrent = m_hoodSupplyCurrent.getValueAsDouble();
         m_inputs.hoodVoltage = m_hoodVoltage.getValueAsDouble();
-        m_inputs.hoodRotations = m_hoodRotations.getValueAsDouble();
+        m_inputs.hoodRotations = -m_hoodRotations.getValueAsDouble();
 
         m_inputs.goalPosition = m_goalPosition;
     }

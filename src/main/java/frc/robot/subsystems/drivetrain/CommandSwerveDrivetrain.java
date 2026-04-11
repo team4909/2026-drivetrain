@@ -399,4 +399,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public List<Translation2d> getFieldCorners(){
         return FIELD_CORNERS;
     }
+
+    public double getDistanceFromAllianceWall() {
+        if(m_alliance == Alliance.Blue){
+            return this.getState().Pose.getX();
+        }
+        return aprilTagLayout.getFieldLength() - this.getState().Pose.getX();
+    }
 }

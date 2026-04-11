@@ -27,7 +27,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setVelocity(0)).withName("Stop");
+        return this.run(() -> m_io.setDutyCycle(0)).withName("Stop");
     }
 
     public Command shoot(DoubleSupplier velocity){
@@ -40,7 +40,7 @@ public class Shooter extends SubsystemBase {
         }
 
         return MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor1VelocityRPS, kSHOOTERTOLERANCE)
-                && MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor2VelocityRPS, kSHOOTERTOLERANCE);
+                || MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor2VelocityRPS, kSHOOTERTOLERANCE);
     }
 
     @Override

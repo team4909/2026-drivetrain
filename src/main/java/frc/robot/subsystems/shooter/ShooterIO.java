@@ -20,11 +20,11 @@ public interface ShooterIO {
         public double motor2SupplyCurrent = 0.0;
         public double motor2Voltage = 0.0;
         
-        public boolean motor3Connected = false;
-        public double motor3VelocityRPS = 0.0;
-        public double motor3StatorCurrent = 0.0;
-        public double motor3SupplyCurrent = 0.0;
-        public double motor3Voltage = 0.0;  
+        // public boolean motor3Connected = false;
+        // public double motor3VelocityRPS = 0.0;
+        // public double motor3StatorCurrent = 0.0;
+        // public double motor3SupplyCurrent = 0.0;
+        // public double motor3Voltage = 0.0;  
 
         public boolean motor4Connected = false;
         public double motor4VelocityRPS = 0.0;
@@ -37,6 +37,7 @@ public interface ShooterIO {
         public double hoodRollerStatorCurrent = 0.0;
         public double hoodRollerSupplyCurrent = 0.0;
         public double hoodRollerVoltage = 0.0;
+        public double hoodRollerPIDOutput = 0.0;
         
 
         public double goalVelocity = 0.0;
@@ -46,6 +47,8 @@ public interface ShooterIO {
     public void setVelocity(double RPS);
 
     public void setBrakeMode(boolean enableBrakeMode);
+
+    public void setDutyCycle(double dutyCycle);
 
     // Get Hardware Data to Business Logic
     public void updateInputs(ShooterIOInputsAutoLogged m_inputs);

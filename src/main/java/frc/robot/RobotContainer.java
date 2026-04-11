@@ -132,23 +132,24 @@ public class RobotContainer {
                 NamedCommands.registerCommand("ShooterSpinUp", s_Shooter.shoot(() -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()));
                 NamedCommands.registerCommand("IndexerFeed", s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly());
                 NamedCommands.registerCommand("IndexerStop", s_Indexer.stop());
+                NamedCommands.registerCommand("RotateToHub", new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
 
                 s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                                                Units.inchesToMeters(-12.31639),
-                                                Units.inchesToMeters(5.092677),
-                                                Units.inchesToMeters(13.347738)),
+                                                Units.inchesToMeters(-11.852969),
+                                                Units.inchesToMeters(5.089323),
+                                                Units.inchesToMeters(13.058160)),
                                                 new Rotation3d(
                                                                 Units.degreesToRadians(0.0),
-                                                                Units.degreesToRadians(-42),
+                                                                Units.degreesToRadians(-32),
                                                                 Units.degreesToRadians(180)))),
                                 new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
-                                                Units.inchesToMeters(-12.202858),
-                                                Units.inchesToMeters(-5.316821),
-                                                Units.inchesToMeters(13.529428)),
+                                                Units.inchesToMeters(-11.852969),
+                                                Units.inchesToMeters(-5.089323),
+                                                Units.inchesToMeters(13.058160)),
                                                 new Rotation3d(
                                                                 Units.degreesToRadians(0.0),
-                                                                Units.degreesToRadians(-42),
+                                                                Units.degreesToRadians(-32),
                                                                 Units.degreesToRadians(180)))));
 
 
@@ -272,7 +273,8 @@ public class RobotContainer {
                 // s_Drivetrain::robotBehindHub));
 
                 s_Hood.setDefaultCommand(s_Hood.retractHood()); // USE THIS
-                s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 30));
+                // s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 30));
+                s_Shooter.setDefaultCommand(s_Shooter.stop());
                 s_Indexer.setDefaultCommand(s_Indexer.stop());
 
                 // s_Hood.setDefaultCommand(s_Hood.goTo(() ->
@@ -289,10 +291,13 @@ public class RobotContainer {
 
                 joystick.y().whileTrue(s_Intake.reZero());
                 // joystick.rightBumper().onTrue(s_Hood.tunableShot());
-                joystick.a().whileTrue(s_Indexer.notintake()).onFalse(s_Indexer.stop());
+                joystick.a().whileTrue(s_Shooter.shoot(() -> 10000)).onFalse(s_Shooter.stop());
+                joystick.x().whileTrue(Commands.parallel(s_Indexer.outtake(), s_Intake.outtake())).onFalse(Commands.parallel(s_Intake.stop(), s_Indexer.stop()));
                 joystick.back().whileTrue(s_Intake.reZero());
 
-                joystick.leftTrigger().whileTrue(s_Intake.intake()).onFalse(s_Intake.stop());
+                joystick.leftTrigger().whileTrue(Commands.parallel(s_Indexer.kickerPull(), s_Intake.intake())).onFalse(Commands.parallel(s_Intake.stop(), s_Indexer.stop()));
+
+                // joystick.rightBumper().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
 
                 // joystick.rightTrigger().whileTrue(Commands.parallel(
                 // s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
@@ -301,9 +306,10 @@ public class RobotContainer {
                 // s_Shooter.stop(),
                 // s_Indexer.stop()));
 
+                //TUNING
                 // joystick.rightTrigger().whileTrue(Commands.parallel(
                 // s_Shooter.tuningShoot(),
-                // Commands.sequence(Commands.waitSeconds(3), s_Indexer.feed())
+                // Commands.sequence(Commands.waitSeconds(3), s_Indexer.tuningShoot())
                 // )).onFalse(Commands.parallel(
                 // s_Shooter.stop(),
                 // s_Indexer.stop()
@@ -420,16 +426,16 @@ public class RobotContainer {
                 joystick.leftBumper()
                                 .onTrue(s_Intake.Extend());
                 // .onFalse(Commands.sequence(s_Intake.stow()));
-                joystick.x().whileTrue(new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
+                //joystick.x().whileTrue(new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
                 // .onFalse(Commands.sequence(s_Intake.stow()));
                 // joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
 
                 // passing shot
                 joystick.povLeft().whileTrue(
                                 Commands.parallel(
-                                                s_Hood.extendHood(),
+                                                s_Hood.goTo(m_shootingCalculator::getHoodPosition),
                                                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-
+                                                new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed),
                                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()))
                                 .onFalse(
                                                 Commands.parallel(
@@ -455,7 +461,7 @@ public class RobotContainer {
 
                 ).onFalse(
                                 Commands.parallel(
-                                                s_Shooter.shoot(() -> 30),
+                                                s_Shooter.stop(),
                                                 s_Indexer.stop(),
                                                 s_Intake.Extend(),
                                                 Commands.race(Commands.waitSeconds(0.75),

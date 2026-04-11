@@ -143,14 +143,14 @@ public class IndexerIOTalonFX implements IndexerIO {
     // Top = follower
     private final TalonFX m_rollerFloor2Motor;
 
-    private final TalonFX m_rollerFloor3Motor;
+    private final TalonFX m_kickerMotor;
 
     // private final TalonFX m_rollerFloor4Motor;
 
 
-    private final int m_rollerFloor1MotorID = 54;
-    private final int m_rollerFloor2MotorID = 53;
-    private final int m_rollerFloor3MotorID = 67;
+    private final int m_rollerFloor1MotorID = 53;
+    private final int m_rollerFloor2MotorID = 54;
+    private final int m_kickerMotorID = 52;
 
 
     private final String kCanbus = "CANivore2";
@@ -165,33 +165,38 @@ public class IndexerIOTalonFX implements IndexerIO {
     private StatusSignal<Current> m_rollerFloor2SupplyCurrent;
     private StatusSignal<Voltage> m_rollerFloor2Voltage;
 
-    private StatusSignal<AngularVelocity> m_rollerFloor3Velocity;
-    private StatusSignal<Current> m_rollerFloor3StatorCurrent;
-    private StatusSignal<Current> m_rollerFloor3SupplyCurrent;
-    private StatusSignal<Voltage> m_rollerFloor3Voltage;
+    private StatusSignal<AngularVelocity> m_kickerVelocity;
+    private StatusSignal<Current> m_kickerStatorCurrent;
+    private StatusSignal<Current> m_kickerSupplyCurrent;
+    private StatusSignal<Voltage> m_kickerVoltage;
 
     // private StatusSignal<AngularVelocity> m_rollerFloor4Velocity;
     // private StatusSignal<Current> m_rollerFloor4StatorCurrent;
     // private StatusSignal<Current> m_rollerFloor4SupplyCurrent;
     // private StatusSignal<Voltage> m_rollerFloor4Voltage;
 
-    private VelocityTorqueCurrentFOC m_velocityRequest = new VelocityTorqueCurrentFOC(0);
+    private VelocityTorqueCurrentFOC m_velocityRequest = new VelocityTorqueCurrentFOC(0).withSlot(0);
     private double m_goalVelocity;
 
     public IndexerIOTalonFX() {
         m_rollerFloor1Motor = new TalonFX(m_rollerFloor1MotorID, kCanbus);
         m_rollerFloor2Motor = new TalonFX(m_rollerFloor2MotorID, kCanbus);
-        m_rollerFloor3Motor = new TalonFX(m_rollerFloor3MotorID, kCanbus);
+        m_kickerMotor = new TalonFX(m_kickerMotorID, kCanbus);
         
         final TalonFXConfiguration indexerMotorConfig = new TalonFXConfiguration();
-        indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
-        indexerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        // indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40.0;
+        // indexerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         indexerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         indexerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        indexerMotorConfig.Slot0.kP = 7;
+        indexerMotorConfig.Slot0.kI = 0;
+        indexerMotorConfig.Slot0.kD = 0.1;
+        indexerMotorConfig.Slot0.kS = 0;
+        indexerMotorConfig.TorqueCurrent.withPeakForwardTorqueCurrent(Units.Amps.of(40)).withPeakReverseTorqueCurrent(Units.Amps.of(-40));
 
         m_rollerFloor1Motor.getConfigurator().apply(indexerMotorConfig);
         m_rollerFloor2Motor.getConfigurator().apply(indexerMotorConfig);
-        m_rollerFloor3Motor.getConfigurator().apply(indexerMotorConfig);
+        m_kickerMotor.getConfigurator().apply(indexerMotorConfig);
 
      
         // m_rollerFloor2Motor.setControl(
@@ -212,10 +217,10 @@ public class IndexerIOTalonFX implements IndexerIO {
         m_rollerFloor2SupplyCurrent = m_rollerFloor2Motor.getSupplyCurrent();
         m_rollerFloor2Voltage = m_rollerFloor2Motor.getSupplyVoltage();
 
-        m_rollerFloor3Velocity = m_rollerFloor3Motor.getVelocity();
-        m_rollerFloor3StatorCurrent = m_rollerFloor3Motor.getStatorCurrent();
-        m_rollerFloor3SupplyCurrent = m_rollerFloor3Motor.getSupplyCurrent();
-        m_rollerFloor3Voltage = m_rollerFloor3Motor.getSupplyVoltage();
+        m_kickerVelocity = m_kickerMotor.getVelocity();
+        m_kickerStatorCurrent = m_kickerMotor.getStatorCurrent();
+        m_kickerSupplyCurrent = m_kickerMotor.getSupplyCurrent();
+        m_kickerVoltage = m_kickerMotor.getSupplyVoltage();
 
     
         m_goalVelocity = 0;
@@ -229,20 +234,35 @@ public class IndexerIOTalonFX implements IndexerIO {
             m_rollerFloor2StatorCurrent,
             m_rollerFloor2SupplyCurrent,
             m_rollerFloor2Voltage,
-            m_rollerFloor3Velocity,
-            m_rollerFloor3StatorCurrent,
-            m_rollerFloor3SupplyCurrent,
-            m_rollerFloor3Voltage
+            m_kickerVelocity,
+            m_kickerStatorCurrent,
+            m_kickerSupplyCurrent,
+            m_kickerVoltage
           
         );
     }
     @Override
     public void setVelocity(double RPS) {
         m_goalVelocity = RPS;
-        m_rollerFloor1Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
-        m_rollerFloor2Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
-        m_rollerFloor3Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(RPS)));
+        m_rollerFloor1Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(-RPS)));
+        m_rollerFloor2Motor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(-RPS)));
+        m_kickerMotor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(-RPS)));
     }
+
+    @Override
+    public void setDutyCycle(double dutyCycle) {
+        m_goalVelocity = dutyCycle;
+        m_rollerFloor1Motor.setControl(new DutyCycleOut(dutyCycle));
+        m_rollerFloor2Motor.setControl(new DutyCycleOut(dutyCycle));
+        m_kickerMotor.setControl(new DutyCycleOut(dutyCycle));
+    }
+
+    @Override
+    public void setVelocityKicker(double RPS) {
+        m_goalVelocity = RPS;
+        m_kickerMotor.setControl(m_velocityRequest.withVelocity(Units.RotationsPerSecond.of(-RPS)));
+    }
+    
 
     // @Override
     // public void setSpeed(double speed) {
@@ -259,7 +279,7 @@ public class IndexerIOTalonFX implements IndexerIO {
 
         m_rollerFloor1Motor.setNeutralMode(neutralModeValue);
         m_rollerFloor2Motor.setNeutralMode(neutralModeValue);
-        m_rollerFloor3Motor.setNeutralMode(neutralModeValue);
+        m_kickerMotor.setNeutralMode(neutralModeValue);
     }
 
     public void updateInputs(IndexerIOInputsAutoLogged m_inputs) {
@@ -271,7 +291,7 @@ public class IndexerIOTalonFX implements IndexerIO {
                 m_rollerFloor1SupplyCurrent
             ).isOK();
 
-        m_inputs.rollerFloor1VelocityRPS = m_rollerFloor1Velocity.getValueAsDouble();
+        m_inputs.rollerFloor1VelocityRPS = -m_rollerFloor1Velocity.getValueAsDouble();
         m_inputs.rollerFloor1StatorCurrent = m_rollerFloor1StatorCurrent.getValueAsDouble();
         m_inputs.rollerFloor1SupplyCurrent = m_rollerFloor1SupplyCurrent.getValueAsDouble();
         m_inputs.rollerFloor1Voltage = m_rollerFloor1Voltage.getValueAsDouble();
@@ -283,22 +303,22 @@ public class IndexerIOTalonFX implements IndexerIO {
                 m_rollerFloor2StatorCurrent,
                 m_rollerFloor2SupplyCurrent
             ).isOK();
-        m_inputs.rollerFloor2VelocityRPS = m_rollerFloor2Velocity.getValueAsDouble();
+        m_inputs.rollerFloor2VelocityRPS = -m_rollerFloor2Velocity.getValueAsDouble();
         m_inputs.rollerFloor2StatorCurrent = m_rollerFloor2StatorCurrent.getValueAsDouble();
         m_inputs.rollerFloor2SupplyCurrent = m_rollerFloor2SupplyCurrent.getValueAsDouble();
         m_inputs.rollerFloor2Voltage = m_rollerFloor2Voltage.getValueAsDouble();
 
-         m_inputs.rollerFloor3Connected = 
+         m_inputs.kickerConnected = 
             BaseStatusSignal.refreshAll(
-                m_rollerFloor3Velocity,
-                m_rollerFloor3Voltage,
-                m_rollerFloor3StatorCurrent,
-                m_rollerFloor3SupplyCurrent
+                m_kickerVelocity,
+                m_kickerVoltage,
+                m_kickerStatorCurrent,
+                m_kickerSupplyCurrent
             ).isOK();
-        m_inputs.rollerFloor3VelocityRPS = m_rollerFloor3Velocity.getValueAsDouble();
-        m_inputs.rollerFloor3StatorCurrent = m_rollerFloor3StatorCurrent.getValueAsDouble();
-        m_inputs.rollerFloor3SupplyCurrent = m_rollerFloor3SupplyCurrent.getValueAsDouble();
-        m_inputs.rollerFloor3Voltage = m_rollerFloor3Voltage.getValueAsDouble();
+        m_inputs.kickerVelocityRPS = -m_kickerVelocity.getValueAsDouble();
+        m_inputs.kickerStatorCurrent = m_kickerStatorCurrent.getValueAsDouble();
+        m_inputs.kickerSupplyCurrent = m_kickerSupplyCurrent.getValueAsDouble();
+        m_inputs.kickerVoltage = m_kickerVoltage.getValueAsDouble();
 
 
         m_inputs.goalVelocity = m_goalVelocity;

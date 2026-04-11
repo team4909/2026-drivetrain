@@ -122,8 +122,13 @@ public class RotateToPose extends Command{
     //         .transformBy(
     //             new Transform2d(new Translation2d(driveVelocityScalar, 0.0), new Rotation2d()))
     //         .getTranslation();
-    double xVel = m_xVelocitySupplier.getAsDouble() > 0.2 ? m_xVelocitySupplier.getAsDouble() : 0.0;
-    double yVel = m_yVelocitySupplier.getAsDouble() > 0.2 ? m_yVelocitySupplier.getAsDouble() : 0.0;
+    double xVel = m_xVelocitySupplier.getAsDouble();// > 0.2 ? m_xVelocitySupplier.getAsDouble() : 0.0;
+    double yVel = m_yVelocitySupplier.getAsDouble();// > 0.2 ? m_yVelocitySupplier.getAsDouble() : 0.0;
+
+    // if(new Translation2d(xVel, yVel).getNorm() < 0.2) {
+      xVel = 0.0;
+      yVel = 0.0;
+    // }
 
     ChassisSpeeds CS = new ChassisSpeeds(xVel,yVel, 0);//(driveVelocity.getX(), driveVelocity.getY(), thetaVelocity);
 
