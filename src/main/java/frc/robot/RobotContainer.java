@@ -133,23 +133,23 @@ public class RobotContainer {
                 NamedCommands.registerCommand("IndexerFeed", s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly());
                 NamedCommands.registerCommand("IndexerStop", s_Indexer.stop());
                 NamedCommands.registerCommand("RotateToHub", new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
-
+                
                 s_Vision = new Vision(s_Drivetrain::addVisionMeasurement,
                                 new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                                                Units.inchesToMeters(-11.852969),
-                                                Units.inchesToMeters(5.089323),
-                                                Units.inchesToMeters(13.058160)),
+                                                Units.inchesToMeters(-12.772144),
+                                                Units.inchesToMeters(5.092677),
+                                                Units.inchesToMeters(13.442920)),
                                                 new Rotation3d(
                                                                 Units.degreesToRadians(0.0),
-                                                                Units.degreesToRadians(-32),
+                                                                Units.degreesToRadians(-20),
                                                                 Units.degreesToRadians(180)))),
                                 new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
-                                                Units.inchesToMeters(-11.852969),
-                                                Units.inchesToMeters(-5.089323),
-                                                Units.inchesToMeters(13.058160)),
+                                                Units.inchesToMeters(-12.966111),
+                                                Units.inchesToMeters(-5.092667),
+                                                Units.inchesToMeters(13.454091)),
                                                 new Rotation3d(
                                                                 Units.degreesToRadians(0.0),
-                                                                Units.degreesToRadians(-32),
+                                                                Units.degreesToRadians(-15),
                                                                 Units.degreesToRadians(180)))));
 
 
@@ -273,7 +273,7 @@ public class RobotContainer {
                 // s_Drivetrain::robotBehindHub));
 
                 s_Hood.setDefaultCommand(s_Hood.retractHood()); // USE THIS
-                // s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 30));
+                //s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 20));
                 s_Shooter.setDefaultCommand(s_Shooter.stop());
                 s_Indexer.setDefaultCommand(s_Indexer.stop());
 
@@ -457,7 +457,7 @@ public class RobotContainer {
                                                 s_Shooter.shoot(() -> m_shootingParameters
                                                                 .calculate(s_Drivetrain.getHubCenter()).rpm()),
                                                 new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed),
-                                                s_Indexer.feed().beforeStarting(Commands.waitSeconds(1.5)))
+                                                s_Indexer.feed().beforeStarting(Commands.waitSeconds(0.51)))
 
                 ).onFalse(
                                 Commands.parallel(

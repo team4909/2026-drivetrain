@@ -41,7 +41,7 @@ public class RotateToPose extends Command{
         m_yVelocitySupplier = yVelocity;
 
         m_goalPose = new Pose2d(drivetrain.getHubCenter(), new Rotation2d());
-        m_rotationController = new ProfiledPIDController(4.0, 0.0, 0.0, new TrapezoidProfile.Constraints(100 * Math.PI/10, 100 * Math.PI/10));
+        m_rotationController = new ProfiledPIDController(10.0, 0.0, 0.01, new TrapezoidProfile.Constraints(100 * Math.PI/10*2, 100 * Math.PI/10*3));
         m_driveRequest = new SwerveRequest.ApplyRobotSpeeds()
         .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
         .withSteerRequestType(SteerRequestType.MotionMagicExpo);
