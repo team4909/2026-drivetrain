@@ -84,12 +84,15 @@ public class ShootingParameters {
         // // m_shooterTable.put(Units.inchesToMeters(103.625+40+40), 60.0);
         // m_shooterTable.put(Units.inchesToMeters(183.234), 63.0); //65
 
-
-        m_timeOfFlightTable.put(Units.inchesToMeters(63.234), 0.93);
-        m_timeOfFlightTable.put(Units.inchesToMeters(93.234), 1.11);
-        m_timeOfFlightTable.put(Units.inchesToMeters(123.234), 1.22);
-        m_timeOfFlightTable.put(Units.inchesToMeters(153.234), 1.22-0.22);
-        m_timeOfFlightTable.put(Units.inchesToMeters(183.234), 1.24);
+        m_timeOfFlightTable.put(2.5, 0.98);
+        m_timeOfFlightTable.put(3.73, 1.2);
+        m_timeOfFlightTable.put(4.53, 1.34);
+        m_timeOfFlightTable.put(5.36, 1.25);//1.16);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(63.234), 0.93);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(93.234), 1.11);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(123.234), 1.22);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(153.234), 1.22-0.22);
+        // m_timeOfFlightTable.put(Units.inchesToMeters(183.234), 1.24);
 
 
         m_horizontalVelocityToDistanceTable.put(Units.inchesToMeters(63.234)/0.93, Units.inchesToMeters(63.234));

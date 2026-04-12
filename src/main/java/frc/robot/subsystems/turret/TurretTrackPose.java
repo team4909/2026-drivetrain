@@ -136,7 +136,7 @@ public class TurretTrackPose extends Command{
     double flippedRelative = wrapDegrees(relativeDeg + 180.0);
     // Clamp to turret travel limits and command (invert sign for motor
     // convention as before).
-    double turretCmdDeg = MathUtil.clamp(-flippedRelative, -105.0, 105.0);
+    double turretCmdDeg = MathUtil.clamp(-flippedRelative, -100.0, 125.0);
     m_turret.setDegrees(turretCmdDeg);
 
     Logger.recordOutput("Turret/flippedRelative", flippedRelative);
