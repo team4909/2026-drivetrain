@@ -54,7 +54,9 @@ public class RotateToPose extends Command{
   public void initialize() {
     Pose2d initialPose = m_drivetrain.getState().Pose;
 
-    Translation2d robotToTargetTranslation = poseInverse(new Pose2d(initialPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
+    Pose2d goalPose = new Pose2d(m_drivetrain.getHubCenter(), new Rotation2d());
+
+    Translation2d robotToTargetTranslation = poseInverse(new Pose2d(initialPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(goalPose.getTranslation(), new Rotation2d())).getTranslation();
 
     m_targetHeading = robotToTargetTranslation.getAngle();//.rotateBy(Rotation2d.k180deg);
 
@@ -79,7 +81,9 @@ public class RotateToPose extends Command{
 
     Pose2d currentPose = m_drivetrain.getState().Pose;
 
-    Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(m_goalPose.getTranslation(), new Rotation2d())).getTranslation();
+    Pose2d goalPose = new Pose2d(m_drivetrain.getHubCenter(), new Rotation2d());
+
+    Translation2d robotToTargetTranslation = poseInverse(new Pose2d(currentPose.getTranslation(), new Rotation2d())).transformBy(new Transform2d(goalPose.getTranslation(), new Rotation2d())).getTranslation();
     m_targetHeading = robotToTargetTranslation.getAngle().plus(Rotation2d.k180deg);
 
     if(m_drivetrain.robotBehindHub()) {
