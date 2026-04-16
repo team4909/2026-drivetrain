@@ -90,6 +90,8 @@ public class RobotContainer {
         private ShootingParameters m_shootingParameters;
         private final Vision s_Vision;
 
+        private final Command oscillate;
+
         public RobotContainer() {
                 // if (DriverStation.getAlliance().isPresent() &&
                 // DriverStation.getAlliance().get() == Alliance.Red){
@@ -104,20 +106,18 @@ public class RobotContainer {
                 // Create intake and give it a reference to the indexer so combined
                 // intake+index commands can be created inside the intake subsystem.
                 s_Intake = new Intake(new IntakeIOTalonFX());
-                // s_Hood = new Hood(new HoodIORevServoHub());
                 s_Hood = new Hood(new HoodIOTalonFX());
-                // s_Shooter = new Shooter(new ShooterIOTalonFX());
-                // s_Turret = new Turret(new TurretIOTalonFX());
+
+                oscillate = Commands.repeatingSequence(
+                                                Commands.race(s_Intake.bottomOscillate(), Commands.waitSeconds(0.15)),
+                                                Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15)));
 
                 NamedCommands.registerCommand("IntakeDownGo", s_Intake.intakeAndExtend());
                 NamedCommands.registerCommand("IntakeUpStop", s_Intake.stowAndStop());
                 NamedCommands.registerCommand("IntakeStop", s_Intake.stop());
                 NamedCommands.registerCommand("IntakeGo", s_Intake.intake());
                 NamedCommands.registerCommand("IntakeZeroDown", s_Intake.reZeroDown());
-                NamedCommands.registerCommand("IntakeOscillate",
-                                Commands.repeatingSequence(
-                                                Commands.race(s_Intake.intakeAndExtend(), Commands.waitSeconds(0.15)),
-                                                Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))));
+                NamedCommands.registerCommand("IntakeOscillate", oscillate);
                 NamedCommands.registerCommand("HoodDown", s_Hood.retractHood());
                 NamedCommands.registerCommand("HoodUp", s_Hood.extendHood());
                 NamedCommands.registerCommand("HoodInterp", s_Hood
@@ -143,6 +143,14 @@ public class RobotContainer {
                                                                 Units.degreesToRadians(0.0),
                                                                 Units.degreesToRadians(-20),
                                                                 Units.degreesToRadians(180)))),
+                                new VisionIOPhotonVision("back-left-cam1", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(-12.772144),
+                                                Units.inchesToMeters(5.092677),
+                                                Units.inchesToMeters(13.442920)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-20),
+                                                                Units.degreesToRadians(180)))),
                                 new VisionIOPhotonVision("back-right-cam", new Transform3d(new Translation3d(
                                                 Units.inchesToMeters(-12.966111),
                                                 Units.inchesToMeters(-5.092667),
@@ -150,63 +158,15 @@ public class RobotContainer {
                                                 new Rotation3d(
                                                                 Units.degreesToRadians(0.0),
                                                                 Units.degreesToRadians(-15),
+                                                                Units.degreesToRadians(180)))),
+                                new VisionIOPhotonVision("back-right-cam1", new Transform3d(new Translation3d(
+                                                Units.inchesToMeters(-12.966111),
+                                                Units.inchesToMeters(-5.092667),
+                                                Units.inchesToMeters(13.454091)),
+                                                new Rotation3d(
+                                                                Units.degreesToRadians(0.0),
+                                                                Units.degreesToRadians(-15),
                                                                 Units.degreesToRadians(180)))));
-
-
-
-                                // new VisionIOPhotonVision("back-left-cam", new Transform3d(new Translation3d(
-                                //                 Units.inchesToMeters(-9.734833), // (-9.88538
-                                //                 Units.inchesToMeters(10.537752), // 10.762213
-                                //                 Units.inchesToMeters(8.506015)), // 8.314941
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(0.0),
-                                //                                 Units.degreesToRadians(-25),
-                                //                                 Units.degreesToRadians(90.0 + 80)))), // 90.0 + 65
-
-                                // new VisionIOPhotonVision("left-cam", new Transform3d(new Translation3d(
-                                //                 Units.inchesToMeters(-6.622807), // -6.748188
-                                //                 Units.inchesToMeters(12.471590), // 12.487542
-                                //                 Units.inchesToMeters(8.318717)), // 8.315411
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(8.745),
-                                //                                 Units.degreesToRadians(-25),
-                                //                                 Units.degreesToRadians(90 + 16.12)))),
-                                // new VisionIOPhotonVision("left-cam1", new Transform3d(new Translation3d(
-                                //                 Units.inchesToMeters(-6.622807), // -9.24006310
-                                //                 Units.inchesToMeters(12.471590), // 10.072250
-                                //                 Units.inchesToMeters(8.318717)), // 15.539060
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(8.745), // 5.6737923
-                                //                                 Units.degreesToRadians(-25), // -21
-                                //                                 Units.degreesToRadians(90 + 16.12) // 69.656
-                                //                 ))),
-                                // new VisionIOPhotonVision("right-cam", new Transform3d(new Translation3d(
-                                //                 Units.inchesToMeters(-6.62210), // -6.748188
-                                //                 Units.inchesToMeters(-12.471590), // -12.487542
-                                //                 Units.inchesToMeters(8.318717)),
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(8.745),
-                                //                                 Units.degreesToRadians(-25),
-                                //                                 Units.degreesToRadians(270 - 16.12) // 69.656
-                                //                 ))),
-                                // new VisionIOPhotonVision("right-cam1", new Transform3d(new Translation3d(
-                                //                 Units.inchesToMeters(-6.62210), // -9.24006310
-                                //                 Units.inchesToMeters(-12.471590), // -10.072250
-                                //                 Units.inchesToMeters(8.318717)),
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(8.745),
-                                //                                 Units.degreesToRadians(-25),
-                                //                                 Units.degreesToRadians(270 - 16.12) // 69.656
-                                //                 ))),
-                                // new VisionIOPhotonVision("back-right-cam", new Transform3d(
-                                //                 new Translation3d(
-                                //                                 Units.inchesToMeters(-9.734833),
-                                //                                 Units.inchesToMeters(-10.537752),
-                                //                                 Units.inchesToMeters(8.314941)),
-                                //                 new Rotation3d(
-                                //                                 Units.degreesToRadians(0.0),
-                                //                                 Units.degreesToRadians(-25),
-                                //                                 Units.degreesToRadians(270.0 - 80)))));
 
                 m_shootingParameters = new ShootingParameters(s_Drivetrain);
 
@@ -266,45 +226,28 @@ public class RobotContainer {
                                                                                                             // negative
                                                                                                             // X (left)
                                 ));
-                // s_Hood.setDefaultCommand(s_Hood.goTo(m_shootingCalculator::getHoodPosition));
-
-                // s_Hood.setDefaultCommand(new ConditionalCommand(s_Hood.extendHood(),
-                // s_Hood.goTo((() -> m_shootingParameters.calculate(m_hub).hoodAngle())),
-                // s_Drivetrain::robotBehindHub));
 
                 s_Hood.setDefaultCommand(s_Hood.retractHood()); // USE THIS
-                //s_Shooter.setDefaultCommand(s_Shooter.shoot(() -> 20));
-                s_Shooter.setDefaultCommand(s_Shooter.stop());
-                s_Indexer.setDefaultCommand(s_Indexer.stop());
+                s_Shooter.setDefaultCommand(s_Shooter.stop()); // USE THIS`
+                s_Indexer.setDefaultCommand(s_Indexer.stop()); // USE THIS
 
-                // s_Hood.setDefaultCommand(s_Hood.goTo(() ->
-                // m_shootingParameters.calculate(m_hub).hoodAngle()));
-
-                // s_Hood.setDefaultCommand(s_Hood.tunableShot());
+                // s_Hood.setDefaultCommand(s_Hood.tunableShot()); // TUNING
 
                 joystick.start().onTrue(s_Drivetrain.runOnce(() -> s_Drivetrain.seedFieldCentric()));
-                // joystick.x().whileTrue(s_Hood.extendHood());
-                // joystick.y().whileTrue(s_Hood.retractHood());
 
                 joystick.povRight().whileTrue(Commands.race(Commands.waitSeconds(0.75), s_Hood.runBack())
                                 .andThen(s_Hood.zeroButton()));
 
                 joystick.y().whileTrue(s_Intake.reZero());
-                // joystick.rightBumper().onTrue(s_Hood.tunableShot());
+
                 joystick.a().whileTrue(s_Shooter.shoot(() -> 10000)).onFalse(s_Shooter.stop());
+
                 joystick.x().whileTrue(Commands.parallel(s_Indexer.outtake(), s_Intake.outtake())).onFalse(Commands.parallel(s_Intake.stop(), s_Indexer.stop()));
+
                 joystick.back().whileTrue(s_Intake.reZero());
 
                 joystick.leftTrigger().whileTrue(Commands.parallel(s_Indexer.kickerPull(), s_Intake.intake())).onFalse(Commands.parallel(s_Intake.stop(), s_Indexer.stop()));
 
-                // joystick.rightBumper().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-
-                // joystick.rightTrigger().whileTrue(Commands.parallel(
-                // s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                // Commands.sequence(Commands.waitSeconds(1),
-                // s_Indexer.feed()))).onFalse(Commands.parallel(
-                // s_Shooter.stop(),
-                // s_Indexer.stop()));
 
                 //TUNING
                 // joystick.rightTrigger().whileTrue(Commands.parallel(
@@ -315,120 +258,8 @@ public class RobotContainer {
                 // s_Indexer.stop()
                 // ));
 
-                // USE THIS
-                // joystick.rightTrigger().whileTrue(new ConditionalCommand(
-                //                 Commands.parallel(
-                //                                 s_Hood.extendHood(),
-                //                                 s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                //                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                //                 Commands.parallel(
-                //                                 s_Hood.goTo(() -> m_shootingParameters
-                //                                                 .calculate(s_Drivetrain.getHubCenter()).hoodAngle()),
-                //                                 s_Shooter.shoot(() -> m_shootingParameters
-                //                                                 .calculate(s_Drivetrain.getHubCenter()).rpm()),
-                //                                 s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                //                 // Condition: true when robot is behind the hub (X greater than hub X)
-                //                 s_Drivetrain::robotBehindHub))
-                //                 .onFalse(Commands.parallel(
-                //                                 s_Shooter.shoot(() -> 30),
-                //                                 s_Indexer.stop(),
-                //                                 s_Intake.Extend(),
-                //                                 Commands.race(Commands.waitSeconds(0.75), s_Hood.runBack())
-                //                                                 .andThen(s_Hood.zeroButton())
-                //                                                 .andThen(s_Hood.retractHood())));
-
-                // (joystick.rightTrigger().and(joystick.leftTrigger())).whileTrue(
-                // new ConditionalCommand(
-                // Commands.parallel(s_Hood.extendHood(),
-                // s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                // s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly(), s_Intake.intake()),
-                // Commands.parallel(s_Hood.goTo(() ->
-                // m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).hoodAngle()),
-                // s_Shooter.shoot(() ->
-                // m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).rpm()),
-                // s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly(), s_Intake.intake()),
-                // // Condition: true when robot is behind the hub (X greater than hub X)
-                // s_Drivetrain::robotBehindHub))
-                // .onFalse(Commands.parallel(
-                // s_Shooter.stop(),
-                // s_Indexer.stop(),
-                // s_Intake.Extend(),
-                // s_Hood.retractHood()
-                // )
-                // );
-
-                // untested new hood control
-                // joystick.rightTrigger().whileTrue(Commands.parallel(
-                // s_Hood.goTo(() -> m_shootingParameters.calculate(m_hub).hoodAngle()),
-                // new ConditionalCommand(
-                // Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(),
-                // Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(),
-                // Commands.waitSeconds(0.15))),
-                // s_Shooter.shoot(m_shootingCalculator::getShooterSpeed),
-                // s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                // Commands.parallel(Commands.repeatingSequence(Commands.race(s_Intake.intakeAndExtend(),
-                // Commands.waitSeconds(0.15)), Commands.race(s_Intake.bumpAndRun(),
-                // Commands.waitSeconds(0.15))), s_Shooter.shoot(() ->
-                // m_shootingParameters.calculate(m_hub).rpm()),
-                // s_Indexer.feed().onlyIf(s_Shooter::atSpeed).repeatedly()),
-                // // Condition: true when robot is behind the hub (X greater than hub X)
-                // s_Drivetrain::robotBehindHub)))
-                // .onFalse(Commands.parallel(
-                // s_Hood.retractHood(),
-                // s_Shooter.stop(),
-                // s_Indexer.stop(),
-                // s_Intake.Extend()
-                // ));
-
-                // joystick.rightTrigger().whileTrue(Commands.parallel(
-                // s_Shooter.shoot(() -> m_shootingParameters.calculate(m_hub).rpm()),
-                // Commands.sequence(Commands.waitSeconds(1),
-                // s_Indexer.feed()))).onFalse(Commands.parallel(
-                // s_Shooter.stop(),
-                // s_Indexer.stop()));
-
-                // joystick.a().whileTrue(new RotateToPose(s_Drivetrain,
-                // (aprilTagLayout.getTagPose(26).orElse(new Pose3d())
-                // .toPose2d().transformBy(new Transform2d(new Translation2d(-0.6, 0),
-                // Rotation2d.kZero)))));
-                // joystick.leftTrigger().whileTrue(s_Indexer.feed()).onFalse(s_Indexer.stop());
-                // s_Turret.setDefaultCommand(new TurretTrackPose(
-                //                 () -> m_shootingParameters.calculate(s_Drivetrain.getHubCenter()).turretAngle()
-                //                                 .getDegrees(),
-                //                 () -> s_Drivetrain.getState().Pose, s_Turret, s_Drivetrain)
-                //                 .onlyIf(s_Intake::clearOfTurret));
-                // joystick.x().whileTrue(new TurretTrackPose(s_Turret, m_hub, ()->
-                // drivetrain.getState().Pose));
-                // joystick.a().whileTrue(new RotateToPose(drivetrain,
-                // (aprilTagLayout.getTagPose(18).orElse(new
-                // Pose3d()).toPose2d().transformBy(new Transform2d(new Translation2d(0.4,0),
-                // Rotation2d.kZero)))));
-
-                // joystick.rightTrigger().whileTrue(Commands.sequence(s_Shooter.shoot(),s_Indexer.feed())).onFalse(Commands.sequence(s_Shooter.stop(),s_Indexer.stop()));
-
-                joystick.b().whileTrue(s_Drivetrain.applyRequest(
-                                () -> point.withModuleDirection(
-                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-
-                ));
-
-                // Run SysId routines when holding back/start and X/Y.
-                // Note that each routine should be run exactly once in a single log.
-                // joystick.y().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-                // // joystick.a().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-                // joystick.b().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-                // joystick.rightTrigger().onTrue(drivetrain.startLogger());
-                // joystick.leftTrigger().onTrue(drivetrain.stopLogger());
-
-                // // reset the field-centric heading on left bumper press
-                // extend intake on left bumper press
                 joystick.leftBumper()
                                 .onTrue(s_Intake.Extend());
-                // .onFalse(Commands.sequence(s_Intake.stow()));
-                //joystick.x().whileTrue(new RotateToPose(s_Drivetrain, () -> -joystick.getLeftY() * MaxSpeed, ()-> -joystick.getLeftX() * MaxSpeed));
-                // .onFalse(Commands.sequence(s_Intake.stow()));
-                // joystick.povLeft().onTrue(s_Intake.bump()).onFalse(s_Intake.Extend());
 
                 // passing shot
                 joystick.povLeft().whileTrue(
@@ -470,12 +301,26 @@ public class RobotContainer {
                                                                 .andThen(s_Hood.retractHood())
 
                                 ));
+
+                //no cam shooting
+                joystick.b().whileTrue(
+                        Commands.parallel(
+                                        s_Hood.goTo(() -> 0.8),
+                                        s_Shooter.shoot(() -> 33.0),
+                                        s_Indexer.feed().beforeStarting(Commands.waitSeconds(0.51))))
+                .onFalse(
+                        Commands.parallel(
+                                        s_Shooter.stop(),
+                                        s_Indexer.stop(),
+                                        s_Intake.Extend(),
+                                        Commands.race(Commands.waitSeconds(0.75),
+                                                        s_Hood.runBack())
+                                                        .andThen(s_Hood.zeroButton())
+                                                        .andThen(s_Hood.retractHood()))
+                );
+
                 joystick.rightBumper()
-                                // .whileTrue(Commands.sequence(s_Intake.intakeAndExtend(),
-                                // s_Intake.stowAndStop()).repeatedly())
-                                .whileTrue(Commands.repeatingSequence(
-                                                Commands.race(s_Intake.bottomOscillate(), Commands.waitSeconds(0.15)),
-                                                Commands.race(s_Intake.bumpAndRun(), Commands.waitSeconds(0.15))))
+                                .whileTrue(oscillate)
                                 .onFalse(Commands.sequence(s_Intake.Extend()));
 
                 s_Drivetrain.registerTelemetry(logger::telemeterize);
