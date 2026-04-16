@@ -44,8 +44,8 @@ public class ShootingCalculator {
         // shotFlywheelSpeedMap.put(Units.inchesToMeters(103.625+40+40), 60.0);
 
         //Corner Interp V4
-        shotFlywheelSpeedMap.put(6.5, 32.0);
-        shotFlywheelSpeedMap.put(9.7, 41.0);
+        shotFlywheelSpeedMap.put(6.5, 32.0 * 1.05);
+        shotFlywheelSpeedMap.put(9.7, 41.0 * 1.05);
         // shotFlywheelSpeedMap.put(8.15, 70.0);
         // shotFlywheelSpeedMap.put(9.25, 80.0);
         // shotFlywheelSpeedMap.put(10.9, 95.0);
