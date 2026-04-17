@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6416833095577745,
-        "y": 0.7162339514978601
+        "x": 2.8487018544935796,
+        "y": 0.418644793152639
       },
       "isLocked": false,
       "linkedName": "Right Bump Shot"
@@ -48,16 +48,16 @@
     },
     {
       "anchor": {
-        "x": 5.669329529243937,
-        "y": 3.1098858773181166
+        "x": 5.785777460770328,
+        "y": 3.5627389443651927
       },
       "prevControl": {
-        "x": 5.514065620542081,
-        "y": 3.4333523537803137
+        "x": 5.630513552068472,
+        "y": 3.8862054208273897
       },
       "nextControl": {
-        "x": 6.392657923364057,
-        "y": 1.6029517229012116
+        "x": 6.509105854890448,
+        "y": 2.0558047899482874
       },
       "isLocked": false,
       "linkedName": null
@@ -95,11 +95,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.3837953091684616,
-      "rotationDegrees": -1.3884581196426098
+      "rotationDegrees": 0.3355036307887183
     },
     {
       "waypointRelativePos": 1.2985074626865627,
-      "rotationDegrees": 9.104239284426622
+      "rotationDegrees": 0.503503327205348
     },
     {
       "waypointRelativePos": 1.9083155650319865,
