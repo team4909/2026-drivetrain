@@ -39,15 +39,15 @@ public class ShootingParameters {
         m_hoodTable.put(5.0, 1.7);
         m_hoodTable.put(5.65, 1.85);
 
-        m_shooterTable.put(1.5, 27.5);
-        m_shooterTable.put(2.0, 27.5);
-        m_shooterTable.put(2.5, 30.5);
-        m_shooterTable.put(3.0, 31.0);
-        m_shooterTable.put(3.5, 33.0);
-        m_shooterTable.put(4.0, 33.0);
-        m_shooterTable.put(4.5, 34.0);
-        m_shooterTable.put(5.0, 35.0);
-        m_shooterTable.put(5.65, 38.0);
+        m_shooterTable.put(1.5, 27.5 * 1.05);
+        m_shooterTable.put(2.0, 27.5 * 1.05);
+        m_shooterTable.put(2.5, 30.5 * 1.05);
+        m_shooterTable.put(3.0, 31.0 * 1.05);
+        m_shooterTable.put(3.5, 33.0 * 1.05);
+        m_shooterTable.put(4.0, 33.0 * 1.05);
+        m_shooterTable.put(4.5, 34.0 * 1.05);
+        m_shooterTable.put(5.0, 35.0 * 1.05);
+        m_shooterTable.put(5.65, 38.0 * 1.05);
 
         m_timeOfFlightTable.put(2.5, 0.98);
         m_timeOfFlightTable.put(3.73, 1.2);
