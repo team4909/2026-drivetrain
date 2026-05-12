@@ -48,16 +48,16 @@
     },
     {
       "anchor": {
-        "x": 1.9429957203994292,
-        "y": 1.3890442225392303
+        "x": 2.874579172610556,
+        "y": 1.1690870185449365
       },
       "prevControl": {
-        "x": 2.9910271041369465,
-        "y": 0.5868473609129817
+        "x": 3.5473894436519258,
+        "y": 0.6386019971469341
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Bump Shot"
+      "linkedName": "Right Trench Dumper Shot"
     }
   ],
   "rotationTargets": [
@@ -109,7 +109,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -137.29061004263843
+    "rotation": -122.22875743509856
   },
   "reversed": false,
   "folder": null,

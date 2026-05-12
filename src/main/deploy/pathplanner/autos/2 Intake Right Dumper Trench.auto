@@ -36,7 +36,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Right Trench Start Sweeping into Right Bump Shot Trench"
+                  "pathName": "Right Trench Start Sweeping into Right Trench Dumper Shot Trench"
                 }
               },
               {
@@ -130,7 +130,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Right Bump Shot Sweep Repeat Trench"
+                  "pathName": "Right Trench Dumper Shot Sweep Repeat Trench"
                 }
               },
               {
