@@ -13,7 +13,8 @@ public class Intake extends SubsystemBase {
     private LoggedNetworkNumber m_position = new LoggedNetworkNumber("/Tuning/IntakePosition", 0);
     private LoggedNetworkNumber m_velocity = new LoggedNetworkNumber("/Tuning/IntakeVelocity", 0);
     private final double Stowed = 0.0;
-    private final double Extended = -8.9;
+    private final double Extended = -9.1; //-8.9
+    private final double BottomOscillate = -7;
     private final double Bump = -4;
     private final double kIntakeVelocity = 70.0;
     private final double kOuttakeVelocity = -70.0;
@@ -25,9 +26,9 @@ public class Intake extends SubsystemBase {
 
     }
 
-    public Command run() {
-        return this.run(() -> m_io.setVelocity(m_velocity.get())).withName("IntakeRun");
-    }
+    // public Command run() {
+    //     return this.run(() -> m_io.setVelocity(m_velocity.get())).withName("IntakeRun");
+    // }
 
     public Command stop() {
         return this.run(() -> m_io.setSpeed(0)).withName("IntakeStop");
@@ -37,56 +38,64 @@ public class Intake extends SubsystemBase {
         return this.run(() -> m_io.setSpeed(1)).withName("IntakeIn");
     }
 
-    public Command intakePID() {
-         return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakePID");
-    }
+    // public Command intakePID() {
+    //      return this.run(() -> m_io.setVelocity(kIntakeVelocity)).withName("IntakePID");
+    // }
 
     public Command outtake() {
-        return this.run(() -> m_io.setVelocity(kOuttakeVelocity)).withName("IntakeOut");
+        return this.run(() -> m_io.setSpeed(-1)).withName("Outtake");
     }
 
     public Command intakeAndExtend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
-            m_io.setVelocity(kIntakeVelocity);
+            m_io.setSpeed(1);
             m_inputs.setpoint = "Extend";
-        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.intakePivotRotations - Extended) <= 0.1);
+    }
+
+    public Command bottomOscillate() {
+        return this.run(() -> {
+            m_io.setExtenderSetpoint(BottomOscillate);
+            m_io.setSpeed(1);
+            m_inputs.setpoint = "BottomOscillate";
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.intakePivotRotations - BottomOscillate) <= 0.1);
     }
 
      public Command Extend() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Extended);
             m_inputs.setpoint = "Extend";
-        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.position - Extended) <= 0.1);
+        }).withName("IntakeWithSetpoint").until(() -> Math.abs(m_inputs.intakePivotRotations - Extended) <= 0.1);
     }
 
     public Command stowAndStop() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
-            m_io.setVelocity(0);
+            m_io.setSpeed(0);
             m_inputs.setpoint = "Stowed";
-        }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+        }).withName("IntakeStowAndStop").until(() -> Math.abs(m_inputs.intakePivotRotations - Stowed) <= 0.1);
     }
     public Command stow() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Stowed);
             m_inputs.setpoint = "Stowed";
-        }).withName("Stow").until(() -> Math.abs(m_inputs.position - Stowed) <= 0.1);
+        }).withName("Stow").until(() -> Math.abs(m_inputs.intakePivotRotations - Stowed) <= 0.1);
     }
     
     public Command bump() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Bump);
             m_inputs.setpoint = "Bump";
-        }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
+        }).withName("Bump").until(() -> Math.abs(m_inputs.intakePivotRotations - Bump) <= 0.1);
     }
 
     public Command bumpAndRun() {
         return this.run(() -> {
             m_io.setExtenderSetpoint(Bump);
-            m_io.setVelocity(kIntakeVelocity);
+            m_io.setSpeed(1);
             m_inputs.setpoint = "Bump";
-        }).withName("Bump").until(() -> Math.abs(m_inputs.position - Bump) <= 0.1);
+        }).withName("Bump").until(() -> Math.abs(m_inputs.intakePivotRotations - Bump) <= 0.1);
     }
 
     public Command setpointFromTuning() {
@@ -107,7 +116,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean clearOfTurret() {
-        if (MathUtil.isNear(0.0, m_inputs.position, 1)) {
+        if (MathUtil.isNear(0.0, m_inputs.intakePivotRotations, 1)) {
             return false;
         }
         return true;

@@ -19,6 +19,12 @@
                 "data": {
                   "waitTime": 0.3
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ShooterSpinUp"
+                }
               }
             ]
           }
@@ -74,7 +80,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.05
                 }
               }
             ]
@@ -87,7 +93,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootAndIndex"
+                  "name": "IndexerFeed"
                 }
               },
               {
@@ -143,7 +149,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootIndexStop"
+                  "name": "IndexerStop"
                 }
               }
             ]
@@ -181,7 +187,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.05
                 }
               }
             ]
@@ -194,7 +200,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "ShootAndIndex"
+                  "name": "IndexerFeed"
                 }
               },
               {

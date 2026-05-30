@@ -20,32 +20,45 @@ public class Indexer extends SubsystemBase {
     }
 
     public Command tuningShoot() {
-        return this.run(() -> m_io.setSpeed(m_speed.get()));
+        m_inputs.command = "TuningShoot";
+        return this.run(() -> m_io.setVelocity(m_speed.get()));
     }
 
-    public Command slowFeed() {
-        return this.run(() -> m_io.setSpeed(-0.2)).withName("SlowShoot");
-    }
+    // public Command slowFeed() {
+    //     m_inputs.command = "SlowShoot";
+    //     return this.run(() -> m_io.setVelocity(-0.2)).withName("SlowShoot");
+    // }
 
     public Command feed() {
-        return this.run(() -> m_io.setSpeed(1)).withName("Shoot");
+        //log feed
+        m_inputs.command = "Feed";
+        return this.run(() -> m_io.setVelocity(80)).withName("Feed");
+    }
+
+    public Command kickerPull() {
+        m_inputs.command = "kickerPull";
+        return this.run(() -> m_io.setVelocityKicker(-50)).withName("KickerPull");
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setSpeed(0)).withName("Stop");
+        //log stop
+        m_inputs.command = "Stop";
+        return this.run(() -> m_io.setDutyCycle(0)).withName("Stop");
     }
 
     public Command stopInstant() {
-        return this.runOnce(() -> m_io.setSpeed(0)).withName("StopInstant");
+        m_inputs.command = "StopInstant";
+        return this.runOnce(() -> m_io.setDutyCycle(0)).withName("StopInstant");
     }
 
-    public Command notintake() {
-        return this.run(() -> m_io.setSpeed(-1)).withName("Intake");
-
+    public Command outtake() {
+        m_inputs.command = "Outtake";
+        return this.run(() -> m_io.setVelocity(-80)).withName("Outtake");
     }
 
     @Override
     public void periodic() {
+        m_io.updateInputs(m_inputs);
         Logger.processInputs(this.getName(), m_inputs);
     }
 }

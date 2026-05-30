@@ -27,20 +27,20 @@ public class Shooter extends SubsystemBase {
     }
 
     public Command stop() {
-        return this.run(() -> m_io.setVelocity(0)).withName("Stop");
+        return this.run(() -> m_io.setDutyCycle(0)).withName("Stop");
     }
 
     public Command shoot(DoubleSupplier velocity){
-        return this.run(() -> m_io.setVelocity((int) velocity.getAsDouble())).repeatedly().withName("Shoot");
+        return this.run(() -> m_io.setVelocity(velocity.getAsDouble())).repeatedly().withName("Shoot");
     }
 
     public boolean atSpeed() {
-        if (m_inputs.goalVelocity == 0.0) {
+        if (m_inputs.goalVelocity == 0.0 || m_inputs.goalVelocity == 30.0) {
             return false;
         }
 
         return MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor1VelocityRPS, kSHOOTERTOLERANCE)
-                && MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor2VelocityRPS, kSHOOTERTOLERANCE);
+                || MathUtil.isNear(m_inputs.goalVelocity, m_inputs.motor2VelocityRPS, kSHOOTERTOLERANCE);
     }
 
     @Override

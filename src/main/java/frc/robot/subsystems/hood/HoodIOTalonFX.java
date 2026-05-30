@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Rotations;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -11,6 +13,10 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DutyCycle;
 
 public class HoodIOTalonFX implements HoodIO {
@@ -25,8 +31,15 @@ public class HoodIOTalonFX implements HoodIO {
 
     // Convert legacy pulse-width setpoints (1000-2000) into Falcon rotations.
     private static final double kMinRotations = 0.0;
-    private static final double kMaxRotations = 0.685;
+    private static final double kMaxRotations = 2.7;
 
+    private StatusSignal<AngularVelocity> m_hoodVelocity;
+    private StatusSignal<Voltage> m_hoodVoltage;
+    private StatusSignal<Current> m_hoodStatorCurrent;
+    private StatusSignal<Current> m_hoodSupplyCurrent;
+    private StatusSignal<Angle> m_hoodRotations;
+
+    private double m_goalPosition;
     public HoodIOTalonFX() {
         m_hoodMotor = new TalonFX(kHoodMotorID, kCanbus);
 
@@ -35,13 +48,29 @@ public class HoodIOTalonFX implements HoodIO {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.Slot0.kP = 30;
-        config.Slot0.kI = 6;
+        config.Slot0.kI = 10;
         config.Slot0.kD = 0.01;
         config.Slot0.kS = 2.0;
 
         m_hoodMotor.getConfigurator().apply(config);
 
         m_hoodMotor.setPosition(0);
+
+        m_hoodVelocity = m_hoodMotor.getVelocity();
+        m_hoodVoltage = m_hoodMotor.getSupplyVoltage();
+        m_hoodStatorCurrent = m_hoodMotor.getStatorCurrent();
+        m_hoodSupplyCurrent = m_hoodMotor.getSupplyCurrent();
+        m_hoodRotations = m_hoodMotor.getPosition();
+
+        m_goalPosition = 0;
+
+        BaseStatusSignal.setUpdateFrequencyForAll(100, 
+            m_hoodVelocity,
+            m_hoodVoltage,
+            m_hoodStatorCurrent,
+            m_hoodSupplyCurrent,
+            m_hoodRotations
+        );
     }
 
     public double map(double x) {
@@ -56,6 +85,7 @@ public class HoodIOTalonFX implements HoodIO {
         //     kMaxRotations,
         //     (clampedPulseWidth - kMinPulseWidth) / (kMaxPulseWidth - kMinPulseWidth)
         // );
+        m_goalPosition = position;
 
         m_hoodMotor.setControl(m_positionRequest.withPosition( -MathUtil.clamp(position, kMinRotations, kMaxRotations)));
         Logger.recordOutput("Hood/map", -MathUtil.clamp(position, kMinRotations, kMaxRotations));
@@ -73,9 +103,22 @@ public class HoodIOTalonFX implements HoodIO {
 
 
     @Override
-    public void updateInputs(HoodIOInputsAutoLogged inputs) {
-        final double motorPosition = m_hoodMotor.getPosition().getValueAsDouble();
-        inputs.positionLeftActuator = motorPosition;
-        inputs.positionRightActuator = motorPosition;
+    public void updateInputs(HoodIOInputsAutoLogged m_inputs) {
+        m_inputs.hoodConnected = 
+            BaseStatusSignal.refreshAll(
+                m_hoodVelocity,
+                m_hoodVoltage,
+                m_hoodStatorCurrent,
+                m_hoodSupplyCurrent,
+                m_hoodRotations
+            ).isOK();
+        
+        m_inputs.hoodVelocityRPS = m_hoodVelocity.getValueAsDouble();
+        m_inputs.hoodStatorCurrent = m_hoodStatorCurrent.getValueAsDouble();
+        m_inputs.hoodSupplyCurrent = m_hoodSupplyCurrent.getValueAsDouble();
+        m_inputs.hoodVoltage = m_hoodVoltage.getValueAsDouble();
+        m_inputs.hoodRotations = -m_hoodRotations.getValueAsDouble();
+
+        m_inputs.goalPosition = m_goalPosition;
     }
 }
