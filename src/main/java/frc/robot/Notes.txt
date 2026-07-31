@@ -4,3 +4,6 @@ Turret.java has the constructor that has the m_io which is an attribute. It sets
 defining of variable in TurretIO is for logging; defined variable will be logged
 TalonFX is mentioned as a way to use the things in that file. When a variable is of TalonFX type, it means that it can use the commands in that predermined file
 making the class does the same thing, but to be used in other files. ie, TurretIOTalonFX mentioned and furhter used in Turret.java (NOT DONE YET)
+
+How to do offsets
+1. 
